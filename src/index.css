@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+
+.ProseMirror-focused {
+  outline: none;
+}
+
+[contenteditable]:focus {
+  outline: 0 solid transparent;
+}
+
+/* Placeholder (at the top) */
+.ProseMirror p.is-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #adb5bd;
+  pointer-events: none;
+  height: 0;
+}
+
+@tailwind utilities;
