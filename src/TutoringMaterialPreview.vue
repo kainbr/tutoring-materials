@@ -66,15 +66,6 @@
       "
       class="border border-2 rounded-lg overflow-auto mx-auto bg-white transition-all duration-500"
     >
-      <!--
-      <tutoring-material
-        :key="indexPlayer"
-        :content="content"
-        :state="statePlayer"
-        @update:state="statePlayer = $event"
-        @event="eventsPlayer = [...eventsPlayer, $event]"
-      ></tutoring-material>
-      -->
       <tutoring-material-player
         :key="indexPlayer"
         :content="content"
