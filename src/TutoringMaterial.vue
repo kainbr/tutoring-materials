@@ -21,8 +21,7 @@
       <!-- Conditional footer -->
       <EditorFooter v-if="isEditor" :editor="editor" class="border-t-2" />
 
-      <!-- Scaffold notification container
-      -->
+      <!-- Scaffold notification container -->
       <div
         :class="{ 'mt-[5.5rem]': isEditor }"
         class="absolute z-0 border-0 h-0"
@@ -36,11 +35,10 @@
 
 <script lang="ts">
 // Vue imports
-import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import EditorMenu from "@/helpers/EditorMenu.vue";
 
 // Editor imports
-import type { Content, JSONContent } from "@tiptap/vue-3";
 import { Editor, EditorContent } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
 import { Color } from "@tiptap/extension-color";
@@ -63,6 +61,9 @@ import NotificationContainerComponent from "@/scaffolds/notification/Notificatio
 import { ScaffoldNotification } from "@/scaffolds/notification";
 import { ScaffoldMark } from "@/scaffolds/mark";
 
+import type { PropType } from "vue";
+import type { Content, JSONContent } from "@tiptap/vue-3";
+
 interface Props {
   readonly taskLimit: number;
   readonly isEditor: boolean;
@@ -70,16 +71,17 @@ interface Props {
   readonly content: object | undefined;
 }
 
-export default {
+export default defineComponent({
   components: {
     NotificationContainerComponent,
     EditorFooter,
     EditorContent,
     EditorMenu,
   },
+
   props: {
     content: {
-      type: Object,
+      type: Object as PropType<JSONContent>,
       default() {
         return {
           type: "tutoring-material",
@@ -117,7 +119,7 @@ export default {
 
   emits: ["update:content", "update:state", "event"],
 
-  setup(props: Props, context: { emit: (arg0: string, arg1: JSONContent) => void }) {
+  setup(props: Props, context) {
     // Editor
     const editor: Editor = new Editor({
       editorProps: {
@@ -243,5 +245,5 @@ export default {
       height,
     };
   },
-};
+});
 </script>

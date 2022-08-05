@@ -2,7 +2,10 @@ export function hashCode(str: string) {
   return Math.abs(Array.from(str).reduce((s, c) => (Math.imul(31, s) + c.charCodeAt(0)) | 0, 0));
 }
 
-export function calculateHexIcon(str: string) {
+export function calculateHexIcon(str: string | undefined) {
+  if (!str) {
+    return "&#x2753;";
+  }
   return hexIcons[hashCode(str) % hexIcons.length];
 }
 

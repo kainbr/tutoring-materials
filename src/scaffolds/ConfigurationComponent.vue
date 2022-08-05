@@ -61,7 +61,7 @@ export default defineComponent({
   },
 
   methods: {
-    calculateHexIcon(str: string) {
+    calculateHexIcon(str: string | undefined) {
       return calculateHexIcon(str);
     },
   },

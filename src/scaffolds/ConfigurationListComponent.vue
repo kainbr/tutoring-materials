@@ -4,7 +4,7 @@
     <ul v-else class="divide-y divide-gray-200" role="list">
       <li
         v-for="scaffold in scaffolds"
-        :key="scaffold"
+        :key="scaffold.id"
         class="py-1"
         @mouseenter="stateStore.addScaffold(scaffold)"
         @mouseleave="stateStore.removeScaffold(scaffold)"

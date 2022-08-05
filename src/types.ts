@@ -44,9 +44,10 @@ export interface NotificationScaffoldConfig {
 }
 
 // Events
-export type Events = {
-  foo: string;
-  bar?: number;
+export type Event = {
+  type: string;
+  ts: number;
+  data: object;
 };
 
 export interface EventOption {

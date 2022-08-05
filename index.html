@@ -9,212 +9,41 @@
   </head>
   <body>
     <div id="app" class="p-2">
-      <!-- Editor -->
       <div class="flex flex-col max-w-7xl mx-auto mt-10">
-        <!-- Headline -->
         <header class="w-full">
           <h1 class="text-3xl font-bold leading-tight text-gray-900 mb-2">Editor</h1>
         </header>
 
         <main class="w-full flex gap-4 flex-wrap">
-          <!-- Main Editor -->
           <div class="h-[650px] w-[640px] mx-auto">
-            <tutoring-material
+            <tutoring-material-editor
               v-model:content="content"
               :is-editor="true"
               :task-limit="3"
               @update:state="stateEditor = $event"
-            ></tutoring-material>
+            ></tutoring-material-editor>
           </div>
 
-          <!-- Interactions -->
           <div class="flex grow">
-            <div
-              class="flex flex-col grow border border-2 overflow-hidden shadow rounded-lg divide-y divide-gray-200"
-            >
-              <div>
-                <div class="sm:hidden">
-                  <label for="tabs" class="sr-only">Select a tab</label>
-                  <select
-                    v-model="selectedTab"
-                    class="block w-full focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                  >
-                    <option :selected="selectedTab === 'Events'">Events</option>
-                    <option :selected="selectedTab === 'Statistics'">Statistics</option>
-                  </select>
-                </div>
-                <div class="hidden sm:block">
-                  <div class="border-b border-gray-200">
-                    <nav class="-mb-px flex bg-slate-50" aria-label="Tabs">
-                      <a
-                        :class="[selectedTab === 'Events' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'w-1/4 py-3 px-1 text-center border-b-2 font-medium text-sm cursor-pointer grow']"
-                        :aria-current="selectedTab === 'Events' ? 'page' : undefined"
-                        @click="selectedTab = 'Events'"
-                        >Events</a
-                      >
-                      <a
-                        :class="[selectedTab === 'Statistics' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'w-1/4 py-3 px-1 text-center border-b-2 font-medium text-sm cursor-pointer grow']"
-                        :aria-current="selectedTab === 'Statistics' ? 'page' : undefined"
-                        @click="selectedTab = 'Statistics'"
-                        >Statistics</a
-                      >
-                    </nav>
-                  </div>
-                </div>
-              </div>
-              <div class="flex flex-row w-full h-full">
-                <div v-if="selectedTab === 'Events'" class="w-full h-full">
-                  <div class="flex flex-row h-full">
-                    <div class="flex flex-col border-r">
-                      <div class="flex-none p-1.5 bg-slate-50 border-b">
-                        <input
-                          class="w-full text-sm p-1"
-                          placeholder="Filter"
-                          type="text"
-                          disabled
-                        />
-                      </div>
-                      <div class="grow h-full">
-                        <ul class="divide-y divide-gray-200" role="list">
-                          <li
-                            v-for="event in filteredEventsPlayer"
-                            class="py-2 px-2 hover:bg-gray-50 cursor-pointer"
-                            @click="selectedEvent = event"
-                          >
-                            <div class="flex space-x-1 min-w-[250px]">
-                              <div class="flex-1 space-y-1">
-                                <div class="flex items-center justify-between">
-                                  <h3 class="text-sm font-medium">
-                                    {{event?.type || "No event type specified"}}
-                                  </h3>
-                                  <p class="text-sm text-gray-500">
-                                    {{ event?.ts || "No timestamp provided" }}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                    <div class="flex w-full h-full">
-                      <div v-if="!selectedEvent" class="mx-auto my-auto">
-                        <span class=""> No event selected </span>
-                      </div>
-                      <div v-else class="p-4">
-                        <dl>
-                          <dt class="text-sm font-medium text-gray-500">Timestamp</dt>
-                          <dd class="mt-1 text-sm text-gray-900">
-                            {{selectedEvent?.ts || "No timestamp provided"}}
-                          </dd>
-                        </dl>
-                        <dl class="mt-2">
-                          <dt class="text-sm font-medium text-gray-500">Event Type</dt>
-                          <dd class="mt-1 text-sm text-gray-900">
-                            {{selectedEvent?.type || "No type provided"}}
-                          </dd>
-                        </dl>
-                        <dl class="mt-2">
-                          <dt class="text-sm font-medium text-gray-500">Data</dt>
-                          <dd class="mt-1 text-sm text-gray-900" v-if="!selectedEvent?.data">
-                            "No type provided"
-                          </dd>
-                        </dl>
-                        <pre class="mt-1 text-sm text-gray-900">{{ selectedEvent?.data }}</pre>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div v-if="selectedTab === 'Statistics'" class="p-4">Statistics</div>
-              </div>
-            </div>
+            <tutoring-material-statistics :events="eventsPlayer"></tutoring-material-statistics>
           </div>
         </main>
       </div>
 
-      <!-- Player -->
       <div class="flex flex-row flex-wrap max-w-7xl mx-auto mt-8">
-        <!-- Headline -->
         <header class="w-full flex flex-row items-center justify-between mb-2">
           <h1 class="text-3xl font-bold leading-tight text-gray-900">Preview</h1>
-
-          <!-- Helper Buttons -->
-          <div>
-            <span class="relative z-0 inline-flex shadow-sm rounded-sm">
-              <button
-                class="relative inline-flex items-center px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                type="button"
-                @click="playerDimensions.isPortrait = !playerDimensions.isPortrait"
-              >
-                <svg
-                  class="-ml-1 mr-1 h-5 w-5 text-gray-400"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M0 0h24v24H0z" fill="none" />
-                  <path
-                    d="M11 9h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H11a1 1 0 0 1-1-1V10a1 1 0 0 1 1-1zm1 2v8h8v-8h-8zm-6-.414l1.828-1.829 1.415 1.415L5 14.414.757 10.172l1.415-1.415L4 10.586V8a5 5 0 0 1 5-5h4v2H9a3 3 0 0 0-3 3v2.586z"
-                  />
-                </svg>
-                Rotate Screen
-              </button>
-              <button
-                class="-ml-px relative inline-flex items-center px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                type="button"
-                @click="resetPlayer"
-              >
-                <svg
-                  class="-ml-1 mr-1 h-5 w-5 text-gray-400"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M0 0h24v24H0z" fill="none" />
-                  <path
-                    d="M5.463 4.433A9.961 9.961 0 0 1 12 2c5.523 0 10 4.477 10 10 0 2.136-.67 4.116-1.81 5.74L17 12h3A8 8 0 0 0 6.46 6.228l-.997-1.795zm13.074 15.134A9.961 9.961 0 0 1 12 22C6.477 22 2 17.523 2 12c0-2.136.67-4.116 1.81-5.74L7 12H4a8 8 0 0 0 13.54 5.772l.997 1.795z"
-                  />
-                </svg>
-                Reset Tasks
-              </button>
-            </span>
-          </div>
         </header>
 
         <!-- Main Player -->
         <main class="w-full border bg-slate-50 shadow">
-          <div
-            v-for="(value, index) in (playerDimensions.isPortrait ?
-          [...defaultPlayerDimensions].sort((a,b) => b.sortWidth - a.sortWidth) :
-          [...defaultPlayerDimensions].sort((a,b) => b.sortHeight - a.sortHeight))"
-            :key="value.label"
-            :class="['z-[' + index + '] ' + (index !== 0 ? 'border-x-2' : '')]"
-            :style="'width: ' + (playerDimensions.isPortrait ? value.width : value.height)"
-            class="absolute left-1/2 transform -translate-x-1/2 bg-slate-200 hover:bg-slate-300 h-5 border-slate-50 cursor-pointer"
-            @click="changePlayerDimensions(value.width, value.height)"
-            @mouseleave=" playerDimensions.hoverLabel = null"
-            @mouseover="playerDimensions.hoverLabel = value.label"
-          ></div>
-          <div class="absolute left-1/2 transform -translate-x-1/2 z-50 text-sm select-none">
-            {{ playerDimensions.hoverLabel }}
-          </div>
-          <div class="w-full py-4 mt-4">
-            <div
-              :style="'height: ' + (playerDimensions.isPortrait ? playerDimensions.height : playerDimensions.width)  +
-           '; width: ' + (playerDimensions.isPortrait ? playerDimensions.width : playerDimensions.height)"
-              class="border border-2 rounded-lg overflow-auto mx-auto bg-white transition-all duration-500"
-            >
-              <tutoring-material
-                :key="indexPlayer"
-                :content="content"
-                :state="statePlayer"
-                @update:state="statePlayer = $event"
-                @event="eventsPlayer = [...eventsPlayer, $event]"
-              ></tutoring-material>
-            </div>
-          </div>
+          <tutoring-material-preview
+            :content="content"
+            :state="statePlayer"
+            @update:state="statePlayer = $event"
+            @event="eventsPlayer = [...eventsPlayer, $event]"
+            @reset="eventsPlayer = []; statePlayer = undefined"
+          ></tutoring-material-preview>
         </main>
       </div>
 
@@ -222,7 +51,7 @@
       <div class="flex flex-row flex-wrap max-w-7xl mt-8 mx-auto">
         <div class="w-1/2">
           <div class="text-xs p-4 overflow-auto">
-            <pre>asd{{ stateEditor }}</pre>
+            <pre>{{ stateEditor }}</pre>
             <pre>{{ content }}</pre>
           </div>
         </div>
@@ -236,98 +65,20 @@
 
     <script type="module">
       import { createApp } from "vue/dist/vue.esm-bundler";
-      import { createPinia } from "pinia";
-      import { TutoringMaterial } from "./src/index";
-      import * as dayjs from "dayjs";
+      import TutoringMaterials from "./src/index";
 
       const app = createApp({
         data() {
           return {
-            selectedTab: "Events",
-            selectedEvent: null,
             content: undefined,
             stateEditor: undefined,
             statePlayer: undefined,
             eventsPlayer: [],
-            indexPlayer: 0,
-            playerDimensions: {
-              width: "375px",
-              height: "667px",
-              isPortrait: true,
-              hoverLabel: null,
-            },
-            defaultPlayerDimensions: [
-              {
-                width: "1280px",
-                height: "720px",
-                sortWidth: 1280,
-                sortHeight: 720,
-                label: "Laptop",
-              },
-              {
-                width: "768px",
-                height: "1024px",
-                sortWidth: 768,
-                sortHeight: 1024,
-                label: "Tablet",
-              },
-              {
-                width: "425px",
-                height: "755px",
-                sortWidth: 425,
-                sortHeight: 755,
-                label: "Mobile L",
-              },
-              {
-                width: "375px",
-                height: "667px",
-                sortWidth: 375,
-                sortHeight: 667,
-                label: "Mobile M",
-              },
-              {
-                width: "320px",
-                height: "570px",
-                sortWidth: 320,
-                sortHeight: 570,
-                label: "Mobile S",
-              },
-            ],
-            tabs: [
-              { name: "Events", href: "#", current: true },
-              { name: "Statistics", href: "#", current: false },
-            ],
           };
-        },
-
-        computed: {
-          filteredEventsPlayer() {
-            return this.eventsPlayer.map((e) => {
-              return { ...e, ts: dayjs(e.ts).format("HH:mm:ss:SSS") };
-            });
-          },
-        },
-
-        methods: {
-          changePlayerDimensions(width, height) {
-            this.playerDimensions = Object.assign({}, this.playerDimensions, {
-              width,
-              height,
-            });
-          },
-          resetPlayer() {
-            this.state = undefined;
-            this.eventsPlayer = [];
-            this.indexPlayer = this.indexPlayer + 1;
-          },
         },
       });
 
-      app.config.unwrapInjectedRef = true;
-
-      app.use(createPinia());
-
-      app.component("tutoring-material", TutoringMaterial);
+      app.use(TutoringMaterials);
 
       app.mount("#app");
     </script>

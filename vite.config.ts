@@ -3,14 +3,21 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
+import viteCompression from "vite-plugin-compression";
+import { visualizer } from "rollup-plugin-visualizer";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), viteCompression(), visualizer()],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
+  },
+  define: {
+    __VUE_I18N_FULL_INSTALL__: true,
+    __VUE_I18N_LEGACY_API__: false,
+    __INTLIFY_PROD_DEVTOOLS__: false,
   },
   build: {
     lib: {
@@ -18,6 +25,7 @@ export default defineConfig({
       name: "TutoringMaterials",
       fileName: `tutoring-materials`,
     },
+    minify: "esbuild",
     watch: {
       // https://rollupjs.org/guide/en/#watch-options
     },

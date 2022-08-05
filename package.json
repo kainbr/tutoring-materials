@@ -20,7 +20,6 @@
   },
   "dependencies": {
     "@headlessui/vue": "^1.6.7",
-    "@tailwindcss/typography": "^0.5.4",
     "@tiptap/extension-color": "^2.0.0-beta.12",
     "@tiptap/extension-image": "^2.0.0-beta.30",
     "@tiptap/extension-placeholder": "^2.0.0-beta.53",
@@ -38,14 +37,14 @@
     "mitt": "^3.0.0",
     "pinia": "^2.0.16",
     "uuid": "^8.3.2",
-    "vue": "^3.2.37"
+    "vue-i18n": "^9.2.0"
   },
   "peerDependencies": {
-    "pinia": "^2.0.16",
     "vue": "^3.2.37"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.0",
+    "@tailwindcss/typography": "^0.5.4",
     "@types/file-saver": "^2.0.5",
     "@types/jsdom": "^16.2.14",
     "@types/node": "^16.11.45",
@@ -64,10 +63,12 @@
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.14",
     "prettier": "^2.5.1",
+    "rollup-plugin-visualizer": "^5.7.1",
     "start-server-and-test": "^1.14.0",
     "tailwindcss": "^3.1.6",
     "typescript": "~4.7.4",
     "vite": "^3.0.1",
+    "vite-plugin-compression": "^0.5.1",
     "vitest": "^0.18.1",
     "vue-tsc": "^0.38.8"
   }

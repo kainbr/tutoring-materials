@@ -9,7 +9,7 @@ import type { Emitter } from "mitt";
 
 import type { StoreDefinition } from "pinia";
 import type { Node as ProseMirrorNode } from "prosemirror-model";
-import type { Scaffold, EventTrigger, MarkScaffold, Events, EventOption } from "@/types";
+import type { Scaffold, EventTrigger, MarkScaffold, Event, EventOption } from "@/types";
 import EventTriggerComponent from "@/events/EventTriggerComponent.vue";
 
 export interface DocumentOptions {
@@ -21,7 +21,7 @@ export interface DocumentStorage {
   // tasks: () => number;
   // scaffoldMarks: () => [];
   stateStore: () => StateStore | null;
-  eventBus: Emitter<Events>;
+  eventBus: Emitter<Event>;
   eventOptions: EventOption[];
 }
 

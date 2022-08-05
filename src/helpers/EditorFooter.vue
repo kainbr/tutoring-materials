@@ -2,7 +2,7 @@
   <div class="bg-slate-50 rounded-b-lg">
     <div class="w-full">
       <div class="mx-auto w-full py-2 max-w flex flex-row flex-wrap gap-0.5">
-        <Disclosure v-slot="{ open }" default-open>
+        <Disclosure v-slot="{ open }">
           <DisclosureButton
             class="flex flex-row grow items-center justify-start px-4 py-1 text-left text-sm font-medium focus:outline-none focus-visible:ring focus-visible:ring-opacity-75"
           >
@@ -39,7 +39,7 @@
     </div>
     <div class="w-full border-t">
       <div class="mx-auto w-full py-2 max-w flex flex-row flex-wrap gap-0.5">
-        <Disclosure v-slot="{ open }" default-open>
+        <Disclosure v-slot="{ open }">
           <DisclosureButton
             class="flex flex-row grow items-center justify-start px-4 py-1 text-left text-sm font-medium focus:outline-none focus-visible:ring focus-visible:ring-opacity-75"
           >
