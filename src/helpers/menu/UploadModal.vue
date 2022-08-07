@@ -51,10 +51,10 @@
                 >
                   <IconUploadCloud />
                   <span class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                    <span class="font-semibold">Click to upload</span> or drag and drop
+                    {{ $t("editor:menu:upload-modal-upload-explanation") }}
                   </span>
                   <span class="text-xs text-gray-500 dark:text-gray-400">
-                    Supported formats: {{ supportedFormats }}
+                    {{ supportedFormats }}
                   </span>
                   <span class="text-xs text-gray-500 dark:text-gray-400">
                     {{ supplementaryText }}

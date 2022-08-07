@@ -1,6 +1,8 @@
 <template>
   <div class="w-full">
-    <span v-if="scaffolds.length === 0" class="text-sm ml-2.5">No scaffolds available.</span>
+    <span v-if="scaffolds.length === 0" class="text-sm ml-2.5">{{
+      $t("editor:footer:feedback-empty-list")
+    }}</span>
     <ul v-else class="divide-y divide-gray-200" role="list">
       <li
         v-for="scaffold in scaffolds"

@@ -1,5 +1,8 @@
 {
   "files": ["./types", "file-saver", "uuid"],
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+  "resolveJsonModule": true,
+  "esModuleInterop": true,
   "references": [
     {
       "path": "./tsconfig.config.json"

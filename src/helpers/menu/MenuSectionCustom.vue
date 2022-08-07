@@ -19,9 +19,9 @@
       :editor="editor"
       :upload-callback="(e) => editor.commands.uploadImage(e)"
       accepted-files="image/png, image/jpeg"
-      title="Upload Image"
-      supported-formats="Supported formats: PNG, JPG, JPEG"
-      supplementary-text="Images are compressed while uploading."
+      :title="$t('editor:menu:image-upload-headline')"
+      :supported-formats="$t('editor:menu:image-upload-supported-formats')"
+      :supplementary-text="$t('editor:menu:image-upload-supplementary-text')"
     />
   </div>
 </template>

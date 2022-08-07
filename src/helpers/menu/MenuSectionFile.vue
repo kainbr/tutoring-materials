@@ -13,9 +13,9 @@
       v-model="fileModalOpen"
       :editor="editor"
       :upload-callback="(e) => editor.commands.uploadDocument(e)"
+      :title="$t('editor:menu:file-upload-headline')"
+      :supported-formats="$t('editor:menu:file-upload-supported-formats')"
       accepted-files="file/*,.json"
-      supported-formats="JSON Document"
-      title="Upload File"
     />
   </div>
 </template>

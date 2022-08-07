@@ -36,6 +36,7 @@
 <script lang="ts">
 // Vue imports
 import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import EditorMenu from "@/helpers/EditorMenu.vue";
 
 // Editor imports
@@ -121,6 +122,8 @@ export default defineComponent({
 
   setup(props: Props, context) {
     // Editor
+    const { t, locale } = useI18n();
+
     const editor: Editor = new Editor({
       editorProps: {
         attributes: {
@@ -148,7 +151,7 @@ export default defineComponent({
         // Image,
         Placeholder.configure({
           includeChildren: true,
-          placeholder: "Some content...",
+          placeholder: () => t("editor:placeholder-text"),
         }),
         TextAlign.configure({
           types: ["heading", "paragraph", "image"],
@@ -185,6 +188,12 @@ export default defineComponent({
           context.emit("update:content", editor.getJSON());
         }
       },
+    });
+
+    // Watch locale change to trigger an event view update
+    // https://github.com/ueberdosis/tiptap/issues/1935
+    watch(locale, () => {
+      editor.view.dispatch(editor.state.tr);
     });
 
     // Register event bus
@@ -238,6 +247,7 @@ export default defineComponent({
     });
 
     return {
+      t,
       editor,
       container,
       editorContainerClasses,

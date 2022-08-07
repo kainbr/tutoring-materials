@@ -1,6 +1,8 @@
 <template>
   <div class="w-full max-h-52 overflow-auto">
-    <span v-if="triggers.length === 0" class="text-sm ml-2.5">No event trigger available.</span>
+    <span v-if="triggers.length === 0" class="text-sm ml-2.5">{{
+      $t("editor:footer:trigger-empty-list")
+    }}</span>
     <ul v-else class="divide-y divide-gray-200" role="list">
       <li v-for="(trigger, index) in triggers" :key="trigger.id" class="flex flex-row py-1">
         <div class="px-3.5">

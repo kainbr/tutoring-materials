@@ -4,13 +4,19 @@
   >
     <div>
       <div class="sm:hidden">
-        <label for="tabs" class="sr-only">Select a tab</label>
+        <label for="tabs" class="sr-only">
+          {{ $t("statistics:tab-option-none") }}
+        </label>
         <select
           v-model="selectedTab"
           class="block w-full focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
         >
-          <option :selected="selectedTab === 'Events'">Events</option>
-          <option :selected="selectedTab === 'Statistics'">Statistics</option>
+          <option :selected="selectedTab === 'Events'">
+            {{ $t("statistics:tab-option-events") }}
+          </option>
+          <option :selected="selectedTab === 'Statistics'">
+            {{ $t("statistics:tab-option-statistics") }}
+          </option>
         </select>
       </div>
       <div class="hidden sm:block">
@@ -25,7 +31,7 @@
               ]"
               :aria-current="selectedTab === 'Events' ? 'page' : undefined"
               @click="selectedTab = 'Events'"
-              >Events</a
+              >{{ $t("statistics:tab-option-events") }}</a
             >
             <a
               :class="[
@@ -36,7 +42,7 @@
               ]"
               :aria-current="selectedTab === 'Statistics' ? 'page' : undefined"
               @click="selectedTab = 'Statistics'"
-              >Statistics</a
+              >{{ $t("statistics:tab-option-statistics") }}</a
             >
           </nav>
         </div>
@@ -61,7 +67,7 @@
                     <div class="flex-1 space-y-1">
                       <div class="flex items-center justify-between">
                         <h3 class="text-sm font-medium">
-                          {{ event?.type || "No event type specified" }}
+                          {{ $t("global:event-type-" + event?.type) || "No event type specified" }}
                         </h3>
                         <p class="text-sm text-gray-500">
                           {{
@@ -79,11 +85,15 @@
           </div>
           <div class="flex w-full h-full">
             <div v-if="!selectedEvent" class="mx-auto my-auto">
-              <span class=""> No event selected </span>
+              <span class="">
+                {{ $t("statistics:tab-events-placeholder") }}
+              </span>
             </div>
             <div v-else class="p-4">
               <dl>
-                <dt class="text-sm font-medium text-gray-500">Timestamp</dt>
+                <dt class="text-sm font-medium text-gray-500">
+                  {{ $t("statistics:tab-events-timestamp") }}
+                </dt>
                 <dd class="mt-1 text-sm text-gray-900">
                   {{
                     selectedEvent?.ts
@@ -93,13 +103,17 @@
                 </dd>
               </dl>
               <dl class="mt-2">
-                <dt class="text-sm font-medium text-gray-500">Event Type</dt>
+                <dt class="text-sm font-medium text-gray-500">
+                  {{ $t("statistics:tab-events-type") }}
+                </dt>
                 <dd class="mt-1 text-sm text-gray-900">
                   {{ selectedEvent?.type || "No type provided" }}
                 </dd>
               </dl>
               <dl class="mt-2">
-                <dt class="text-sm font-medium text-gray-500">Data</dt>
+                <dt class="text-sm font-medium text-gray-500">
+                  {{ $t("statistics:tab-events-data") }}
+                </dt>
                 <dd v-if="!selectedEvent?.data" class="mt-1 text-sm text-gray-900">
                   "No type provided"
                 </dd>

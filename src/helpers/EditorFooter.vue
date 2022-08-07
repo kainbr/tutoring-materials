@@ -7,7 +7,9 @@
             class="flex flex-row grow items-center justify-start px-4 py-1 text-left text-sm font-medium focus:outline-none focus-visible:ring focus-visible:ring-opacity-75"
           >
             <IconDropDown :class="open ? '' : '-rotate-90 transform'" />
-            <span class="ml-3 text-base font-normal">Document Scaffolds</span>
+            <span class="ml-3 text-base font-normal">{{
+              $t("editor:footer:headline-feedback")
+            }}</span>
           </DisclosureButton>
 
           <!-- Notification -->
@@ -44,7 +46,9 @@
             class="flex flex-row grow items-center justify-start px-4 py-1 text-left text-sm font-medium focus:outline-none focus-visible:ring focus-visible:ring-opacity-75"
           >
             <IconDropDown :class="open ? '' : '-rotate-90 transform'" />
-            <span class="ml-3 text-base font-normal">Event Trigger</span>
+            <span class="ml-3 text-base font-normal">{{
+              $t("editor:footer:headline-trigger")
+            }}</span>
           </DisclosureButton>
 
           <EditorMenuButton
@@ -76,7 +80,6 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import type { PropType } from "vue";
 import { findChildren } from "@tiptap/core";
 import IconDropDown from "@/helpers/icons/IconDropDown.vue";
 import IconNotification from "@/helpers/icons/IconNotification.vue";
@@ -87,6 +90,7 @@ import EventTriggerListComponent from "@/events/EventTriggerListComponent.vue";
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 import type { Editor } from "@tiptap/vue-3";
+import type { PropType } from "vue";
 
 export default defineComponent({
   name: "EditorFooter",
