@@ -67,7 +67,7 @@
                     <div class="flex-1 space-y-1">
                       <div class="flex items-center justify-between">
                         <h3 class="text-sm font-medium">
-                          {{ $t("global:event-type-" + event?.type) || "No event type specified" }}
+                          {{ $t("global:event:type-" + event?.type) || "No event type specified" }}
                         </h3>
                         <p class="text-sm text-gray-500">
                           {{

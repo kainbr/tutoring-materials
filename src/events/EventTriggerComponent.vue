@@ -2,7 +2,9 @@
   <div class="flex flex-row justify-between">
     <div class="flex flex-col grow">
       <div class="flex flex-row items-center">
-        <span class="text-sm">If</span>
+        <span class="text-sm">
+          {{ $t("editor:trigger:builder-if") }}
+        </span>
 
         <!-- Event selector -->
         <EventSelector :trigger="trigger" :editor="editor" />
@@ -12,7 +14,7 @@
       </div>
 
       <div class="flex flex-row items-center">
-        <span class="text-sm py-1.5"> then </span>
+        <span class="text-sm py-1.5"> {{ $t("editor:trigger:builder-then") }} </span>
 
         <!-- Scaffold selector -->
         <ScaffoldSelector :trigger="trigger" :editor="editor" />

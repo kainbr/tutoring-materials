@@ -18,15 +18,19 @@
           class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
         >
           {{
-            editor.storage.document.eventOptions.find((option) => option.name === trigger.event)
-              ?.name || "No name found"
+            $t(
+              "global:event:type-" +
+                (editor.storage.document.eventOptions.find(
+                  (option) => option.name === trigger.event
+                )?.name || "missing-label")
+            )
           }}
         </span>
         <span
           v-else
           class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
         >
-          Select event
+          {{ $t("editor:trigger:builder-select-event") }}
         </span>
       </ComboboxButton>
 
@@ -40,7 +44,7 @@
         >
           <div class="p-1">
             <ComboboxInput
-              class="w-full w-40 border-none py-2 pl-3 text-xs leading-5 text-gray-900 focus:ring-0"
+              class="w-full w-52 border-none py-2 pl-3 text-xs leading-5 text-gray-900 focus:ring-0"
               @change="eventQuery = $event.target.value"
             />
           </div>
@@ -59,7 +63,7 @@
               ]"
             >
               <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                option.name
+                $t("global:event:type-" + option.name)
               }}</span>
             </li>
           </ComboboxOption>
@@ -118,7 +122,7 @@ export default defineComponent({
       return this.eventQuery === ""
         ? this.editor.storage.document.eventOptions
         : this.editor.storage.document.eventOptions.filter((option: EventOption) =>
-            option.name
+            this.$t("global:event-type-" + option.name)
               .toLowerCase()
               .replace(/\s+/g, "")
               .includes(this.eventQuery.toLowerCase().replace(/\s+/g, ""))

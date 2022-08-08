@@ -17,14 +17,19 @@
         <div class="flex flex-row grow items-center justify-center gap-4">
           <!-- Icon -->
           <div class="flex flex-row items-center">
-            <span class="text-sm"> Icon: </span>
+            <span class="text-sm"> {{ $t("editor:infobox:icon-description") }}: </span>
             <Listbox :model-value="node.attrs.icon" class="ml-2 w-56">
               <div class="relative">
                 <ListboxButton
                   class="relative w-full rounded-lg bg-white py-1.5 pl-2.5 pr-8 text-left cursor-pointer focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
                 >
                   <span class="block truncate">
-                    {{ iconOptions.find((option) => option.value === node.attrs.icon)?.label }}
+                    {{
+                      $t(
+                        "editor:infobox:icon-label-" +
+                          iconOptions.find((option) => option.value === node.attrs.icon)?.value
+                      )
+                    }}
                   </span>
                   <span
                     class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
@@ -74,7 +79,7 @@
                             'block truncate',
                           ]"
                         >
-                          {{ option.label }}
+                          {{ $t("editor:infobox:icon-label-" + option.value) }}
                         </span>
                         <span
                           v-if="selectedOption"
@@ -103,14 +108,19 @@
 
           <!-- Color -->
           <div class="flex flex-row items-center">
-            <span class="text-sm"> Color: </span>
+            <span class="text-sm"> {{ $t("editor:infobox:color-description") }}: </span>
             <Listbox :model-value="node.attrs.color" class="ml-2 w-32">
               <div class="relative">
                 <ListboxButton
                   class="relative w-full rounded-lg bg-white py-1.5 pl-2.5 pr-8 text-left cursor-pointer focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
                 >
                   <span class="block truncate">
-                    {{ colorOptions.find((option) => option.value === node.attrs.color)?.label }}
+                    {{
+                      $t(
+                        "editor:infobox:color-label-" +
+                          colorOptions.find((option) => option.value === node.attrs.color)?.value
+                      )
+                    }}
                   </span>
                   <span
                     class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
@@ -160,7 +170,7 @@
                             'block truncate',
                           ]"
                         >
-                          {{ infoboxType.label }}
+                          {{ $t("editor:infobox:color-label-" + infoboxType.value) }}
                         </span>
                         <span
                           v-if="selectedOption"

@@ -18,8 +18,11 @@
         <span class="pr-1" v-html="calculateHexIcon(scaffoldId)" />
         <span>
           {{
-            document.node.attrs.scaffolds.find((scaffold) => scaffold.id === scaffoldId)?.type ||
-            "No type found"
+            $t(
+              "global:feedback:type-" +
+                (document.node.attrs.scaffolds.find((scaffold) => scaffold.id === scaffoldId)
+                  ?.type || "missing-label")
+            )
           }}
         </span>
         <button
@@ -52,7 +55,7 @@
           v-if="trigger.scaffoldIds.length === 0"
           class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
         >
-          Select scaffold
+          {{ $t("editor:trigger:builder-select-feedback") }}
         </span>
         <span
           v-else
@@ -73,7 +76,7 @@
           <div class="p-1">
             <ComboboxInput
               :display-trigger="(option) => option?.label"
-              class="w-full w-40 border-none py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0"
+              class="w-full w-60 border-none py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0"
               @change="scaffoldsQuery = $event.target.value"
             />
           </div>
@@ -103,8 +106,11 @@
             >
               <span class="px-2" v-html="calculateHexIcon(option)" />
               <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                document.node.attrs.scaffolds.find((scaffold) => scaffold.id === option)?.type ||
-                "No type found"
+                $t(
+                  "global:feedback:type-" +
+                    (document.node.attrs.scaffolds.find((scaffold) => scaffold.id === option)
+                      ?.type || "missing-label")
+                )
               }}</span>
             </li>
           </ComboboxOption>
@@ -112,7 +118,9 @@
             v-if="filteredScaffoldOptions.length === 0"
             class="text-gray-900 w-full cursor-default select-none py-2 pl-4 pr-4"
           >
-            <span class="font-normal text-xs block truncate">No scaffolds configured</span>
+            <span class="font-normal text-xs block truncate">{{
+              $t("editor:footer:trigger-empty-list")
+            }}</span>
           </li>
         </ComboboxOptions>
       </transition>

@@ -1,6 +1,6 @@
 <template>
   <scaffold-configuration-component :editor="editor" :scaffold="scaffold">
-    <template #title>Text style</template>
+    <template #title> {{ $t("global:feedback:type-scaffold-mark") }}</template>
     <template #default>
       <!-- Bold -->
       <MenuButton
