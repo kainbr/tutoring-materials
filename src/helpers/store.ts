@@ -1,22 +1,22 @@
 import { defineStore } from "pinia";
 import type { Store } from "pinia";
 import { v4 as uuid } from "uuid";
-import type { Scaffold, Task } from "@/types";
+import type { Feedback, Task } from "@/types";
 
 const definedStores = new Map();
 
 interface State {
   tasks: Task[];
-  scaffolds: Scaffold[];
+  feedbacks: Feedback[];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Getters {}
 
 interface Actions {
-  addScaffold(scaffold: Scaffold): void;
-  updateScaffold(scaffold: Scaffold, attributes: object): void;
-  removeScaffold(scaffold: Scaffold): void;
+  addFeedback(feedback: Feedback): void;
+  updateFeedback(feedback: Feedback, attributes: object): void;
+  removeFeedback(feedback: Feedback): void;
   addTask(task: Task): void;
   updateTask(taskId: string, attributes: object): void;
   removeTask(taskId: string): void;
@@ -37,51 +37,51 @@ function defineStateStore(documentId: string | number) {
   return defineStore<"state", State, Getters, Actions>(`states/${documentId}`, {
     state: () => ({
       tasks: [],
-      scaffolds: [],
+      feedbacks: [],
     }),
     getters: {},
     actions: {
-      addScaffold(scaffold): void {
-        if (!scaffold.type) {
+      addFeedback(feedback): void {
+        if (!feedback.type) {
           return;
         }
 
-        if (!scaffold.id) {
-          scaffold.id = uuid();
+        if (!feedback.id) {
+          feedback.id = uuid();
         }
 
-        const index = this.scaffolds.findIndex(
+        const index = this.feedbacks.findIndex(
           (s) =>
             JSON.stringify((({ type, parent, config }) => ({ type, parent, config }))(s)) ===
-            JSON.stringify((({ type, parent, config }) => ({ type, parent, config }))(scaffold))
+            JSON.stringify((({ type, parent, config }) => ({ type, parent, config }))(feedback))
         );
 
         if (!index) {
           return;
         }
 
-        this.scaffolds = [...this.scaffolds, scaffold];
+        this.feedbacks = [...this.feedbacks, feedback];
       },
 
-      updateScaffold(scaffold, attributes): void {
-        const index = this.scaffolds.findIndex(
+      updateFeedback(feedback, attributes): void {
+        const index = this.feedbacks.findIndex(
           (s) =>
             JSON.stringify((({ type, parent, config }) => ({ type, parent, config }))(s)) ===
-            JSON.stringify((({ type, parent, config }) => ({ type, parent, config }))(scaffold))
+            JSON.stringify((({ type, parent, config }) => ({ type, parent, config }))(feedback))
         );
 
         if (!index) {
           return;
         }
 
-        this.scaffolds[index] = { ...this.scaffolds[index], ...attributes };
+        this.feedbacks[index] = { ...this.feedbacks[index], ...attributes };
       },
 
-      removeScaffold(scaffold) {
-        this.scaffolds = this.scaffolds.filter(
+      removeFeedback(feedback) {
+        this.feedbacks = this.feedbacks.filter(
           (s) =>
             JSON.stringify((({ type, parent, config }) => ({ type, parent, config }))(s)) !==
-            JSON.stringify((({ type, parent, config }) => ({ type, parent, config }))(scaffold))
+            JSON.stringify((({ type, parent, config }) => ({ type, parent, config }))(feedback))
         );
       },
 
@@ -130,7 +130,7 @@ function defineStateStore(documentId: string | number) {
 export const stateStore = defineStore("states", {
   state: () => ({
     tasks: {},
-    scaffolds: [],
+    feedbacks: [],
   }),
   getters: {
     state: (state) => {
@@ -172,11 +172,11 @@ export const stateStore = defineStore("states", {
         this.tasks[id][attribute] = data;
 
         // Send out notifications
-        if (attribute === "scaffolds" && Array.isArray(data)) {
+        if (attribute === "feedbacks" && Array.isArray(data)) {
           for (let i = 0; i < data.length; i++) {
-            const scaffold = data[i];
-            if (scaffold.type === "text") {
-              // EventBus.emit("notification", scaffold.content);
+            const feedback = data[i];
+            if (feedback.type === "text") {
+              // EventBus.emit("notification", feedback.content);
             }
           }
         }

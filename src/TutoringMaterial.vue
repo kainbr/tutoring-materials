@@ -21,7 +21,7 @@
       <!-- Conditional footer -->
       <EditorFooter v-if="isEditor" :editor="editor" class="border-t-2" />
 
-      <!-- Scaffold notification container -->
+      <!-- Feedback notification container -->
       <div
         :class="{ 'mt-[5.5rem]': isEditor }"
         class="absolute z-0 border-0 h-0"
@@ -58,9 +58,9 @@ import { Indent } from "@/extensions/indent";
 import { Infobox } from "@/extensions/infobox";
 import { CustomImage } from "@/extensions/image";
 import EditorFooter from "@/helpers/EditorFooter.vue";
-import NotificationContainerComponent from "@/scaffolds/notification/NotificationContainerComponent.vue";
-import { ScaffoldNotification } from "@/scaffolds/notification";
-import { ScaffoldMark } from "@/scaffolds/mark";
+import NotificationContainerComponent from "@/feedbacks/notification/NotificationContainerComponent.vue";
+import { FeedbackNotification } from "@/feedbacks/notification";
+import { FeedbackMark } from "@/feedbacks/mark";
 
 import type { PropType } from "vue";
 import type { Content, JSONContent } from "@tiptap/vue-3";
@@ -161,8 +161,8 @@ export default defineComponent({
         Indent,
         CustomImage,
         Infobox,
-        ScaffoldNotification,
-        ScaffoldMark.configure({ showOutline: props.isEditor }),
+        FeedbackNotification,
+        FeedbackMark.configure({ showOutline: props.isEditor }),
         /*
           Task,
            */

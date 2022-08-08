@@ -4,8 +4,8 @@
       <!-- Title -->
       <span class="text-sm">
         <!-- eslint-disable vue/no-v-html -->
-        <span class="pl-2 pr-3" v-html="calculateHexIcon(scaffold.id)" />
-        <slot name="title">{{ scaffold.type }}</slot>
+        <span class="pl-2 pr-3" v-html="calculateHexIcon(feedback.id)" />
+        <slot name="title">{{ feedback.type }}</slot>
       </span>
     </div>
 
@@ -17,10 +17,10 @@
 
       <!-- Standard buttons -->
       <div class="flex gap-0.5 ml-3">
-        <EditorMenuButton :on-inactive-click="() => editor.commands.addScaffold(scaffold)">
+        <EditorMenuButton :on-inactive-click="() => editor.commands.addFeedback(feedback)">
           <IconCopy />
         </EditorMenuButton>
-        <EditorMenuButton :on-inactive-click="() => editor.commands.removeScaffold(scaffold)">
+        <EditorMenuButton :on-inactive-click="() => editor.commands.removeFeedback(feedback)">
           <IconTrash />
         </EditorMenuButton>
       </div>
@@ -35,11 +35,11 @@ import IconTrash from "@/helpers/icons/IconTrash.vue";
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
-import type { Scaffold } from "@/types";
+import type { Feedback } from "@/types";
 import { calculateHexIcon } from "@/helpers/util";
 
 export default defineComponent({
-  name: "ScaffoldConfigurationComponent",
+  name: "FeedbackConfigurationComponent",
 
   components: { IconTrash, IconCopy, EditorMenuButton },
 
@@ -48,8 +48,8 @@ export default defineComponent({
       type: Object as PropType<Editor>,
       required: true,
     },
-    scaffold: {
-      type: Object as PropType<Scaffold>,
+    feedback: {
+      type: Object as PropType<Feedback>,
       required: true,
     },
   },

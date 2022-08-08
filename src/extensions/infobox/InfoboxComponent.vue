@@ -27,7 +27,7 @@
                     {{
                       $t(
                         "editor:infobox:icon-label-" +
-                          iconOptions.find((option) => option.value === node.attrs.icon)?.value
+                          iconOptions.find((option) => option === node.attrs.icon)
                       )
                     }}
                   </span>
@@ -58,14 +58,15 @@
                     class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
                     style="padding-left: 0"
                   >
+                    <!--suppress JSValidateTypes -->
                     <ListboxOption
                       v-for="option in iconOptions"
-                      :key="option.value"
+                      :key="option"
                       v-slot="{ active, selectedOption }"
-                      :value="option.value"
+                      :value="option"
                       as="template"
                       class="cursor-pointer"
-                      @click="updateAttributes({ icon: option.value })"
+                      @click="updateAttributes({ icon: option })"
                     >
                       <li
                         :class="[
@@ -79,7 +80,7 @@
                             'block truncate',
                           ]"
                         >
-                          {{ $t("editor:infobox:icon-label-" + option.value) }}
+                          {{ $t("editor:infobox:icon-label-" + option) }}
                         </span>
                         <span
                           v-if="selectedOption"
@@ -118,7 +119,7 @@
                     {{
                       $t(
                         "editor:infobox:color-label-" +
-                          colorOptions.find((option) => option.value === node.attrs.color)?.value
+                          colorOptions.find((option) => option === node.attrs.color)
                       )
                     }}
                   </span>
@@ -149,14 +150,15 @@
                     class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
                     style="padding-left: 0"
                   >
+                    <!--suppress JSValidateTypes -->
                     <ListboxOption
-                      v-for="infoboxType in colorOptions"
-                      :key="infoboxType.value"
+                      v-for="option in colorOptions"
+                      :key="option"
                       v-slot="{ active, selectedOption }"
-                      :value="infoboxType.value"
+                      :value="option"
                       as="template"
                       class="cursor-pointer"
-                      @click="updateAttributes({ color: infoboxType.value })"
+                      @click="updateAttributes({ color: option })"
                     >
                       <li
                         :class="[
@@ -170,7 +172,7 @@
                             'block truncate',
                           ]"
                         >
-                          {{ $t("editor:infobox:color-label-" + infoboxType.value) }}
+                          {{ $t("editor:infobox:color-label-" + option) }}
                         </span>
                         <span
                           v-if="selectedOption"
@@ -266,19 +268,13 @@ export default defineComponent({
 
   data: () => {
     return {
-      test: "info",
-      colorOptions: [
-        { value: "blue", label: "Blue" },
-        { value: "yellow", label: "Yellow" },
-        { value: "red", label: "Red" },
-        { value: "green", label: "Green" },
-      ],
+      colorOptions: ["blue", "yellow", "red", "green"],
       iconOptions: [
-        { value: "error-warning-line", label: "Exclamation Mark" },
-        { value: "error-warning-fill", label: "Exclamation Mark (filled)" },
-        { value: "question-line", label: "Question Mark" },
-        { value: "question-fill", label: "Question Mark (filled)" },
-        { value: "rainbow-line", label: "Rainbow" },
+        "error-warning-line",
+        "error-warning-fill",
+        "question-line",
+        "question-fill",
+        "rainbow-line",
       ],
     };
   },

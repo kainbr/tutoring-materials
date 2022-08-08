@@ -13,25 +13,25 @@
           </DisclosureButton>
 
           <!-- Notification -->
-          <EditorMenuButton :on-inactive-click="() => editor.commands.addScaffoldNotification({})">
+          <EditorMenuButton :on-inactive-click="() => editor.commands.addFeedbackNotification({})">
             <IconNotification />
           </EditorMenuButton>
 
           <!-- Mark -->
           <EditorMenuButton
             class="mr-2"
-            :active="editor.isActive('scaffold-mark')"
-            :on-active-click="() => editor.chain().focus().unsetScaffoldMark().run()"
-            :on-inactive-click="() => editor.chain().focus().setScaffoldMark().run()"
+            :active="editor.isActive('feedback-mark')"
+            :on-active-click="() => editor.chain().focus().unsetFeedbackMark().run()"
+            :on-inactive-click="() => editor.chain().focus().setFeedbackMark().run()"
           >
             <IconText />
           </EditorMenuButton>
 
           <DisclosurePanel class="basis-full text-sm text-gray-500">
             <div class="flex flex-col w-full max-h-44 overflow-auto">
-              <scaffold-configuration-list-component
+              <FeedbackConfigurationListComponent
                 :editor="editor"
-                :scaffolds="[...document?.node.attrs.scaffolds.filter((s) => s.parent === null)]"
+                :feedbacks="[...document?.node.attrs.feedbacks.filter((s) => s.parent === null)]"
                 class="p-2"
               />
             </div>
@@ -58,7 +58,7 @@
                 editor.commands.addEventTrigger({
                   event: null,
                   conditions: [],
-                  scaffoldIds: [],
+                  feedbackIds: [],
                 })
             "
           >
@@ -85,7 +85,7 @@ import IconDropDown from "@/helpers/icons/IconDropDown.vue";
 import IconNotification from "@/helpers/icons/IconNotification.vue";
 import IconText from "@/helpers/icons/IconText.vue";
 import IconAdd from "@/helpers/icons/IconAdd.vue";
-import ScaffoldConfigurationListComponent from "@/scaffolds/ConfigurationListComponent.vue";
+import FeedbackConfigurationListComponent from "@/feedbacks/ConfigurationListComponent.vue";
 import EventTriggerListComponent from "@/events/EventTriggerListComponent.vue";
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
@@ -100,7 +100,7 @@ export default defineComponent({
     IconDropDown,
     IconNotification,
     IconText,
-    ScaffoldConfigurationListComponent,
+    FeedbackConfigurationListComponent,
     EventTriggerListComponent,
     EditorMenuButton,
     Disclosure,

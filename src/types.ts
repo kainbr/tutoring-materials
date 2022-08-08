@@ -7,19 +7,19 @@ export interface Task {
   answer: object;
 }
 
-// Scaffolds
-export interface Scaffold {
+// Feedbacks
+export interface Feedback {
   id?: string;
   type: string;
   parent: string | null;
-  config: MarkScaffoldConfig | NotificationScaffoldConfig;
+  config: MarkFeedbackConfig | NotificationFeedbackConfig;
 }
 
-export interface MarkScaffold extends Scaffold {
-  config: MarkScaffoldConfig;
+export interface MarkFeedback extends Feedback {
+  config: MarkFeedbackConfig;
 }
 
-export interface MarkScaffoldConfig {
+export interface MarkFeedbackConfig {
   ref: string;
   bold?: {
     weight?: number;
@@ -35,11 +35,11 @@ export interface MarkScaffoldConfig {
   };
 }
 
-export interface NotificationScaffold extends Scaffold {
-  config: NotificationScaffoldConfig;
+export interface NotificationFeedback extends Feedback {
+  config: NotificationFeedbackConfig;
 }
 
-export interface NotificationScaffoldConfig {
+export interface NotificationFeedbackConfig {
   content: JSONContent;
 }
 
@@ -62,5 +62,5 @@ export interface EventTrigger {
   id?: string;
   event: string | null;
   conditions: EventOption[];
-  scaffoldIds: string[];
+  feedbackIds: string[];
 }

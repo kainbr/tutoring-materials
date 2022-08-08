@@ -1,30 +1,30 @@
 import { findChildren, Mark, mergeAttributes } from "@tiptap/core";
 import { v4 as uuid } from "uuid";
 import type { StateStore } from "@/helpers/store";
-import type { MarkScaffoldConfig } from "@/types";
-import type { Scaffold } from "@/types";
+import type { MarkFeedbackConfig } from "@/types";
+import type { Feedback } from "@/types";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    scaffoldMark: {
+    feedbackMark: {
       /**
        *
        */
-      setScaffoldMark: (attributes: object) => ReturnType;
+      setFeedbackMark: (attributes: object) => ReturnType;
       /**
        *
        */
-      unsetScaffoldMark: () => ReturnType;
+      unsetFeedbackMark: () => ReturnType;
       /**
        *
        */
-      removeScaffoldMark: (ref: string) => ReturnType;
+      removeFeedbackMark: (ref: string) => ReturnType;
     };
   }
 }
 
-export const ScaffoldMark = Mark.create({
-  name: "scaffold-mark",
+export const FeedbackMark = Mark.create({
+  name: "feedback-mark",
 
   inclusive: false,
 
@@ -86,7 +86,7 @@ export const ScaffoldMark = Mark.create({
   onBeforeCreate() {
     const stateStore: StateStore = this.editor.storage.document.stateStore();
     stateStore.$subscribe(() => {
-      const styleVariables = stateStore.scaffolds
+      const styleVariables = stateStore.feedbacks
         .map((s) => {
           const styles: string[] = [];
 
@@ -94,7 +94,7 @@ export const ScaffoldMark = Mark.create({
             return styles;
           }
 
-          const config = s.config as MarkScaffoldConfig;
+          const config = s.config as MarkFeedbackConfig;
 
           // Bold
           if (!!config.bold) {
@@ -148,48 +148,48 @@ export const ScaffoldMark = Mark.create({
   },
 
   onUpdate() {
-    // Clean up empty scaffold marks
+    // Clean up empty feedback marks
     const documentNode = findChildren(
       this.editor.state.doc,
       (node) => node.type.name === "document"
     )[0];
-    const scaffoldMarks = documentNode.node.attrs.scaffolds.filter(
-      (s: Scaffold) => s.type === this.name
+    const feedbackMarks = documentNode.node.attrs.feedbacks.filter(
+      (s: Feedback) => s.type === this.name
     );
 
-    for (const scaffoldMark of scaffoldMarks) {
+    for (const feedbackMark of feedbackMarks) {
       const nodes = findChildren(
         this.editor.state.doc,
-        (node) => !!node.marks.find((m) => m.attrs?.ref === scaffoldMark.config.ref)
+        (node) => !!node.marks.find((m) => m.attrs?.ref === feedbackMark.config.ref)
       );
       if (nodes.length === 0) {
-        this.editor.commands.removeScaffold(scaffoldMark);
+        this.editor.commands.removeFeedback(feedbackMark);
       }
     }
   },
 
   addCommands() {
     return {
-      setScaffoldMark:
+      setFeedbackMark:
         (attributes) =>
         ({ commands }) => {
-          const scaffold = {
+          const feedback = {
             id: uuid(),
             type: this.name,
             parent: null,
             config: { ...attributes, ref: uuid() },
           };
-          commands.addScaffold(scaffold);
-          commands.setMark(this.name, scaffold.config);
+          commands.addFeedback(feedback);
+          commands.setMark(this.name, feedback.config);
           return true;
         },
-      unsetScaffoldMark:
+      unsetFeedbackMark:
         () =>
         ({ commands }) => {
           commands.unsetMark(this.name);
           return true;
         },
-      removeScaffoldMark:
+      removeFeedbackMark:
         (ref) =>
         ({ chain }) => {
           const nodes = findChildren(

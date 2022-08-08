@@ -1,26 +1,26 @@
 import { Extension } from "@tiptap/core";
-import type { Scaffold } from "@/types";
+import type { Feedback } from "@/types";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    scaffoldNotification: {
+    feedbackNotification: {
       /**
        *
        */
-      addScaffoldNotification: (attributes: object) => ReturnType;
+      addFeedbackNotification: (attributes: object) => ReturnType;
     };
   }
 }
 
 // This notification is only used to add commands to the editor instance.
-// See scaffolds/notification/NotificationComponent.vue and
-// scaffolds/notification/NotificationContainerComponent.vue for more information
-export const ScaffoldNotification = Extension.create({
-  name: "scaffold-notification",
+// See feedbacks/notification/NotificationComponent.vue and
+// feedbacks/notification/NotificationContainerComponent.vue for more information
+export const FeedbackNotification = Extension.create({
+  name: "feedback-notification",
 
   addCommands() {
     return {
-      addScaffoldNotification:
+      addFeedbackNotification:
         (attributes) =>
         ({ commands }) => {
           const defaults = {
@@ -40,12 +40,12 @@ export const ScaffoldNotification = Extension.create({
             },
           };
 
-          const scaffold: Scaffold = {
+          const feedback: Feedback = {
             type: this.name,
             parent: null,
             config: { ...defaults, ...attributes },
           };
-          commands.addScaffold(scaffold);
+          commands.addFeedback(feedback);
           return true;
         },
     };

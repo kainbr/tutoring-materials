@@ -1,26 +1,26 @@
 <template>
   <div class="flex flex-row w-full flex-wrap items-center">
-    <div v-for="(scaffoldId, index) in trigger.scaffoldIds" :key="scaffoldId">
+    <div v-for="(feedbackId, index) in trigger.feedbackIds" :key="feedbackId">
       <span
         class="cursor-default inline-flex flex-nowrap items-center m-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
         @mouseenter="
-          stateStore.addScaffold(
-            document.node.attrs.scaffolds.find((scaffold) => scaffold.id === scaffoldId)
+          stateStore.addFeedback(
+            document.node.attrs.feedbacks.find((feedback) => feedback.id === feedbackId)
           )
         "
         @mouseleave="
-          stateStore.removeScaffold(
-            document.node.attrs.scaffolds.find((scaffold) => scaffold.id === scaffoldId)
+          stateStore.removeFeedback(
+            document.node.attrs.feedbacks.find((feedback) => feedback.id === feedbackId)
           )
         "
       >
         <!-- eslint-disable vue/no-v-html -->
-        <span class="pr-1" v-html="calculateHexIcon(scaffoldId)" />
+        <span class="pr-1" v-html="calculateHexIcon(feedbackId)" />
         <span>
           {{
             $t(
               "global:feedback:type-" +
-                (document.node.attrs.scaffolds.find((scaffold) => scaffold.id === scaffoldId)
+                (document.node.attrs.feedbacks.find((feedback) => feedback.id === feedbackId)
                   ?.type || "missing-label")
             )
           }}
@@ -30,29 +30,29 @@
           type="button"
           @click="
             editor.commands.updateEventTrigger(trigger, {
-              scaffoldIds: trigger.scaffoldIds.filter((s) => scaffoldId !== s),
+              feedbackIds: trigger.feedbackIds.filter((s) => feedbackId !== s),
             })
           "
         >
-          <span class="sr-only">Remove scaffold</span>
+          <span class="sr-only">Remove feedback</span>
           <IconClose class="h-3 w-3 fill-green-700" />
         </button>
       </span>
-      <span v-if="index < trigger.scaffoldIds.length - 1">and </span>
+      <span v-if="index < trigger.feedbackIds.length - 1">and </span>
     </div>
     <Combobox
-      :model-value="trigger.scaffoldIds"
+      :model-value="trigger.feedbackIds"
       multiple
       nullable
       @update:model-value="
         editor.commands.updateEventTrigger(trigger, {
-          scaffoldIds: $event,
+          feedbackIds: $event,
         })
       "
     >
       <ComboboxButton class="cursor-pointer">
         <span
-          v-if="trigger.scaffoldIds.length === 0"
+          v-if="trigger.feedbackIds.length === 0"
           class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
         >
           {{ $t("editor:trigger:builder-select-feedback") }}
@@ -77,12 +77,12 @@
             <ComboboxInput
               :display-trigger="(option) => option?.label"
               class="w-full w-60 border-none py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0"
-              @change="scaffoldsQuery = $event.target.value"
+              @change="feedbacksQuery = $event.target.value"
             />
           </div>
 
           <ComboboxOption
-            v-for="option in filteredScaffoldOptions"
+            v-for="option in filteredFeedbackOptions"
             :key="option"
             v-slot="{ active, selected }"
             :value="option"
@@ -94,13 +94,13 @@
                 'flex flex-row w-full cursor-default select-none py-2',
               ]"
               @mouseenter="
-                stateStore.addScaffold(
-                  document.node.attrs.scaffolds.find((scaffold) => scaffold.id === option)
+                stateStore.addFeedback(
+                  document.node.attrs.feedbacks.find((feedback) => feedback.id === option)
                 )
               "
               @mouseleave="
-                stateStore.removeScaffold(
-                  document.node.attrs.scaffolds.find((scaffold) => scaffold.id === option)
+                stateStore.removeFeedback(
+                  document.node.attrs.feedbacks.find((feedback) => feedback.id === option)
                 )
               "
             >
@@ -108,14 +108,14 @@
               <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
                 $t(
                   "global:feedback:type-" +
-                    (document.node.attrs.scaffolds.find((scaffold) => scaffold.id === option)
+                    (document.node.attrs.feedbacks.find((feedback) => feedback.id === option)
                       ?.type || "missing-label")
                 )
               }}</span>
             </li>
           </ComboboxOption>
           <li
-            v-if="filteredScaffoldOptions.length === 0"
+            v-if="filteredFeedbackOptions.length === 0"
             class="text-gray-900 w-full cursor-default select-none py-2 pl-4 pr-4"
           >
             <span class="font-normal text-xs block truncate">{{
@@ -137,7 +137,7 @@ import {
   ComboboxOption,
   ComboboxOptions,
 } from "@headlessui/vue";
-import type { EventTrigger, Scaffold } from "@/types";
+import type { EventTrigger, Feedback } from "@/types";
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
 import { findChildren } from "@tiptap/core";
@@ -145,7 +145,7 @@ import IconClose from "@/helpers/icons/IconClose.vue";
 import { calculateHexIcon } from "@/helpers/util";
 
 export default defineComponent({
-  name: "ScaffoldSelector",
+  name: "FeedbackSelector",
 
   components: {
     IconClose,
@@ -171,7 +171,7 @@ export default defineComponent({
 
   data() {
     return {
-      scaffoldsQuery: "",
+      feedbacksQuery: "",
       stateStore: this.editor.storage.document.stateStore(),
     };
   },
@@ -180,17 +180,17 @@ export default defineComponent({
     document() {
       return findChildren(this.editor.state.doc, (node) => node.type.name === "document")[0];
     },
-    scaffoldOptions() {
-      return this.document.node.attrs.scaffolds.map((scaffold: Scaffold) => scaffold.id);
+    feedbackOptions() {
+      return this.document.node.attrs.feedbacks.map((feedback: Feedback) => feedback.id);
     },
-    filteredScaffoldOptions() {
-      return this.scaffoldsQuery === ""
-        ? this.scaffoldOptions
-        : this.scaffoldOptions.filter((option: string) =>
+    filteredFeedbackOptions() {
+      return this.feedbacksQuery === ""
+        ? this.feedbackOptions
+        : this.feedbackOptions.filter((option: string) =>
             option
               .toLowerCase()
               .replace(/\s+/g, "")
-              .includes(this.scaffoldsQuery.toLowerCase().replace(/\s+/g, ""))
+              .includes(this.feedbacksQuery.toLowerCase().replace(/\s+/g, ""))
           );
     },
   },

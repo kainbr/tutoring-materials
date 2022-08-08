@@ -1,6 +1,6 @@
 <template>
-  <scaffold-configuration-component :editor="editor" :scaffold="scaffold">
-    <template #title> {{ $t("global:feedback:type-scaffold-notification") }}</template>
+  <feedback-configuration-component :editor="editor" :feedback="feedback">
+    <template #title> {{ $t("global:feedback:type-feedback-notification") }}</template>
     <template #default>
       <button
         type="button"
@@ -61,24 +61,24 @@
         </Dialog>
       </TransitionRoot>
     </template>
-  </scaffold-configuration-component>
+  </feedback-configuration-component>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import ScaffoldConfigurationComponent from "../ConfigurationComponent.vue";
+import FeedbackConfigurationComponent from "../ConfigurationComponent.vue";
 import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } from "@headlessui/vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
-import type { NotificationScaffold } from "@/types";
+import type { NotificationFeedback } from "@/types";
 
 export default defineComponent({
-  name: "ScaffoldNotificationConfigurationComponent",
+  name: "FeedbackNotificationConfigurationComponent",
 
   components: {
     InlineEditor,
-    ScaffoldConfigurationComponent,
+    FeedbackConfigurationComponent,
     TransitionRoot,
     TransitionChild,
     // eslint-disable-next-line vue/no-reserved-component-names
@@ -88,8 +88,8 @@ export default defineComponent({
   },
 
   props: {
-    scaffold: {
-      type: Object as PropType<NotificationScaffold>,
+    feedback: {
+      type: Object as PropType<NotificationFeedback>,
       required: true,
     },
     editor: {
@@ -102,13 +102,13 @@ export default defineComponent({
     return {
       stateStore: this.editor.storage.document.stateStore(),
       isOpen: false,
-      contentCandidate: this.scaffold.config?.content,
+      contentCandidate: this.feedback.config?.content,
     };
   },
 
   methods: {
     save() {
-      this.editor.commands.updateScaffold(this.scaffold, {
+      this.editor.commands.updateFeedback(this.feedback, {
         content: this.contentCandidate,
       });
 

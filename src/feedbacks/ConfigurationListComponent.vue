@@ -1,21 +1,21 @@
 <template>
   <div class="w-full">
-    <span v-if="scaffolds.length === 0" class="text-sm ml-2.5">{{
+    <span v-if="feedbacks.length === 0" class="text-sm ml-2.5">{{
       $t("editor:footer:feedback-empty-list")
     }}</span>
     <ul v-else class="divide-y divide-gray-200" role="list">
       <li
-        v-for="scaffold in scaffolds"
-        :key="scaffold.id"
+        v-for="feedback in feedbacks"
+        :key="feedback.id"
         class="py-1"
-        @mouseenter="stateStore.addScaffold(scaffold)"
-        @mouseleave="stateStore.removeScaffold(scaffold)"
+        @mouseenter="stateStore.addFeedback(feedback)"
+        @mouseleave="stateStore.removeFeedback(feedback)"
       >
         <component
-          :is="scaffold.type"
-          :key="scaffold.config"
+          :is="feedback.type"
+          :key="feedback.config"
           :editor="editor"
-          :scaffold="scaffold"
+          :feedback="feedback"
         ></component>
       </li>
     </ul>
@@ -24,18 +24,18 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import ScaffoldMark from "./mark/ConfigurationComponent.vue";
-import ScaffoldNotification from "./notification/ConfigurationComponent.vue";
+import FeedbackMark from "./mark/ConfigurationComponent.vue";
+import FeedbackNotification from "./notification/ConfigurationComponent.vue";
 import type { Editor } from "@tiptap/vue-3";
 import type { PropType } from "vue";
-import type { Scaffold } from "@/types";
+import type { Feedback } from "@/types";
 
 export default defineComponent({
-  name: "ScaffoldConfigurationComponent",
+  name: "FeedbackConfigurationComponent",
 
   components: {
-    "scaffold-mark": ScaffoldMark,
-    "scaffold-notification": ScaffoldNotification,
+    "feedback-mark": FeedbackMark,
+    "feedback-notification": FeedbackNotification,
   },
 
   props: {
@@ -43,8 +43,8 @@ export default defineComponent({
       type: Object as PropType<Editor>,
       required: true,
     },
-    scaffolds: {
-      type: Array as PropType<Scaffold[]>,
+    feedbacks: {
+      type: Array as PropType<Feedback[]>,
       required: true,
     },
   },

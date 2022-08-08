@@ -16,8 +16,8 @@
       <div class="flex flex-row items-center">
         <span class="text-sm py-1.5"> {{ $t("editor:trigger:builder-then") }} </span>
 
-        <!-- Scaffold selector -->
-        <ScaffoldSelector :trigger="trigger" :editor="editor" />
+        <!-- Feedback selector -->
+        <FeedbackSelector :trigger="trigger" :editor="editor" />
       </div>
     </div>
     <!-- Standard buttons -->
@@ -41,7 +41,7 @@ import EventSelector from "@/events/helpers/EventSelector.vue";
 import type { PropType } from "vue";
 import type { EventTrigger } from "@/types";
 import ConditionSelector from "@/events/helpers/ConditionSelector.vue";
-import ScaffoldSelector from "@/events/helpers/ScaffoldSelector.vue";
+import FeedbackSelector from "@/events/helpers/FeedbackSelector.vue";
 import type { Editor } from "@tiptap/vue-3";
 
 export default defineComponent({
@@ -51,7 +51,7 @@ export default defineComponent({
     EditorMenuButton,
     IconCopy,
     IconTrash,
-    ScaffoldSelector,
+    FeedbackSelector,
     ConditionSelector,
     EventSelector,
   },

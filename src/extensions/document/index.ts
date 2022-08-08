@@ -9,7 +9,7 @@ import type { Emitter } from "mitt";
 
 import type { StoreDefinition } from "pinia";
 import type { Node as ProseMirrorNode } from "prosemirror-model";
-import type { Scaffold, EventTrigger, MarkScaffold, Event, EventOption } from "@/types";
+import type { Feedback, EventTrigger, MarkFeedback, Event, EventOption } from "@/types";
 import EventTriggerComponent from "@/events/EventTriggerComponent.vue";
 
 export interface DocumentOptions {
@@ -19,7 +19,7 @@ export interface DocumentOptions {
 
 export interface DocumentStorage {
   // tasks: () => number;
-  // scaffoldMarks: () => [];
+  // feedbackMarks: () => [];
   stateStore: () => StateStore | null;
   eventBus: Emitter<Event>;
   eventOptions: EventOption[];
@@ -39,15 +39,15 @@ declare module "@tiptap/core" {
       /**
        *
        */
-      addScaffold: (scaffold: Scaffold) => ReturnType;
+      addFeedback: (feedback: Feedback) => ReturnType;
       /**
        *
        */
-      updateScaffold: (scaffold: Scaffold, attributes: object) => ReturnType;
+      updateFeedback: (feedback: Feedback, attributes: object) => ReturnType;
       /**
        *
        */
-      removeScaffold: (scaffold: Scaffold) => ReturnType;
+      removeFeedback: (feedback: Feedback) => ReturnType;
       /**
        *
        */
@@ -85,7 +85,7 @@ export const Document = Node.create<DocumentOptions, DocumentStorage>({
   addStorage() {
     return {
       // tasks: () => 0,
-      // scaffoldMarks: () => [],
+      // feedbackMarks: () => [],
       stateStore: () => null,
       eventBus: mitt(),
       eventOptions: [],
@@ -94,7 +94,7 @@ export const Document = Node.create<DocumentOptions, DocumentStorage>({
 
   addAttributes() {
     return {
-      scaffolds: {
+      feedbacks: {
         default: [],
       },
       triggers: {
@@ -127,13 +127,13 @@ export const Document = Node.create<DocumentOptions, DocumentStorage>({
         eventTriggerWithType.forEach((eventTrigger: EventTrigger) => {
           // Todo: Check conditions
 
-          // Trigger the scaffolds
-          eventTrigger.scaffoldIds.forEach((scaffoldId: string) => {
-            const scaffold = document.node.attrs.scaffolds.find(
-              (s: Scaffold) => s.id === scaffoldId
+          // Trigger the feedbacks
+          eventTrigger.feedbackIds.forEach((feedbackId: string) => {
+            const feedback = document.node.attrs.feedbacks.find(
+              (s: Feedback) => s.id === feedbackId
             );
-            if (scaffold && stateStore) {
-              stateStore.addScaffold(scaffold);
+            if (feedback && stateStore) {
+              stateStore.addFeedback(feedback);
             }
           });
         });
@@ -162,24 +162,24 @@ export const Document = Node.create<DocumentOptions, DocumentStorage>({
 
   addCommands() {
     return {
-      addScaffold:
-        (scaffold) =>
+      addFeedback:
+        (feedback) =>
         ({ commands }) => {
           const documentNode = findChildren(
             this.editor.state.doc,
             (node) => node.type.name === "document"
           )[0];
-          const scaffoldWithId = { ...scaffold, id: uuid() };
+          const feedbackWithId = { ...feedback, id: uuid() };
           commands.updateAttributes("document", {
-            scaffolds: [...documentNode.node.attrs.scaffolds, scaffoldWithId],
+            feedbacks: [...documentNode.node.attrs.feedbacks, feedbackWithId],
           });
           return true;
         },
 
-      updateScaffold:
-        (scaffold, attributes) =>
+      updateFeedback:
+        (feedback, attributes) =>
         ({ commands }) => {
-          if (!scaffold.id) {
+          if (!feedback.id) {
             return false;
           }
 
@@ -188,44 +188,44 @@ export const Document = Node.create<DocumentOptions, DocumentStorage>({
             (node) => node.type.name === "document"
           )[0];
 
-          const newScaffolds = documentNode.node.attrs.scaffolds;
-          const index = newScaffolds.findIndex((s: Scaffold) => {
-            return s.id === scaffold.id && s.id;
+          const newFeedbacks = documentNode.node.attrs.feedbacks;
+          const index = newFeedbacks.findIndex((s: Feedback) => {
+            return s.id === feedback.id && s.id;
           });
 
           if (!index && index !== 0) {
             return false;
           }
 
-          newScaffolds[index].config = { ...newScaffolds[index].config, ...attributes };
+          newFeedbacks[index].config = { ...newFeedbacks[index].config, ...attributes };
 
           commands.updateAttributes("document", {
-            scaffolds: newScaffolds,
+            feedbacks: newFeedbacks,
           });
 
           return true;
         },
 
-      removeScaffold:
-        (scaffold) =>
+      removeFeedback:
+        (feedback) =>
         ({ commands }) => {
-          if (!scaffold.id) {
+          if (!feedback.id) {
             return false;
           }
 
-          if (scaffold.type === "scaffold-mark") {
-            // Check if this is the last scaffold with this ref
+          if (feedback.type === "feedback-mark") {
+            // Check if this is the last feedback with this ref
             const document = findChildren(
               this.editor.state.doc,
               (node) => node.type.name === "document"
             )[0];
 
-            const scaffoldsWithRef = document.node.attrs.scaffolds.filter((s: Scaffold) => {
-              return "ref" in s.config && s.config.ref === (scaffold as MarkScaffold).config.ref;
+            const feedbacksWithRef = document.node.attrs.feedbacks.filter((s: Feedback) => {
+              return "ref" in s.config && s.config.ref === (feedback as MarkFeedback).config.ref;
             });
 
-            if (scaffoldsWithRef.length <= 1) {
-              commands.removeScaffoldMark((scaffold as MarkScaffold).config.ref);
+            if (feedbacksWithRef.length <= 1) {
+              commands.removeFeedbackMark((feedback as MarkFeedback).config.ref);
             }
           }
 
@@ -234,12 +234,12 @@ export const Document = Node.create<DocumentOptions, DocumentStorage>({
             (node) => node.type.name === "document"
           )[0];
           commands.updateAttributes("document", {
-            scaffolds: documentNode.node.attrs.scaffolds.filter(
-              (s: Scaffold) => s.id !== scaffold.id
+            feedbacks: documentNode.node.attrs.feedbacks.filter(
+              (s: Feedback) => s.id !== feedback.id
             ),
-            // Remove scaffold from triggers using it
+            // Remove feedback from triggers using it
             triggers: documentNode.node.attrs.triggers.map((trigger: EventTrigger) => {
-              trigger.scaffoldIds = trigger.scaffoldIds.filter((id) => id !== scaffold.id);
+              trigger.feedbackIds = trigger.feedbackIds.filter((id) => id !== feedback.id);
               return trigger;
             }),
           });
@@ -247,7 +247,7 @@ export const Document = Node.create<DocumentOptions, DocumentStorage>({
           const store = this.storage.stateStore();
 
           if (!!store) {
-            store.removeScaffold(scaffold);
+            store.removeFeedback(feedback);
           }
 
           return true;

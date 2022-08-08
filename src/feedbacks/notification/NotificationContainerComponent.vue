@@ -6,9 +6,9 @@
   >
     <div class="w-full flex flex-col items-center space-y-4 sm:items-end">
       <notification-component
-        v-for="notificationScaffold in notificationScaffolds"
-        :key="notificationScaffold"
-        :scaffold="notificationScaffold"
+        v-for="notificationFeedback in notificationFeedbacks"
+        :key="notificationFeedback"
+        :feedback="notificationFeedback"
         :editor="editor"
       ></notification-component>
     </div>
@@ -17,10 +17,10 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import NotificationComponent from "@/scaffolds/notification/NotificationComponent.vue";
+import NotificationComponent from "@/feedbacks/notification/NotificationComponent.vue";
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
-import type { Scaffold } from "@/types";
+import type { Feedback } from "@/types";
 
 export default defineComponent({
   name: "NotificationContainerComponent",
@@ -41,8 +41,8 @@ export default defineComponent({
   },
 
   computed: {
-    notificationScaffolds() {
-      return this.stateStore.scaffolds.filter((s: Scaffold) => s.type === "scaffold-notification");
+    notificationFeedbacks() {
+      return this.stateStore.feedbacks.filter((s: Feedback) => s.type === "feedback-notification");
     },
   },
 });

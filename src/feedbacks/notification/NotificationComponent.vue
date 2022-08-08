@@ -14,13 +14,13 @@
         <div class="flex items-start">
           <div class="ml-3 w-0 flex-1 pt-0.5">
             <p class="mt-1 text-sm text-gray-500">
-              <InlineEditor :content="scaffold.config.content" />
+              <InlineEditor :content="feedback.config.content" />
             </p>
           </div>
           <div class="ml-4 flex-shrink-0 flex">
             <button
               class="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              @click="stateStore.removeScaffold(scaffold)"
+              @click="stateStore.removeFeedback(feedback)"
             >
               <span class="sr-only">Close</span>
               x
@@ -37,7 +37,7 @@ import { defineComponent } from "vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
-import type { NotificationScaffold } from "@/types";
+import type { NotificationFeedback } from "@/types";
 
 export default defineComponent({
   name: "NotificationComponent",
@@ -45,8 +45,8 @@ export default defineComponent({
   components: { InlineEditor },
 
   props: {
-    scaffold: {
-      type: Object as PropType<NotificationScaffold>,
+    feedback: {
+      type: Object as PropType<NotificationFeedback>,
       required: true,
     },
     editor: {

@@ -1,12 +1,12 @@
 <template>
-  <scaffold-configuration-component :editor="editor" :scaffold="scaffold">
-    <template #title> {{ $t("global:feedback:type-scaffold-mark") }}</template>
+  <feedback-configuration-component :editor="editor" :feedback="feedback">
+    <template #title> {{ $t("global:feedback:type-feedback-mark") }}</template>
     <template #default>
       <!-- Bold -->
       <MenuButton
-        :active="!!scaffold.config.bold"
-        :on-active-click="() => editor.commands.updateScaffold(scaffold, { bold: undefined })"
-        :on-inactive-click="() => editor.commands.updateScaffold(scaffold, { bold: {} })"
+        :active="!!feedback.config.bold"
+        :on-active-click="() => editor.commands.updateFeedback(feedback, { bold: undefined })"
+        :on-inactive-click="() => editor.commands.updateFeedback(feedback, { bold: {} })"
       >
         <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
           <path d="M0 0h24v24H0z" fill="none" />
@@ -18,9 +18,9 @@
 
       <!-- Italic -->
       <MenuButton
-        :active="!!scaffold.config.italic"
-        :on-active-click="() => editor.commands.updateScaffold(scaffold, { italic: undefined })"
-        :on-inactive-click="() => editor.commands.updateScaffold(scaffold, { italic: {} })"
+        :active="!!feedback.config.italic"
+        :on-active-click="() => editor.commands.updateFeedback(feedback, { italic: undefined })"
+        :on-inactive-click="() => editor.commands.updateFeedback(feedback, { italic: {} })"
         ><svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
           <path d="M0 0h24v24H0z" fill="none" />
           <path d="M15 20H7v-2h2.927l2.116-12H9V4h8v2h-2.927l-2.116 12H15z" />
@@ -29,9 +29,9 @@
 
       <!-- Underline -->
       <MenuButton
-        :active="!!scaffold.config.underline"
-        :on-active-click="() => editor.commands.updateScaffold(scaffold, { underline: undefined })"
-        :on-inactive-click="() => editor.commands.updateScaffold(scaffold, { underline: {} })"
+        :active="!!feedback.config.underline"
+        :on-active-click="() => editor.commands.updateFeedback(feedback, { underline: undefined })"
+        :on-inactive-click="() => editor.commands.updateFeedback(feedback, { underline: {} })"
         ><svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
           <path d="M0 0h24v24H0z" fill="none" />
           <path d="M8 3v9a4 4 0 1 0 8 0V3h2v9a6 6 0 1 1-12 0V3h2zM4 20h16v2H4v-2z" />
@@ -40,9 +40,9 @@
 
       <!-- Highlight -->
       <MenuButton
-        :active="!!scaffold.config.highlight"
-        :on-active-click="() => editor.commands.updateScaffold(scaffold, { highlight: undefined })"
-        :on-inactive-click="() => editor.commands.updateScaffold(scaffold, { highlight: {} })"
+        :active="!!feedback.config.highlight"
+        :on-active-click="() => editor.commands.updateFeedback(feedback, { highlight: undefined })"
+        :on-inactive-click="() => editor.commands.updateFeedback(feedback, { highlight: {} })"
         ><svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
           <path d="M0 0h24v24H0z" fill="none" />
           <path
@@ -51,25 +51,25 @@
         </svg>
       </MenuButton>
     </template>
-  </scaffold-configuration-component>
+  </feedback-configuration-component>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import type { PropType } from "vue";
-import ScaffoldConfigurationComponent from "@/scaffolds/ConfigurationComponent.vue";
+import FeedbackConfigurationComponent from "@/feedbacks/ConfigurationComponent.vue";
 import MenuButton from "@/helpers/EditorMenuButton.vue";
 import type { Editor } from "@tiptap/vue-3";
-import type { MarkScaffold } from "@/types";
+import type { MarkFeedback } from "@/types";
 
 export default defineComponent({
-  name: "ScaffoldMarkConfigurationComponent",
+  name: "FeedbackMarkConfigurationComponent",
 
-  components: { MenuButton, ScaffoldConfigurationComponent },
+  components: { MenuButton, FeedbackConfigurationComponent },
 
   props: {
-    scaffold: {
-      type: Object as PropType<MarkScaffold>,
+    feedback: {
+      type: Object as PropType<MarkFeedback>,
       required: true,
     },
     editor: {
