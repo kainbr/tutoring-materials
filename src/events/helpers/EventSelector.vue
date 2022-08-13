@@ -19,7 +19,7 @@
         >
           {{
             $t(
-              "global:event:type-" +
+              "global.event.type-" +
                 (editor.storage.document.eventOptions.find(
                   (option) => option.name === trigger.event
                 )?.name || "missing-label")
@@ -30,7 +30,7 @@
           v-else
           class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
         >
-          {{ $t("editor:trigger:builder-select-event") }}
+          {{ $t("editor.trigger.builder-select-event") }}
         </span>
       </ComboboxButton>
 
@@ -63,7 +63,7 @@
               ]"
             >
               <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                $t("global:event:type-" + option.name)
+                $t("global.event.type-" + option.name)
               }}</span>
             </li>
           </ComboboxOption>
@@ -122,7 +122,7 @@ export default defineComponent({
       return this.eventQuery === ""
         ? this.editor.storage.document.eventOptions
         : this.editor.storage.document.eventOptions.filter((option: EventOption) =>
-            this.$t("global:event-type-" + option.name)
+            this.$t("global.event-type-" + option.name)
               .toLowerCase()
               .replace(/\s+/g, "")
               .includes(this.eventQuery.toLowerCase().replace(/\s+/g, ""))

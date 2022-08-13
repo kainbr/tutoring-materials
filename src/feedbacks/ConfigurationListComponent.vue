@@ -1,7 +1,7 @@
 <template>
   <div class="w-full">
     <span v-if="feedbacks.length === 0" class="text-sm ml-2.5">{{
-      $t("editor:footer:feedback-empty-list")
+      $t("editor.footer.feedback-empty-list")
     }}</span>
     <ul v-else class="divide-y divide-gray-200" role="list">
       <li

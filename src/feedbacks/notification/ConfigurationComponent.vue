@@ -1,13 +1,13 @@
 <template>
   <feedback-configuration-component :editor="editor" :feedback="feedback">
-    <template #title> {{ $t("global:feedback:type-feedback-notification") }}</template>
+    <template #title> {{ $t("global.feedback.type-feedback-notification") }}</template>
     <template #default>
       <button
         type="button"
         class="mx-3 flex-shrink-0 text-sm text-blue-600 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         @click="isOpen = true"
       >
-        {{ $t("editor:feedback:notification-modal-edit-button") }}
+        {{ $t("editor.feedback.notification-modal-edit-button") }}
       </button>
       <TransitionRoot appear :show="isOpen" as="template">
         <Dialog as="div" class="relative z-10" @close="isOpen = false">
@@ -38,7 +38,7 @@
                   class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
                 >
                   <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900">
-                    {{ $t("editor:feedback:notification-modal-edit-title") }}
+                    {{ $t("editor.feedback.notification-modal-edit-title") }}
                   </DialogTitle>
 
                   <div class="mt-5">
@@ -51,7 +51,7 @@
                       class="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                       @click="save"
                     >
-                      {{ $t("editor:feedback:notification-modal-edit-save-button") }}
+                      {{ $t("editor.feedback.notification-modal-edit-save-button") }}
                     </button>
                   </div>
                 </DialogPanel>

@@ -3,7 +3,7 @@
     <div class="flex flex-col grow">
       <div class="flex flex-row items-center">
         <span class="text-sm">
-          {{ $t("editor:trigger:builder-if") }}
+          {{ $t("editor.trigger.builder-if") }}
         </span>
 
         <!-- Event selector -->
@@ -14,7 +14,7 @@
       </div>
 
       <div class="flex flex-row items-center">
-        <span class="text-sm py-1.5"> {{ $t("editor:trigger:builder-then") }} </span>
+        <span class="text-sm py-1.5"> {{ $t("editor.trigger.builder-then") }} </span>
 
         <!-- Feedback selector -->
         <FeedbackSelector :trigger="trigger" :editor="editor" />

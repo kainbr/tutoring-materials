@@ -1,54 +1,101 @@
 {
-  "editor:feedback:notification-modal-description": "Pop-up Notification",
-  "editor:feedback:notification-modal-edit-button": "Edit content",
-  "editor:feedback:notification-modal-edit-save-button": "Save",
-  "editor:feedback:notification-modal-edit-title": "Edit Pop-up Notification Content",
-  "editor:feedback:text-style-description": "Change Text Style",
-  "editor:footer:feedback-empty-list": "No feedbacks available",
-  "editor:footer:headline-feedback": "Feedbacks",
-  "editor:footer:headline-trigger": "Event Trigger",
-  "editor:footer:trigger-empty-list": "No event trigger available",
-  "editor:infobox:color-description": "Color",
-  "editor:infobox:color-label-blue": "Blue",
-  "editor:infobox:color-label-green": "Green",
-  "editor:infobox:color-label-red": "Red",
-  "editor:infobox:color-label-yellow": "Yellow",
-  "editor:infobox:icon-description": "Icon",
-  "editor:infobox:icon-label-error-warning-fill": "Exclamation Mark (filled)",
-  "editor:infobox:icon-label-error-warning-line": "Exclamation Mark",
-  "editor:infobox:icon-label-question-fill": "Question Mark (filled)",
-  "editor:infobox:icon-label-question-line": "Question Mark",
-  "editor:infobox:icon-label-rainbow-line": "Rainbow",
-  "editor:menu:file-upload-headline": "Upload Task File",
-  "editor:menu:file-upload-supported-formats": "Supported file formats: JSON documents",
-  "editor:menu:image-alt-description": "Alternative Text",
-  "editor:menu:image-caption-description": "Caption",
-  "editor:menu:image-floating-description": "Floating",
-  "editor:menu:image-floating-disabled": "no float",
-  "editor:menu:image-floating-left": "left",
-  "editor:menu:image-floating-right": "right",
-  "editor:menu:image-size-description": "Size",
-  "editor:menu:image-upload-headline": "Upload Image",
-  "editor:menu:image-upload-supplementary-text": "Images are compressed while uploading",
-  "editor:menu:image-upload-supported-formats": "Supported file formats: PNG, JPG and JPEG",
-  "editor:menu:upload-modal-upload-explanation": "Click to upload or drag file here",
-  "editor:placeholder-text": "Enter text...",
-  "editor:trigger:builder-if": "If",
-  "editor:trigger:builder-select-event": "Select event",
-  "editor:trigger:builder-select-feedback": "Select feedback",
-  "editor:trigger:builder-then": "then",
-  "global:event:type-document-created": "Document created",
-  "global:feedback:type-feedback-mark": "Change Text Style",
-  "global:feedback:type-feedback-notification": "Show Pop-up Notification",
-  "index:headline-editor": "Editor",
-  "index:headline-preview": "Preview",
-  "preview:button-reset-task": "Reset Task",
-  "preview:button-rotate-player": "Rotate screen",
-  "statistics:tab-events-data": "Additional data",
-  "statistics:tab-events-placeholder": "No event selected",
-  "statistics:tab-events-timestamp": "Timestamp",
-  "statistics:tab-events-type": "Event type",
-  "statistics:tab-option-events": "Events",
-  "statistics:tab-option-none": "Select a tab",
-  "statistics:tab-option-statistics": "Statistics"
+  "editor": {
+    "feedback": {
+      "notification-modal-description": "Pop-up Notification",
+      "notification-modal-edit-button": "Edit content",
+      "notification-modal-edit-save-button": "Save",
+      "notification-modal-edit-title": "Edit Pop-up Notification Content",
+      "text-style-description": "Change Text Style"
+    },
+    "footer": {
+      "feedback-empty-list": "No feedbacks available",
+      "headline-feedback": "Feedbacks",
+      "headline-trigger": "Event Trigger",
+      "trigger-empty-list": "No event trigger available"
+    },
+    "infobox": {
+      "color-description": "Color",
+      "color-label-blue": "Blue",
+      "color-label-green": "Green",
+      "color-label-red": "Red",
+      "color-label-yellow": "Yellow",
+      "icon-description": "Icon",
+      "icon-label-error-warning-fill": "Exclamation Mark (filled)",
+      "icon-label-error-warning-line": "Exclamation Mark",
+      "icon-label-question-fill": "Question Mark (filled)",
+      "icon-label-question-line": "Question Mark",
+      "icon-label-rainbow-line": "Rainbow"
+    },
+    "menu": {
+      "file-upload-headline": "Upload Task File",
+      "file-upload-supported-formats": "Supported file formats: JSON documents",
+      "image-alt-description": "Alternative Text",
+      "image-caption-description": "Caption",
+      "image-floating-description": "Floating",
+      "image-floating-disabled": "no float",
+      "image-floating-left": "left",
+      "image-floating-right": "right",
+      "image-size-description": "Size",
+      "image-upload-headline": "Upload Image",
+      "image-upload-supplementary-text": "Images are compressed while uploading",
+      "image-upload-supported-formats": "Supported file formats: PNG, JPG and JPEG",
+      "upload-modal-upload-explanation": "Click to upload or drag file here"
+    },
+    "placeholder-text": "Enter text...",
+    "task": {
+      "config-description-allow-empty-answer-submission": "If this option is selected, empty answers can be submitted. ",
+      "config-label-allow-empty-answer-submission": "Allow submission of empty answers",
+      "config-label-has-max-attempts": "Limit number of trials",
+      "config-label-max-attempts": "Number of trials",
+      "config-label-text-correct-answer": "Text correct answer",
+      "config-label-text-final-incorrect-answer": "Text incorrect answer (final)",
+      "config-label-text-incorrect-answer": "Text incorrect answer",
+      "config-label-text-submit-button": "Text submit button",
+      "config-label-title-correct-answer": "Title correct answer",
+      "config-label-title-final-incorrect-answer": "Title incorrect answer (final)",
+      "config-label-title-incorrect-answer": "Title incorrect answer",
+      "evaluation-label-type": "Type",
+      "title-evaluation": "Evaluation",
+      "title-feedbacks": "Feedbacks",
+      "title-options": "Options",
+      "type-description": "Task Type",
+      "type-multiple-choice": "Multiple-Choice",
+      "type-single-choice": "Single-Choice"
+    },
+    "trigger": {
+      "builder-if": "If",
+      "builder-select-event": "Select event",
+      "builder-select-feedback": "Select feedback",
+      "builder-then": "then"
+    }
+  },
+  "global": {
+    "event": {
+      "type-answer-submitted": "Answer submitted",
+      "type-change-answer": "Answer changed",
+      "type-document-created": "Document created",
+      "type-task-created": "Task created"
+    },
+    "feedback": {
+      "type-feedback-mark": "Change Text Style",
+      "type-feedback-notification": "Show Pop-up Notification"
+    }
+  },
+  "index": {
+    "headline-editor": "Editor",
+    "headline-preview": "Preview"
+  },
+  "preview": {
+    "button-reset-task": "Reset Task",
+    "button-rotate-player": "Rotate screen"
+  },
+  "statistics": {
+    "tab-events-data": "Additional information",
+    "tab-events-placeholder": "No event selected",
+    "tab-events-timestamp": "Timestamp",
+    "tab-events-type": "Event type",
+    "tab-option-events": "Events",
+    "tab-option-none": "Select a tab",
+    "tab-option-statistics": "Statistics"
+  }
 }

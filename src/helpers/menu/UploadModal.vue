@@ -5,7 +5,7 @@
       as="div"
       class="relative z-10"
       :initial-focus="uploadInput"
-      @close="$emit('update:modelValue', false)"
+      @close="$emit('update.modelValue', false)"
     >
       <TransitionChild
         as="template"
@@ -51,7 +51,7 @@
                 >
                   <IconUploadCloud />
                   <span class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                    {{ $t("editor:menu:upload-modal-upload-explanation") }}
+                    {{ $t("editor.menu.upload-modal-upload-explanation") }}
                   </span>
                   <span class="text-xs text-gray-500 dark:text-gray-400">
                     {{ supportedFormats }}

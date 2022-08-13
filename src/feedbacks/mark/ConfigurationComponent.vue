@@ -1,6 +1,6 @@
 <template>
   <feedback-configuration-component :editor="editor" :feedback="feedback">
-    <template #title> {{ $t("global:feedback:type-feedback-mark") }}</template>
+    <template #title> {{ $t("global.feedback.type-feedback-mark") }}</template>
     <template #default>
       <!-- Bold -->
       <MenuButton

@@ -34,7 +34,7 @@
               d="M11 9h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H11a1 1 0 0 1-1-1V10a1 1 0 0 1 1-1zm1 2v8h8v-8h-8zm-6-.414l1.828-1.829 1.415 1.415L5 14.414.757 10.172l1.415-1.415L4 10.586V8a5 5 0 0 1 5-5h4v2H9a3 3 0 0 0-3 3v2.586z"
             />
           </svg>
-          {{ $t("preview:button-rotate-player") }}
+          {{ $t("preview.button-rotate-player") }}
         </button>
         <button
           class="-ml-px relative inline-flex items-center px-3 py-1.5 rounded-r-md border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
@@ -53,7 +53,7 @@
               d="M5.463 4.433A9.961 9.961 0 0 1 12 2c5.523 0 10 4.477 10 10 0 2.136-.67 4.116-1.81 5.74L17 12h3A8 8 0 0 0 6.46 6.228l-.997-1.795zm13.074 15.134A9.961 9.961 0 0 1 12 22C6.477 22 2 17.523 2 12c0-2.136.67-4.116 1.81-5.74L7 12H4a8 8 0 0 0 13.54 5.772l.997 1.795z"
             />
           </svg>
-          {{ $t("preview:button-reset-task") }}
+          {{ $t("preview.button-reset-task") }}
         </button>
       </span>
     </div>
@@ -67,7 +67,6 @@
       class="border border-2 rounded-lg overflow-auto mx-auto bg-white transition-all duration-500"
     >
       <tutoring-material-player
-        :key="indexPlayer"
         :content="content"
         :state="state"
         @update:state="$emit('update:state', $event)"
@@ -177,7 +176,6 @@ export default defineComponent({
     },
     resetPlayer() {
       this.$emit("reset");
-      this.indexPlayer = this.indexPlayer + 1;
     },
   },
 });

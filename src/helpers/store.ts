@@ -1,12 +1,13 @@
 import { defineStore } from "pinia";
 import type { Store } from "pinia";
 import { v4 as uuid } from "uuid";
-import type { Feedback, Task } from "@/types";
+import type { Feedback } from "@/types";
+import type { TaskState } from "@/tasks/types";
 
 const definedStores = new Map();
 
-interface State {
-  tasks: Task[];
+export interface State {
+  tasks: TaskState[];
   feedbacks: Feedback[];
 }
 
@@ -17,7 +18,7 @@ interface Actions {
   addFeedback(feedback: Feedback): void;
   updateFeedback(feedback: Feedback, attributes: object): void;
   removeFeedback(feedback: Feedback): void;
-  addTask(task: Task): void;
+  addTask(task: TaskState): void;
   updateTask(taskId: string, attributes: object): void;
   removeTask(taskId: string): void;
 }
@@ -90,10 +91,6 @@ function defineStateStore(documentId: string | number) {
           return;
         }
 
-        if (!task.id) {
-          task.id = uuid();
-        }
-
         const index = this.tasks.findIndex(
           (s) =>
             JSON.stringify((({ type, answer }) => ({ type, answer }))(s)) ===
@@ -108,13 +105,13 @@ function defineStateStore(documentId: string | number) {
       },
 
       updateTask(taskId, attributes): void {
-        const index = this.tasks.findIndex((t) => t.id === taskId);
-
-        if (!index) {
-          return;
-        }
-
-        this.tasks[index] = Object.assign(this.tasks[index], attributes);
+        this.tasks = this.tasks.map((task: TaskState) => {
+          if (task.id !== taskId) {
+            return task;
+          } else {
+            return { ...task, ...attributes };
+          }
+        });
       },
 
       removeTask(taskId) {
@@ -123,68 +120,3 @@ function defineStateStore(documentId: string | number) {
     },
   })();
 }
-
-/*
-
-
-export const stateStore = defineStore("states", {
-  state: () => ({
-    tasks: {},
-    feedbacks: [],
-  }),
-  getters: {
-    state: (state) => {
-      return (attribute) => {
-        if (typeof attribute === "undefined") {
-          return undefined;
-        } else {
-          return state[attribute];
-        }
-      };
-    },
-    taskState: (state) => {
-      return (id, attribute = undefined) => {
-        if (typeof state.tasks[id] === "undefined") {
-          return undefined;
-        } else {
-          if (typeof attribute === "undefined") {
-            return state.tasks[id];
-          } else {
-            return state.tasks[id][attribute];
-          }
-        }
-      };
-    },
-  },
-  actions: {
-    setState(attribute, data) {
-      if (typeof attribute !== "undefined") {
-        this[attribute] = data;
-      }
-    },
-    setTaskState(id, attribute = undefined, data) {
-      if (typeof this.tasks[id] === "undefined") {
-        this.tasks[id] = {};
-      }
-      if (typeof attribute === "undefined") {
-        this.tasks[id] = data;
-      } else {
-        this.tasks[id][attribute] = data;
-
-        // Send out notifications
-        if (attribute === "feedbacks" && Array.isArray(data)) {
-          for (let i = 0; i < data.length; i++) {
-            const feedback = data[i];
-            if (feedback.type === "text") {
-              // EventBus.emit("notification", feedback.content);
-            }
-          }
-        }
-      }
-    },
-    removeTaskState(id) {
-      this.tasks[id] = undefined;
-    },
-  },
-});
- */

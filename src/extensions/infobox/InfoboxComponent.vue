@@ -17,7 +17,7 @@
         <div class="flex flex-row grow items-center justify-center gap-4">
           <!-- Icon -->
           <div class="flex flex-row items-center">
-            <span class="text-sm"> {{ $t("editor:infobox:icon-description") }}: </span>
+            <span class="text-sm"> {{ $t("editor.infobox.icon-description") }}: </span>
             <Listbox :model-value="node.attrs.icon" class="ml-2 w-56">
               <div class="relative">
                 <ListboxButton
@@ -26,7 +26,7 @@
                   <span class="block truncate">
                     {{
                       $t(
-                        "editor:infobox:icon-label-" +
+                        "editor.infobox.icon-label-" +
                           iconOptions.find((option) => option === node.attrs.icon)
                       )
                     }}
@@ -80,7 +80,7 @@
                             'block truncate',
                           ]"
                         >
-                          {{ $t("editor:infobox:icon-label-" + option) }}
+                          {{ $t("editor.infobox.icon-label-" + option) }}
                         </span>
                         <span
                           v-if="selectedOption"
@@ -109,7 +109,7 @@
 
           <!-- Color -->
           <div class="flex flex-row items-center">
-            <span class="text-sm"> {{ $t("editor:infobox:color-description") }}: </span>
+            <span class="text-sm"> {{ $t("editor.infobox.color-description") }}: </span>
             <Listbox :model-value="node.attrs.color" class="ml-2 w-32">
               <div class="relative">
                 <ListboxButton
@@ -118,7 +118,7 @@
                   <span class="block truncate">
                     {{
                       $t(
-                        "editor:infobox:color-label-" +
+                        "editor.infobox.color-label-" +
                           colorOptions.find((option) => option === node.attrs.color)
                       )
                     }}
@@ -172,7 +172,7 @@
                             'block truncate',
                           ]"
                         >
-                          {{ $t("editor:infobox:color-label-" + option) }}
+                          {{ $t("editor.infobox.color-label-" + option) }}
                         </span>
                         <span
                           v-if="selectedOption"

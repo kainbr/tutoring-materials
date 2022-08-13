@@ -8,7 +8,7 @@
           >
             <IconDropDown :class="open ? '' : '-rotate-90 transform'" />
             <span class="ml-3 text-base font-normal">{{
-              $t("editor:footer:headline-feedback")
+              $t("editor.footer.headline-feedback")
             }}</span>
           </DisclosureButton>
 
@@ -47,7 +47,7 @@
           >
             <IconDropDown :class="open ? '' : '-rotate-90 transform'" />
             <span class="ml-3 text-base font-normal">{{
-              $t("editor:footer:headline-trigger")
+              $t("editor.footer.headline-trigger")
             }}</span>
           </DisclosureButton>
 

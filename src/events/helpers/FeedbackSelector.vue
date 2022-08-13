@@ -19,7 +19,7 @@
         <span>
           {{
             $t(
-              "global:feedback:type-" +
+              "global.feedback.type-" +
                 (document.node.attrs.feedbacks.find((feedback) => feedback.id === feedbackId)
                   ?.type || "missing-label")
             )
@@ -55,7 +55,7 @@
           v-if="trigger.feedbackIds.length === 0"
           class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
         >
-          {{ $t("editor:trigger:builder-select-feedback") }}
+          {{ $t("editor.trigger.builder-select-feedback") }}
         </span>
         <span
           v-else
@@ -107,7 +107,7 @@
               <span class="px-2" v-html="calculateHexIcon(option)" />
               <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
                 $t(
-                  "global:feedback:type-" +
+                  "global.feedback.type-" +
                     (document.node.attrs.feedbacks.find((feedback) => feedback.id === option)
                       ?.type || "missing-label")
                 )

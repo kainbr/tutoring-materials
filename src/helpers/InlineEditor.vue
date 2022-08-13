@@ -32,7 +32,7 @@
   </BubbleMenu>
 
   <!-- Editor Content -->
-  <editor-content :editor="editor" class="light-editor" />
+  <editor-content :editor="editor" class="[&_p]:my-0 [&_p]:py-0" />
 </template>
 
 <script lang="ts">
@@ -46,6 +46,7 @@ import IconItalic from "@/helpers/icons/IconItalic.vue";
 import IconUnderline from "@/helpers/icons/IconUnderline.vue";
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import type { JSONContent } from "@tiptap/vue-3";
+import { useI18n } from "vue-i18n";
 
 interface Props {
   readonly content: object | undefined;
@@ -102,11 +103,13 @@ export default defineComponent({
   emits: ["update:content"],
 
   setup(props: Props, context) {
+    const { t, locale } = useI18n();
+
     const editor: Editor = new Editor({
       extensions: [
         StarterKit,
         Placeholder.configure({
-          placeholder: "Some content...",
+          placeholder: () => t("editor.placeholder-text"),
         }),
       ],
       editable: props.isEditor,
@@ -123,6 +126,12 @@ export default defineComponent({
           context.emit("update:content", editor.getJSON());
         }
       },
+    });
+
+    // Watch locale change to trigger an event view update
+    // https://github.com/ueberdosis/tiptap/issues/1935
+    watch(locale, () => {
+      editor.view.dispatch(editor.state.tr);
     });
 
     watch(

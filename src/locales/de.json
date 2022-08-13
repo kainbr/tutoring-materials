@@ -1,54 +1,101 @@
 {
-  "editor:feedback:notification-modal-description": "Pop-up Benachrichtigung",
-  "editor:feedback:notification-modal-edit-button": "Inhalt bearbeiten",
-  "editor:feedback:notification-modal-edit-save-button": "Speichern",
-  "editor:feedback:notification-modal-edit-title": "Inhalt der Pop-up Benachrichtigung bearbeiten",
-  "editor:feedback:text-style-description": "Textformatierung ändern",
-  "editor:footer:feedback-empty-list": "Keine Rückmeldungen vorhanden",
-  "editor:footer:headline-feedback": "Rückmeldungen",
-  "editor:footer:headline-trigger": "Ereignisauslöser",
-  "editor:footer:trigger-empty-list": "Keine Ereignisauslöser vorhanden",
-  "editor:infobox:color-description": "Farbe",
-  "editor:infobox:color-label-blue": "Blau",
-  "editor:infobox:color-label-green": "Grün",
-  "editor:infobox:color-label-red": "Rot",
-  "editor:infobox:color-label-yellow": "Gelb",
-  "editor:infobox:icon-description": "Symbol",
-  "editor:infobox:icon-label-error-warning-fill": "Ausrufezeichen (gefüllt)",
-  "editor:infobox:icon-label-error-warning-line": "Ausrufezeichen",
-  "editor:infobox:icon-label-question-fill": "Fragezeichen (gefüllt)",
-  "editor:infobox:icon-label-question-line": "Fragezeichen",
-  "editor:infobox:icon-label-rainbow-line": "Regenbogen",
-  "editor:menu:file-upload-headline": "Aufgabe hochladen",
-  "editor:menu:file-upload-supported-formats": "Unterstützte Dateiformate: JSON Dokumente",
-  "editor:menu:image-alt-description": "Alternativer Text",
-  "editor:menu:image-caption-description": "Unterschrift",
-  "editor:menu:image-floating-description": "Schwebend",
-  "editor:menu:image-floating-disabled": "inaktiv",
-  "editor:menu:image-floating-left": "links",
-  "editor:menu:image-floating-right": "rechts",
-  "editor:menu:image-size-description": "Größe",
-  "editor:menu:image-upload-headline": "Bild hochladen",
-  "editor:menu:image-upload-supplementary-text": "Bilder werden während des Hochladens komprimiert",
-  "editor:menu:image-upload-supported-formats": "Unterstützte Dateiformate: PNG, JPG und JPEG",
-  "editor:menu:upload-modal-upload-explanation": "Klicken, um Datei hochzuladen oder hier hinziehen",
-  "editor:placeholder-text": "Text eingeben...",
-  "editor:trigger:builder-if": "Wenn",
-  "editor:trigger:builder-select-event": "Ereignis auswählen",
-  "editor:trigger:builder-select-feedback": "Rückmeldung auswählen",
-  "editor:trigger:builder-then": "dann",
-  "global:event:type-document-created": "Aufgabe erstellt",
-  "global:feedback:type-feedback-mark": "Textformatierung ändern",
-  "global:feedback:type-feedback-notification": "Zeige Pop-up Benachrichtigung",
-  "index:headline-editor": "Editor",
-  "index:headline-preview": "Vorschau",
-  "preview:button-reset-task": "Aufgabe zurücksetzen",
-  "preview:button-rotate-player": "Ansicht drehen",
-  "statistics:tab-events-data": "Zusätzliche Daten",
-  "statistics:tab-events-placeholder": "Kein Ereignis ausgewählt",
-  "statistics:tab-events-timestamp": "Zeitstempel",
-  "statistics:tab-events-type": "Ereignistyp",
-  "statistics:tab-option-events": "Ereignisse",
-  "statistics:tab-option-none": "Wähle einen Tab",
-  "statistics:tab-option-statistics": "Statistiken"
+  "editor": {
+    "feedback": {
+      "notification-modal-description": "Pop-up Benachrichtigung",
+      "notification-modal-edit-button": "Inhalt bearbeiten",
+      "notification-modal-edit-save-button": "Speichern",
+      "notification-modal-edit-title": "Inhalt der Pop-up Benachrichtigung bearbeiten",
+      "text-style-description": "Textformatierung ändern"
+    },
+    "footer": {
+      "feedback-empty-list": "Keine Rückmeldungen vorhanden",
+      "headline-feedback": "Rückmeldungen",
+      "headline-trigger": "Ereignisauslöser",
+      "trigger-empty-list": "Keine Ereignisauslöser vorhanden"
+    },
+    "infobox": {
+      "color-description": "Farbe",
+      "color-label-blue": "Blau",
+      "color-label-green": "Grün",
+      "color-label-red": "Rot",
+      "color-label-yellow": "Gelb",
+      "icon-description": "Symbol",
+      "icon-label-error-warning-fill": "Ausrufezeichen (gefüllt)",
+      "icon-label-error-warning-line": "Ausrufezeichen",
+      "icon-label-question-fill": "Fragezeichen (gefüllt)",
+      "icon-label-question-line": "Fragezeichen",
+      "icon-label-rainbow-line": "Regenbogen"
+    },
+    "menu": {
+      "file-upload-headline": "Aufgabe hochladen",
+      "file-upload-supported-formats": "Unterstützte Dateiformate: JSON Dokumente",
+      "image-alt-description": "Alternativer Text",
+      "image-caption-description": "Unterschrift",
+      "image-floating-description": "Schwebend",
+      "image-floating-disabled": "inaktiv",
+      "image-floating-left": "links",
+      "image-floating-right": "rechts",
+      "image-size-description": "Größe",
+      "image-upload-headline": "Bild hochladen",
+      "image-upload-supplementary-text": "Bilder werden während des Hochladens komprimiert",
+      "image-upload-supported-formats": "Unterstützte Dateiformate: PNG, JPG und JPEG",
+      "upload-modal-upload-explanation": "Klicken, um Datei hochzuladen oder hier hinziehen"
+    },
+    "placeholder-text": "Text eingeben...",
+    "task": {
+      "config-description-allow-empty-answer-submission": "Wenn diese Option angewählt ist, dann können leere Antworten abgeschickt werden. ",
+      "config-label-allow-empty-answer-submission": "Leere Antworten erlauben",
+      "config-label-has-max-attempts": "Anzahl von Versuchen beschränken",
+      "config-label-max-attempts": "Anzahl an Versuchen",
+      "config-label-text-correct-answer": "Text korrekte Antwort",
+      "config-label-text-final-incorrect-answer": "Text falsche Antwort (final)",
+      "config-label-text-incorrect-answer": "Text falsche Antwort",
+      "config-label-text-submit-button": "Beschriftung Button",
+      "config-label-title-correct-answer": "Überschrift korrekte Antwort",
+      "config-label-title-final-incorrect-answer": "Überschrift falsche Antwort (final)",
+      "config-label-title-incorrect-answer": "Überschrift falsche Antwort",
+      "evaluation-label-type": "Art",
+      "title-evaluation": "Auswertung",
+      "title-feedbacks": "Rückmeldungen",
+      "title-options": "Optionen",
+      "type-description": "Aufgabentyp",
+      "type-multiple-choice": "Multiple-Choice",
+      "type-single-choice": "Single-Choice"
+    },
+    "trigger": {
+      "builder-if": "Wenn",
+      "builder-select-event": "Ereignis auswählen",
+      "builder-select-feedback": "Rückmeldung auswählen",
+      "builder-then": "dann"
+    }
+  },
+  "global": {
+    "event": {
+      "type-answer-submitted": "Antwort abgeschickt",
+      "type-change-answer": "Antwort geändert",
+      "type-document-created": "Dokument erstellt",
+      "type-task-created": "Aufgabe erstellt"
+    },
+    "feedback": {
+      "type-feedback-mark": "Textformatierung ändern",
+      "type-feedback-notification": "Zeige Pop-up Benachrichtigung"
+    }
+  },
+  "index": {
+    "headline-editor": "Editor",
+    "headline-preview": "Vorschau"
+  },
+  "preview": {
+    "button-reset-task": "Aufgabe zurücksetzen",
+    "button-rotate-player": "Ansicht drehen"
+  },
+  "statistics": {
+    "tab-events-data": "Zusätzliche Informationen",
+    "tab-events-placeholder": "Kein Ereignis ausgewählt",
+    "tab-events-timestamp": "Zeitstempel",
+    "tab-events-type": "Ereignistyp",
+    "tab-option-events": "Ereignisse",
+    "tab-option-none": "Wähle einen Tab",
+    "tab-option-statistics": "Statistiken"
+  }
 }

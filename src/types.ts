@@ -1,13 +1,12 @@
 import type { JSONContent } from "@tiptap/vue-3";
 
-// Tasks
-export interface Task {
-  id: string;
-  type: string;
-  answer: object;
-}
+// Task State
 
-// Feedbacks
+// Task Evaluation
+
+// Task Options
+
+// Feedback
 export interface Feedback {
   id?: string;
   type: string;

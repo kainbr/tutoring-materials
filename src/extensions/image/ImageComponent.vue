@@ -35,7 +35,7 @@
         <div>
           <div class="flex flex-row">
             <span class="text-sm font-medium p-1">
-              {{ $t("editor:menu:image-size-description") }}:
+              {{ $t("editor.menu.image-size-description") }}:
             </span>
             <button
               :class="{
@@ -92,7 +92,7 @@
           </div>
           <div class="flex flex-row mt-1">
             <span class="text-sm font-medium p-1">
-              {{ $t("editor:menu:image-floating-description") }}:
+              {{ $t("editor.menu.image-floating-description") }}:
             </span>
             <button
               :class="{
@@ -101,7 +101,7 @@
               class="text-sm hover:opacity-100 font-medium opacity-60 p-1"
               @click="editor.chain().focus().updateAttributes('image', { float: 'left' }).run()"
             >
-              {{ $t("editor:menu:image-floating-left") }}
+              {{ $t("editor.menu.image-floating-left") }}
             </button>
             <button
               :class="{
@@ -110,7 +110,7 @@
               class="text-sm hover:opacity-100 font-medium opacity-60 p-1"
               @click="editor.chain().focus().updateAttributes('image', { float: 'none' }).run()"
             >
-              {{ $t("editor:menu:image-floating-disabled") }}
+              {{ $t("editor.menu.image-floating-disabled") }}
             </button>
             <button
               :class="{
@@ -119,19 +119,19 @@
               class="text-sm hover:opacity-100 font-medium opacity-60 p-1"
               @click="editor.chain().focus().updateAttributes('image', { float: 'right' }).run()"
             >
-              {{ $t("editor:menu:image-floating-right") }}
+              {{ $t("editor.menu.image-floating-right") }}
             </button>
           </div>
         </div>
         <div class="flex flex-col grow">
           <div class="flex flex-row">
             <span class="text-sm font-medium p-1 pr-2 w-32">
-              {{ $t("editor:menu:image-caption-description") }}:
+              {{ $t("editor.menu.image-caption-description") }}:
             </span>
             <input
               :value="node.attrs.title"
               class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md pl-2 pr-2 grow"
-              :placeholder="$t('editor:menu:image-caption-description')"
+              :placeholder="$t('editor.menu.image-caption-description')"
               type="text"
               @input="updateAttributes({ title: $event.target.value })"
             />
@@ -141,7 +141,7 @@
             <input
               :value="node.attrs.alt"
               class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md pl-2 pr-2 grow"
-              :placeholder="$t('editor:menu:image-alt-description')"
+              :placeholder="$t('editor.menu.image-alt-description')"
               type="text"
               @input="updateAttributes({ alt: $event.target.value })"
             />

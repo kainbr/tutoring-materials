@@ -106,14 +106,10 @@ export const Document = Node.create<DocumentOptions, DocumentStorage>({
   onBeforeCreate() {
     const storeId = Date.now();
     this.storage.stateStore = () => stateStore(storeId);
-  },
 
-  onCreate() {
     // Register event listener here
     if (!this.options.isEditor) {
       this.storage.eventBus.on("*", (type, e) => {
-        console.log("document listener", type, e);
-
         const document = findChildren(
           this.editor.state.doc,
           (node) => node.type.name === "document"
@@ -137,8 +133,6 @@ export const Document = Node.create<DocumentOptions, DocumentStorage>({
             }
           });
         });
-
-        console.log("available eventTrigger", document.node.attrs.triggers);
       });
     }
 

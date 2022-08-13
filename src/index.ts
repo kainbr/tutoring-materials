@@ -1,5 +1,6 @@
 import { createPinia } from "pinia";
 import { createI18n } from "vue-i18n";
+import VueTippy from "vue-tippy";
 import TutoringMaterial from "@/TutoringMaterial.vue";
 import TutoringMaterialEditor from "@/TutoringMaterialEditor.vue";
 import TutoringMaterialPlayer from "@/TutoringMaterialPlayer.vue";
@@ -9,9 +10,11 @@ import TutoringMaterialStatistics from "@/TutoringMaterialStatistics.vue";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import de from "@/locales/de.json";
+// Todo: Fix import error of locales files
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import en from "@/locales/en.json";
+import "tippy.js/themes/light-border.css";
 import "./index.css";
 import type { App } from "vue";
 
@@ -31,6 +34,8 @@ export default {
     );
 
     app.use(createPinia());
+
+    app.use(VueTippy);
 
     app.component("TutoringMaterial", TutoringMaterial);
     app.component("TutoringMaterialEditor", TutoringMaterialEditor);

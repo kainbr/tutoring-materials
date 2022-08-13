@@ -61,9 +61,11 @@ import EditorFooter from "@/helpers/EditorFooter.vue";
 import NotificationContainerComponent from "@/feedbacks/notification/NotificationContainerComponent.vue";
 import { FeedbackNotification } from "@/feedbacks/notification";
 import { FeedbackMark } from "@/feedbacks/mark";
+import { Task } from "@/extensions/task";
 
 import type { PropType } from "vue";
 import type { Content, JSONContent } from "@tiptap/vue-3";
+import type { TaskState } from "@/tasks/types";
 
 interface Props {
   readonly taskLimit: number;
@@ -101,9 +103,9 @@ export default defineComponent({
     },
 
     state: {
-      type: Object,
+      type: Object as PropType<TaskState>,
       default() {
-        return undefined;
+        return {};
       },
     },
 
@@ -121,6 +123,22 @@ export default defineComponent({
   emits: ["update:content", "update:state", "event"],
 
   setup(props: Props, context) {
+    // Meta information
+    const startTimestamp: number = Date.now();
+    // eslint-disable-next-line vue/no-setup-props-destructure
+    const receivedContent = props.content;
+    // eslint-disable-next-line vue/no-setup-props-destructure
+    const receivedState = props.state;
+
+    onMounted(() => {
+      editor.storage.document.eventBus.emit("document-created", {
+        startTimestamp: startTimestamp,
+        endTimestamp: Date.now(),
+        receivedContent: receivedContent,
+        receivedState: receivedState,
+      });
+    });
+
     // Editor
     const { t, locale } = useI18n();
 
@@ -151,7 +169,7 @@ export default defineComponent({
         // Image,
         Placeholder.configure({
           includeChildren: true,
-          placeholder: () => t("editor:placeholder-text"),
+          placeholder: () => t("editor.placeholder-text"),
         }),
         TextAlign.configure({
           types: ["heading", "paragraph", "image"],
@@ -163,9 +181,7 @@ export default defineComponent({
         Infobox,
         FeedbackNotification,
         FeedbackMark.configure({ showOutline: props.isEditor }),
-        /*
-          Task,
-           */
+        Task,
         TutoringMaterial,
         Document.configure({
           isEditor: props.isEditor,
@@ -180,8 +196,6 @@ export default defineComponent({
         if (props.isEditor) {
           context.emit("update:content", editor.getJSON());
         }
-
-        editor.storage.document.eventBus.emit("document-created", {});
       },
       onUpdate: () => {
         if (props.isEditor) {
@@ -217,11 +231,11 @@ export default defineComponent({
 
     // Store
     const stateStore = editor.storage.document.stateStore();
+    context.emit("update:state", stateStore.$state);
+
     stateStore.$subscribe((mutation: never, state: JSONContent) => {
       context.emit("update:state", state);
     });
-
-    // TODO: Watch state
 
     // Content sizing
     const container = ref<HTMLInputElement | null>(null);
