@@ -61,11 +61,12 @@ import EditorFooter from "@/helpers/EditorFooter.vue";
 import NotificationContainerComponent from "@/feedbacks/notification/NotificationContainerComponent.vue";
 import { FeedbackNotification } from "@/feedbacks/notification";
 import { FeedbackMark } from "@/feedbacks/mark";
-import { Task } from "@/extensions/task";
 
 import type { PropType } from "vue";
 import type { Content, JSONContent } from "@tiptap/vue-3";
 import type { TaskState } from "@/tasks/types";
+import { SingleChoiceTask } from "@/extensions/task/single-choice";
+import { Task } from "@/extensions/task";
 
 interface Props {
   readonly taskLimit: number;
@@ -182,6 +183,7 @@ export default defineComponent({
         FeedbackNotification,
         FeedbackMark.configure({ showOutline: props.isEditor }),
         Task,
+        SingleChoiceTask,
         TutoringMaterial,
         Document.configure({
           isEditor: props.isEditor,

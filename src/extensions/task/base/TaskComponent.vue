@@ -8,7 +8,6 @@
     class="flex w-full"
   >
     <div class="flex flex-col w-full">
-      <!-- Configuration menu -->
       <div
         v-if="editor.isEditable"
         class="flex flex-row items-center pb-2 mb-2 border-b-2 border-slate-300"
@@ -17,103 +16,25 @@
         draggable="true"
       >
         <div class="flex flex-row grow items-center gap-4">
-          <!-- Type -->
-          <div class="flex flex-row items-center mx-auto">
-            <span class="text-sm"> {{ $t("editor.task.type-description") }}: </span>
-            <Listbox :model-value="node.attrs.type" class="ml-2 w-56">
-              <div class="relative">
-                <ListboxButton
-                  class="relative w-full rounded-lg bg-white py-1.5 pl-2.5 pr-8 text-left cursor-pointer focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
-                >
-                  <span class="block truncate">
-                    {{
-                      $t(
-                        "editor.task.type-" +
-                          taskOptions.find((option) => option === node.attrs.type)
-                      )
-                    }}
-                  </span>
-                  <span
-                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
-                  >
-                    <svg
-                      class="h-5 w-5 text-gray-400"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      width="24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M0 0h24v24H0z" fill="none" />
-                      <path
-                        d="M12 15l-4.243-4.243 1.415-1.414L12 12.172l2.828-2.829 1.415 1.414z"
-                      />
-                    </svg>
-                  </span>
-                </ListboxButton>
-
-                <transition
-                  leave-active-class="transition duration-100 ease-in"
-                  leave-from-class="opacity-100"
-                  leave-to-class="opacity-0"
-                >
-                  <ListboxOptions
-                    class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-                    style="padding-left: 0"
-                  >
-                    <!--suppress JSValidateTypes -->
-                    <ListboxOption
-                      v-for="option in taskOptions"
-                      :key="option"
-                      v-slot="{ active, selectedOption }"
-                      :value="option"
-                      as="template"
-                      class="cursor-pointer"
-                      @click="changeTaskType(option)"
-                    >
-                      <li
-                        :class="[
-                          active ? 'bg-amber-100 text-amber-900' : 'text-gray-900',
-                          'relative py-2 px-3 my-0',
-                        ]"
-                      >
-                        <span
-                          :class="[
-                            selectedOption ? 'font-medium' : 'font-normal',
-                            'block truncate',
-                          ]"
-                        >
-                          {{ $t("editor.task.type-" + option) }}
-                        </span>
-                        <span
-                          v-if="selectedOption"
-                          class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600"
-                        >
-                        </span>
-                      </li>
-                    </ListboxOption>
-                  </ListboxOptions>
-                </transition>
-              </div>
-            </Listbox>
+          <div class="flex w-full justify-center">
+            <span>{{ $t("editor.task.type-" + node.attrs.type.substring(5)) }}</span>
           </div>
-
-          <div>
-            <svg
-              class="cursor-pointer"
-              height="24"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-              @click="deleteNode()"
-            >
-              <path d="M0 0h24v24H0z" fill="none" />
-              <path
-                d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"
-              />
-            </svg>
-          </div>
+          <svg
+            class="cursor-pointer"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+            @click="deleteNode()"
+          >
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path
+              d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"
+            />
+          </svg>
         </div>
       </div>
+
       <!-- Instruction -->
       <div class="flex flex-row w-full [&_p]:my-0">
         <node-view-content class="w-full" />
@@ -121,7 +42,7 @@
 
       <!-- Task -->
       <component
-        :is="node.attrs.type"
+        :is="node.attrs.type.substring(5)"
         :id="node.attrs.id"
         :editor="editor"
         :content="node.attrs.content"
@@ -146,28 +67,22 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { NodeViewContent, NodeViewWrapper } from "@tiptap/vue-3";
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/vue";
-import SingleChoice from "@/tasks/single-choice/TaskComponent.vue";
-import MultipleChoice from "@/tasks/multiple-choice/TaskComponent.vue";
-import type { PropType } from "vue";
-import type { NodeViewProps } from "@tiptap/core";
-import type { TaskState } from "@/tasks/types";
+import SubmitButton from "@/helpers/tasks/SubmitButton.vue";
+import { evaluate } from "@/extensions/task/evaluate";
 import { storeToRefs } from "pinia";
 import type { Feedback } from "@/types";
-import { evaluate } from "@/tasks/evaluate";
-import SubmitButton from "@/helpers/tasks/SubmitButton.vue";
+import type { NodeViewProps } from "@tiptap/core";
+import type { PropType } from "vue";
+import type { TaskState } from "@/tasks/types";
+
+import SingleChoice from "@/extensions/task/single-choice/TaskComponent.vue";
 
 export default defineComponent({
   components: {
-    SingleChoice,
-    SubmitButton,
-    MultipleChoice,
-    NodeViewWrapper,
     NodeViewContent,
-    Listbox,
-    ListboxButton,
-    ListboxOptions,
-    ListboxOption,
+    NodeViewWrapper,
+    SubmitButton,
+    SingleChoice,
   },
 
   props: {

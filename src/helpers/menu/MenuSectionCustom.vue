@@ -10,7 +10,7 @@
     <EditorMenuButton :on-inactive-click="() => editor.commands.setInfobox()">
       <IconFolderInfo />
     </EditorMenuButton>
-    <EditorMenuButton :on-inactive-click="() => editor.commands.setTask()">
+    <EditorMenuButton :on-inactive-click="() => editor.commands.setSingleChoiceTask()">
       <IconTask />
     </EditorMenuButton>
 

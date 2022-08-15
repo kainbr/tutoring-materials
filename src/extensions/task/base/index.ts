@@ -1,0 +1,40 @@
+import TaskComponent from "@/extensions/task/base/TaskComponent.vue";
+import { Node, mergeAttributes } from "@tiptap/core";
+import { VueNodeViewRenderer } from "@tiptap/vue-3";
+
+export const BaseTask = Node.create({
+  name: "task-base",
+
+  group: "block",
+
+  content: "(paragraph|list|image|heading)*",
+
+  draggable: true,
+
+  addAttributes() {
+    return {
+      id: { default: null },
+      type: { default: this.name },
+      content: { default: null },
+      evaluation: { default: null },
+      feedbacks: { default: [] },
+      options: { default: null },
+    };
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: 'div[data-type="draggable-item"]',
+      },
+    ];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return ["div", mergeAttributes(HTMLAttributes, { "data-type": "draggable-item" }), 0];
+  },
+
+  addNodeView() {
+    return VueNodeViewRenderer(TaskComponent);
+  },
+});

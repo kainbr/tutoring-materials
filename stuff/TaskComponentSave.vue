@@ -133,7 +133,7 @@ import type {
   SCState,
 } from "../src/tasks/single-choice/types";
 import { SCEvaluationOption, SCOptionAnswer } from "../src/tasks/single-choice/types";
-import { defaultTaskOptions } from "../src/extensions/task";
+import { defaultTaskOptions } from "../src/extensions/task/base";
 
 interface SCProps extends TaskProps {
   id: string;
