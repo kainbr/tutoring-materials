@@ -1,5 +1,5 @@
-import type { SCFormatFunction, SCEvaluation } from "@/tasks/single-choice/types";
-import type { SCEvaluationOption } from "@/tasks/single-choice/types";
+import type { SCFormatFunction, SCEvaluation } from "@/extensions/task/single-choice/types";
+import type { SCEvaluationOption } from "@/extensions/task/single-choice/types";
 
 export const formatEvaluation: SCFormatFunction<SCEvaluation> = function ({
   newEvaluation,

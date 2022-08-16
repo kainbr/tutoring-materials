@@ -12,6 +12,9 @@ import { defineComponent } from "vue";
 import TutoringMaterial from "@/TutoringMaterial.vue";
 import type { PropType } from "vue";
 import type { JSONContent } from "@tiptap/vue-3";
+import type { TaskState } from "@/extensions/task/base/types";
+import type { Feedback } from "@/extensions/feedback/types";
+import { DocumentState } from "@/extensions/document/types";
 
 export default defineComponent({
   name: "TutoringMaterialPlayer",
@@ -41,9 +44,9 @@ export default defineComponent({
     },
 
     state: {
-      type: Object,
+      type: Object as PropType<DocumentState>,
       default() {
-        return undefined;
+        return {};
       },
     },
   },

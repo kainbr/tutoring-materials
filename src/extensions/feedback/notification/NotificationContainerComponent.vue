@@ -17,10 +17,10 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import NotificationComponent from "@/feedbacks/notification/NotificationComponent.vue";
+import NotificationComponent from "@/extensions/feedback/notification/NotificationComponent.vue";
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
-import type { Feedback } from "@/types";
+import type { Feedback } from "@/extensions/feedback/types";
 
 export default defineComponent({
   name: "NotificationContainerComponent",
@@ -34,15 +34,17 @@ export default defineComponent({
     },
   },
 
-  data() {
-    return {
-      stateStore: this.editor.storage.document.stateStore(),
-    };
-  },
-
   computed: {
     notificationFeedbacks() {
-      return this.stateStore.feedbacks.filter((s: Feedback) => s.type === "feedback-notification");
+      if (!!this.editor?.storage?.feedback?.activeFeedbacks) {
+        return (
+          this.editor.storage.feedback.activeFeedbacks.filter(
+            (s: Feedback) => s.type === "feedback-notification"
+          ) || []
+        );
+      } else {
+        return [];
+      }
     },
   },
 });

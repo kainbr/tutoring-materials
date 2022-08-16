@@ -69,6 +69,7 @@
       "builder-then": "then"
     }
   },
+  "editor:footer:trigger-empty-list": "No feedbacks defined",
   "global": {
     "event": {
       "type-answer-submitted": "Answer submitted",

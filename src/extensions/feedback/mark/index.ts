@@ -1,22 +1,21 @@
 import { findChildren, Mark, mergeAttributes } from "@tiptap/core";
 import { v4 as uuid } from "uuid";
-import type { StateStore } from "@/helpers/store";
-import type { MarkFeedbackConfig } from "@/types";
-import type { Feedback } from "@/types";
+import type { Feedback } from "@/extensions/feedback/types";
+import type { MarkFeedback } from "@/extensions/feedback/mark/types";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     feedbackMark: {
       /**
-       *
+       * Todo: Add method description
        */
       setFeedbackMark: (attributes: object) => ReturnType;
       /**
-       *
+       * Todo: Add method description
        */
       unsetFeedbackMark: () => ReturnType;
       /**
-       *
+       * Todo: Add method description
        */
       removeFeedbackMark: (ref: string) => ReturnType;
     };
@@ -36,7 +35,7 @@ export const FeedbackMark = Mark.create({
 
   addStorage() {
     return {
-      // activeStyleVariables: () => [],
+      getStyleVariables: () => "",
     };
   },
 
@@ -84,17 +83,16 @@ export const FeedbackMark = Mark.create({
   },
 
   onBeforeCreate() {
-    const stateStore: StateStore = this.editor.storage.document.stateStore();
-    stateStore.$subscribe(() => {
-      const styleVariables = stateStore.feedbacks
-        .map((s) => {
+    this.storage.getStyleVariables = () => {
+      return this.editor.storage.feedback.activeFeedbacks
+        .map((s: Feedback) => {
           const styles: string[] = [];
 
           if (s.type !== this.name) {
             return styles;
           }
 
-          const config = s.config as MarkFeedbackConfig;
+          const config = (s as MarkFeedback).config;
 
           // Bold
           if (!!config.bold) {
@@ -135,16 +133,7 @@ export const FeedbackMark = Mark.create({
         })
         .flat()
         .join("; ");
-
-      this.editor.setOptions({
-        editorProps: {
-          attributes: {
-            style: styleVariables,
-            class: "h-full",
-          },
-        },
-      });
-    });
+    };
   },
 
   onUpdate() {
@@ -208,17 +197,5 @@ export const FeedbackMark = Mark.create({
           return true;
         },
     };
-  },
-
-  addKeyboardShortcuts() {
-    return {};
-  },
-
-  addInputRules() {
-    return [];
-  },
-
-  addPasteRules() {
-    return [];
   },
 });

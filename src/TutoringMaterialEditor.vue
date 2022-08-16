@@ -5,7 +5,7 @@
     :is-editor="isEditor"
     :task-limit="taskLimit"
     @update:content="$emit('update:content', $event)"
-    @update:state="$emit('update:state', $event)"
+    @update:state="updateState"
   ></TutoringMaterial>
 </template>
 
@@ -42,13 +42,6 @@ export default defineComponent({
       },
     },
 
-    state: {
-      type: Object,
-      default() {
-        return undefined;
-      },
-    },
-
     isEditor: {
       type: Boolean,
       default: false,
@@ -60,6 +53,18 @@ export default defineComponent({
     },
   },
 
-  emits: ["update:content", "update:state"],
+  emits: ["update:content"],
+
+  data() {
+    return {
+      state: undefined,
+    };
+  },
+
+  methods: {
+    updateState($event) {
+      this.state = { ...$event };
+    },
+  },
 });
 </script>

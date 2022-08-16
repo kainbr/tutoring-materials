@@ -79,7 +79,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { Combobox, ComboboxButton, ComboboxOption, ComboboxOptions } from "@headlessui/vue";
-import type { EventOption, EventTrigger } from "@/types";
+import type { EventOption, EventTrigger } from "@/extensions/feedback/types";
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
 

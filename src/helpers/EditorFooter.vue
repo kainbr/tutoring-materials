@@ -31,7 +31,9 @@
             <div class="flex flex-col w-full max-h-44 overflow-auto">
               <FeedbackConfigurationListComponent
                 :editor="editor"
-                :feedbacks="[...document?.node.attrs.feedbacks.filter((s) => s.parent === null)]"
+                :feedbacks="[
+                  ...editor.getAttributes('document').feedbacks.filter((s) => s.parent === null),
+                ]"
                 class="p-2"
               />
             </div>
@@ -68,7 +70,7 @@
           <DisclosurePanel class="basis-full w-full text-sm text-gray-500">
             <EventTriggerListComponent
               :editor="editor"
-              :triggers="[...document?.node.attrs.triggers]"
+              :triggers="[...editor.getAttributes('document').triggers]"
               class="p-2"
             />
           </DisclosurePanel>
@@ -85,8 +87,8 @@ import IconDropDown from "@/helpers/icons/IconDropDown.vue";
 import IconNotification from "@/helpers/icons/IconNotification.vue";
 import IconText from "@/helpers/icons/IconText.vue";
 import IconAdd from "@/helpers/icons/IconAdd.vue";
-import FeedbackConfigurationListComponent from "@/feedbacks/ConfigurationListComponent.vue";
-import EventTriggerListComponent from "@/events/EventTriggerListComponent.vue";
+import FeedbackConfigurationListComponent from "@/extensions/feedback/ConfigurationListComponent.vue";
+import EventTriggerListComponent from "@/extensions/feedback/EventTriggerListComponent.vue";
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 import type { Editor } from "@tiptap/vue-3";
@@ -113,12 +115,6 @@ export default defineComponent({
       type: Object as PropType<Editor>,
       required: true,
     },
-  },
-
-  data() {
-    return {
-      stateStore: this.editor.storage.document.stateStore(),
-    };
   },
 
   computed: {

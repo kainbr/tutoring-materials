@@ -23,7 +23,7 @@
 import { defineComponent } from "vue";
 import EventTriggerComponent from "./EventTriggerComponent.vue";
 import type { Editor } from "@tiptap/vue-3";
-import type { EventTrigger } from "@/types";
+import type { EventTrigger } from "@/extensions/feedback/types";
 import type { PropType } from "vue";
 
 export default defineComponent({

@@ -58,22 +58,17 @@ import { Indent } from "@/extensions/indent";
 import { Infobox } from "@/extensions/infobox";
 import { CustomImage } from "@/extensions/image";
 import EditorFooter from "@/helpers/EditorFooter.vue";
-import NotificationContainerComponent from "@/feedbacks/notification/NotificationContainerComponent.vue";
-import { FeedbackNotification } from "@/feedbacks/notification";
-import { FeedbackMark } from "@/feedbacks/mark";
+import NotificationContainerComponent from "@/extensions/feedback/notification/NotificationContainerComponent.vue";
+import { FeedbackNotification } from "@/extensions/feedback/notification";
+import { FeedbackMark } from "@/extensions/feedback/mark";
 
-import type { PropType } from "vue";
-import type { Content, JSONContent } from "@tiptap/vue-3";
-import type { TaskState } from "@/tasks/types";
 import { SingleChoiceTask } from "@/extensions/task/single-choice";
 import { Task } from "@/extensions/task";
-
-interface Props {
-  readonly taskLimit: number;
-  readonly isEditor: boolean;
-  readonly state: object | undefined;
-  readonly content: object | undefined;
-}
+import { FeedbackExtension } from "@/extensions/feedback";
+import type { PropType } from "vue";
+import type { JSONContent } from "@tiptap/vue-3";
+import type { DocumentState } from "@/extensions/document/types";
+import { isEqual } from "lodash-es";
 
 export default defineComponent({
   components: {
@@ -104,7 +99,7 @@ export default defineComponent({
     },
 
     state: {
-      type: Object as PropType<TaskState>,
+      type: Object as PropType<DocumentState>,
       default() {
         return {};
       },
@@ -123,7 +118,7 @@ export default defineComponent({
 
   emits: ["update:content", "update:state", "event"],
 
-  setup(props: Props, context) {
+  setup(props, context) {
     // Meta information
     const startTimestamp: number = Date.now();
     // eslint-disable-next-line vue/no-setup-props-destructure
@@ -151,12 +146,6 @@ export default defineComponent({
         },
       },
       extensions: [
-        Color,
-        Subscript,
-        Superscript,
-        TextStyle,
-        Typography,
-        Underline,
         StarterKit.configure({
           document: false,
           dropcursor: {
@@ -167,7 +156,12 @@ export default defineComponent({
             levels: [1, 2, 3],
           },
         }),
-        // Image,
+        Color,
+        Subscript,
+        Superscript,
+        TextStyle,
+        Typography,
+        Underline,
         Placeholder.configure({
           includeChildren: true,
           placeholder: () => t("editor.placeholder-text"),
@@ -180,6 +174,7 @@ export default defineComponent({
         Indent,
         CustomImage,
         Infobox,
+        FeedbackExtension,
         FeedbackNotification,
         FeedbackMark.configure({ showOutline: props.isEditor }),
         Task,
@@ -219,9 +214,37 @@ export default defineComponent({
 
     watch(
       () => props.content,
-      (newContent: Content) => {
-        if (JSON.stringify(editor.getJSON()) !== JSON.stringify(newContent)) {
+      (newContent) => {
+        if (!isEqual(newContent, editor.getJSON())) {
+          if (!newContent) {
+            newContent = {
+              type: "tutoring-material",
+              content: [
+                {
+                  type: "document",
+                  content: [
+                    {
+                      type: "paragraph",
+                    },
+                  ],
+                },
+              ],
+            };
+          }
           editor.commands.setContent(newContent, true);
+        }
+      },
+      { deep: true }
+    );
+
+    watch(
+      () => props.state,
+      (newState) => {
+        if (!isEqual(newState?.tasks, editor.storage.task.taskStates)) {
+          editor.storage.task.taskStates = !!newState?.tasks ? newState?.tasks : [];
+        }
+        if (!isEqual(newState?.feedbacks, editor.storage.feedback.activeFeedbacks)) {
+          editor.storage.feedback.activeFeedbacks = !!newState?.feedbacks ? newState.feedbacks : [];
         }
       },
       { deep: true }
@@ -231,13 +254,48 @@ export default defineComponent({
       editor.destroy();
     });
 
-    // Store
-    const stateStore = editor.storage.document.stateStore();
-    context.emit("update:state", stateStore.$state);
+    watch(
+      [() => editor.storage.task.taskStates, () => editor.storage.feedback.activeFeedbacks],
+      ([newStates, newFeedbacks], [oldStates, oldFeedbacks]) => {
+        if (!isEqual(newStates, oldStates) || !isEqual(newFeedbacks, oldFeedbacks)) {
+          context.emit("update:state", {
+            tasks: newStates,
+            feedbacks: newFeedbacks,
+          });
+          /*
+          console.log("watch taskStates and activeFeedbacks triggered", editor.isEditable);
+          console.log(
+            "truth",
+            !isEqual(newStates, oldStates),
+            !isEqual(newFeedbacks, oldFeedbacks),
+            !isEqual(newStates, oldStates) || !isEqual(newFeedbacks, oldFeedbacks)
+          );
+          console.log("states", newStates, oldStates);
+          console.log("states", JSON.stringify(newStates), JSON.stringify(oldStates));
+          console.log("feedbacks", newFeedbacks, oldFeedbacks);
+          console.log("feedbacks", JSON.stringify(newFeedbacks), JSON.stringify(oldFeedbacks));
+          console.log("emit new state", {
+            tasks: newStates,
+            feedbacks: newFeedbacks,
+          });
+          context.emit("update:state", {
+            tasks: newStates,
+            feedbacks: newFeedbacks,
+          });
+           */
 
-    stateStore.$subscribe((mutation: never, state: JSONContent) => {
-      context.emit("update:state", state);
-    });
+          editor.setOptions({
+            editorProps: {
+              attributes: {
+                style: editor.storage["feedback-mark"].getStyleVariables(),
+                class: "h-full",
+              },
+            },
+          });
+        }
+      },
+      { deep: true }
+    );
 
     // Content sizing
     const container = ref<HTMLInputElement | null>(null);

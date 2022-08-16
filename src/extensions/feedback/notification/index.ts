@@ -1,5 +1,5 @@
 import { Extension } from "@tiptap/core";
-import type { Feedback } from "@/types";
+import type { Feedback } from "@/extensions/feedback/types";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {

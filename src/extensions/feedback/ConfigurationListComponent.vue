@@ -8,8 +8,8 @@
         v-for="feedback in feedbacks"
         :key="feedback.id"
         class="py-1"
-        @mouseenter="stateStore.addFeedback(feedback)"
-        @mouseleave="stateStore.removeFeedback(feedback)"
+        @mouseenter="editor.commands.addActiveFeedback(feedback)"
+        @mouseleave="editor.commands.removeActiveFeedback(feedback)"
       >
         <component
           :is="feedback.type"
@@ -28,7 +28,7 @@ import FeedbackMark from "./mark/ConfigurationComponent.vue";
 import FeedbackNotification from "./notification/ConfigurationComponent.vue";
 import type { Editor } from "@tiptap/vue-3";
 import type { PropType } from "vue";
-import type { Feedback } from "@/types";
+import type { Feedback } from "@/extensions/feedback/types";
 
 export default defineComponent({
   name: "FeedbackConfigurationComponent",
@@ -47,12 +47,6 @@ export default defineComponent({
       type: Array as PropType<Feedback[]>,
       required: true,
     },
-  },
-
-  data() {
-    return {
-      stateStore: this.editor.storage.document.stateStore(),
-    };
   },
 });
 </script>

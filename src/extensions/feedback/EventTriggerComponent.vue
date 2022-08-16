@@ -37,11 +37,11 @@ import { defineComponent } from "vue";
 import IconCopy from "@/helpers/icons/IconCopy.vue";
 import IconTrash from "@/helpers/icons/IconTrash.vue";
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
-import EventSelector from "@/events/helpers/EventSelector.vue";
+import EventSelector from "@/extensions/feedback/helpers/EventSelector.vue";
 import type { PropType } from "vue";
-import type { EventTrigger } from "@/types";
-import ConditionSelector from "@/events/helpers/ConditionSelector.vue";
-import FeedbackSelector from "@/events/helpers/FeedbackSelector.vue";
+import type { EventTrigger } from "@/extensions/feedback/types";
+import ConditionSelector from "@/extensions/feedback/helpers/ConditionSelector.vue";
+import FeedbackSelector from "@/extensions/feedback/helpers/FeedbackSelector.vue";
 import type { Editor } from "@tiptap/vue-3";
 
 export default defineComponent({

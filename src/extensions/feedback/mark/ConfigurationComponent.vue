@@ -57,10 +57,10 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import type { PropType } from "vue";
-import FeedbackConfigurationComponent from "@/feedbacks/ConfigurationComponent.vue";
+import FeedbackConfigurationComponent from "@/extensions/feedback/ConfigurationComponent.vue";
 import MenuButton from "@/helpers/EditorMenuButton.vue";
 import type { Editor } from "@tiptap/vue-3";
-import type { MarkFeedback } from "@/types";
+import type { MarkFeedback } from "@/extensions/feedback/mark/types";
 
 export default defineComponent({
   name: "FeedbackMarkConfigurationComponent",
@@ -76,12 +76,6 @@ export default defineComponent({
       type: Object as PropType<Editor>,
       required: true,
     },
-  },
-
-  data() {
-    return {
-      stateStore: this.editor.storage.document.stateStore(),
-    };
   },
 
   methods: {

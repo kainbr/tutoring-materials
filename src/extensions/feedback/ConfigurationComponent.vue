@@ -35,7 +35,7 @@ import IconTrash from "@/helpers/icons/IconTrash.vue";
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
-import type { Feedback } from "@/types";
+import type { Feedback } from "@/extensions/feedback/types";
 import { calculateHexIcon } from "@/helpers/util";
 
 export default defineComponent({
@@ -52,12 +52,6 @@ export default defineComponent({
       type: Object as PropType<Feedback>,
       required: true,
     },
-  },
-
-  data() {
-    return {
-      stateStore: this.editor.storage.document.stateStore(),
-    };
   },
 
   methods: {

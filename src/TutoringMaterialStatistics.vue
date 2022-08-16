@@ -123,7 +123,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import dayjs from "dayjs";
-import type { Event } from "@/types";
+import type { Event } from "@/extensions/feedback/types";
 import type { PropType } from "vue";
 
 export default defineComponent({

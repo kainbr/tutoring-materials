@@ -69,6 +69,7 @@
       "builder-then": "dann"
     }
   },
+  "editor:footer:trigger-empty-list": "Keine Rückmeldungen vorhanden",
   "global": {
     "event": {
       "type-answer-submitted": "Antwort abgeschickt",

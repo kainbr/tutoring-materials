@@ -1,4 +1,4 @@
-import type { SCEvaluation, SCState } from "@/tasks/single-choice/types";
+import type { SCEvaluation, SCState } from "@/extensions/task/single-choice/types";
 
 export const evaluate = function (config: SCEvaluation, state: SCState): boolean {
   switch (config.name) {

@@ -2,9 +2,9 @@ import { BaseTask } from "@/extensions/task/base";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    task: {
+    taskSingleChoice: {
       /**
-       * Todo
+       * Todo: Add method description
        */
       setSingleChoiceTask: () => ReturnType;
     };

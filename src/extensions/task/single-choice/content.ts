@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import type { SCFormatFunction, SCOption } from "@/tasks/single-choice/types";
+import type { SCFormatFunction, SCOption } from "@/extensions/task/single-choice/types";
 
 export const formatContent: SCFormatFunction<SCOption[]> = function ({ newContent }) {
   let content: SCOption[];

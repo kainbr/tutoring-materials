@@ -55,12 +55,11 @@
               v-model:content="content"
               :is-editor="true"
               :task-limit="3"
-              @update:state="stateEditor = $event"
             ></tutoring-material-editor>
           </div>
 
           <div class="h-[850px] max-h-[850px] w-[628px] mx-auto">
-            <tutoring-material-statistics :events="eventsPlayer"></tutoring-material-statistics>
+            <tutoring-material-statistics :events="playerEvents"></tutoring-material-statistics>
           </div>
         </main>
       </div>
@@ -76,11 +75,11 @@
         <main class="w-full border bg-slate-50 shadow">
           <tutoring-material-preview
             v-if="!isReloading"
-            :content="content"
-            :state="statePlayer"
             :key="previewKey"
-            @update:state="statePlayer = $event"
-            @event="eventsPlayer = [...eventsPlayer, $event]"
+            :content="content"
+            :state="playerState"
+            @update:state="updateState"
+            @event="playerEvents = [...playerEvents, $event]"
             @reset="resetPreview"
           ></tutoring-material-preview>
         </main>
@@ -118,8 +117,8 @@
         :class="isSidebarOpen ? 'translate-x-0' : 'translate-x-full'"
       >
         <div class="text-xs p-4 overflow-auto">
-          statePlayer
-          <pre>{{ statePlayer }}</pre>
+          playerStates
+          <pre>{{ playerState }}</pre>
           content
           <pre>{{ content }}</pre>
           stateEditor
@@ -138,8 +137,8 @@
             isSidebarOpen: false,
             content: undefined,
             stateEditor: undefined,
-            statePlayer: undefined,
-            eventsPlayer: [],
+            playerState: undefined,
+            playerEvents: [],
             previewKey: 0,
             isReloading: false,
           };
@@ -147,10 +146,13 @@
 
         methods: {
           resetPreview() {
-            this.eventsPlayer = [];
-            this.statePlayer.tasks = [];
-            this.statePlayer.feedbacks = [];
+            this.playerEvents = [];
+            this.playerState.tasks = [];
+            this.playerState.feedbacks = [];
             this.previewKey += 1;
+          },
+          updateState($event) {
+            this.playerState = $event;
           },
         },
       });

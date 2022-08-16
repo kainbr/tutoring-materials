@@ -69,11 +69,10 @@ import { computed, defineComponent } from "vue";
 import { NodeViewContent, NodeViewWrapper } from "@tiptap/vue-3";
 import SubmitButton from "@/helpers/tasks/SubmitButton.vue";
 import { evaluate } from "@/extensions/task/evaluate";
-import { storeToRefs } from "pinia";
-import type { Feedback } from "@/types";
+import type { Feedback } from "@/extensions/feedback/types";
 import type { NodeViewProps } from "@tiptap/core";
 import type { PropType } from "vue";
-import type { TaskState } from "@/tasks/types";
+import type { TaskState } from "@/extensions/task/base/types";
 
 import SingleChoice from "@/extensions/task/single-choice/TaskComponent.vue";
 
@@ -86,83 +85,39 @@ export default defineComponent({
   },
 
   props: {
-    // eslint-disable-next-line vue/require-default-prop
-    editor: {
-      type: Object as PropType<NodeViewProps["editor"]>,
-      required: true as const,
-    },
-    // eslint-disable-next-line vue/require-default-prop
-    node: {
-      type: Object as PropType<NodeViewProps["node"]>,
-      required: true as const,
-    },
-    // eslint-disable-next-line vue/require-default-prop
-    decorations: {
-      type: Object as PropType<NodeViewProps["decorations"]>,
-      required: true as const,
-    },
-    // eslint-disable-next-line vue/require-default-prop
-    selected: {
-      type: Boolean as PropType<NodeViewProps["selected"]>,
-      required: true as const,
-    },
-    // eslint-disable-next-line vue/require-default-prop
-    extension: {
-      type: Object as PropType<NodeViewProps["extension"]>,
-      required: true as const,
-    },
-    // eslint-disable-next-line vue/require-default-prop
-    getPos: {
-      type: Function as PropType<NodeViewProps["getPos"]>,
-      required: true as const,
-    },
-    // eslint-disable-next-line vue/require-default-prop
+    editor: { type: Object as PropType<NodeViewProps["editor"]>, required: true },
+    node: { type: Object as PropType<NodeViewProps["node"]>, required: true },
+    decorations: { type: Object as PropType<NodeViewProps["decorations"]>, required: true },
+    selected: { type: Boolean as PropType<NodeViewProps["selected"]>, required: true },
+    extension: { type: Object as PropType<NodeViewProps["extension"]>, required: true },
+    getPos: { type: Function as PropType<NodeViewProps["getPos"]>, required: true },
     updateAttributes: {
       type: Function as PropType<NodeViewProps["updateAttributes"]>,
-      required: true as const,
+      required: true,
     },
-    // eslint-disable-next-line vue/require-default-prop
-    deleteNode: {
-      type: Function as PropType<NodeViewProps["deleteNode"]>,
-      required: true as const,
-    },
+    deleteNode: { type: Function as PropType<NodeViewProps["deleteNode"]>, required: true },
   },
 
   setup: function (props) {
-    const taskOptions = ["single-choice", "multiple-choice"];
-
-    const stateStore = props.editor.storage.document.stateStore();
-    const { tasks, feedbacks } = storeToRefs(stateStore);
-
     const taskState = computed(() => {
-      return tasks.value?.find((task: TaskState) => task.id === props.node.attrs.id);
+      return props.editor.storage.task.taskStates.find(
+        (taskState: TaskState) => taskState.id === props.node.attrs.id
+      );
     });
 
     const taskFeedbacks = computed(() => {
-      return feedbacks.value?.filter(
+      return props.editor.storage.feedback.feedbacks.filter(
         (feedback: Feedback) => feedback.parent === props.node.attrs.id
       );
     });
 
     const updateTaskState = (newTaskState: TaskState) => {
       if (!taskState.value) {
-        stateStore.addTask(newTaskState);
+        props.editor.commands.addTaskState(newTaskState);
         props.editor.storage.document.eventBus.emit("task-created", newTaskState);
       } else {
-        stateStore.updateTask(props.node.attrs.id, newTaskState);
+        props.editor.commands.updateTaskState(taskState.value, newTaskState);
       }
-    };
-
-    const changeTaskType = (newTaskType: string) => {
-      console.log("changeTaskType", newTaskType);
-      props.updateAttributes({
-        type: newTaskType,
-        content: null,
-        evaluation: null,
-        feedbacks: [],
-        options: null,
-        state: null,
-      });
     };
 
     /**
@@ -234,12 +189,10 @@ export default defineComponent({
     });
 
     return {
-      taskOptions,
       taskState,
       taskFeedbacks,
       buttonProps,
       updateTaskState,
-      changeTaskType,
       submit,
     };
   },

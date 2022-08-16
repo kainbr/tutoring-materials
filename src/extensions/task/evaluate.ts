@@ -1,4 +1,4 @@
-import type { TaskEvaluation, TaskState } from "@/tasks/types";
+import type { TaskEvaluation, TaskState } from "@/extensions/task/base/types";
 
 export async function evaluate(taskType: string, config: TaskEvaluation, state: TaskState) {
   /* @vite-ignore */

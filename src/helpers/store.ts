@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import type { Store } from "pinia";
 import { v4 as uuid } from "uuid";
-import type { Feedback } from "@/types";
-import type { TaskState } from "@/tasks/types";
+import type { Feedback } from "@/extensions/feedback/types";
+import type { TaskState } from "@/extensions/task/base/types";
 
 const definedStores = new Map();
 

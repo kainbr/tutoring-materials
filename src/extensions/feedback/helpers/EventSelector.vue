@@ -12,7 +12,7 @@
       <ComboboxButton class="cursor-pointer">
         <span
           v-if="
-            editor.storage.document.eventOptions.find((option) => option.name === trigger.event)
+            editor.storage.feedback.eventOptions.find((option) => option.name === trigger.event)
               ?.name
           "
           class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
@@ -20,7 +20,7 @@
           {{
             $t(
               "global.event.type-" +
-                (editor.storage.document.eventOptions.find(
+                (editor.storage.feedback.eventOptions.find(
                   (option) => option.name === trigger.event
                 )?.name || "missing-label")
             )
@@ -84,8 +84,8 @@ import {
 } from "@headlessui/vue";
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
-import type { EventTrigger } from "@/types";
-import type { EventOption } from "@/types";
+import type { EventTrigger } from "@/extensions/feedback/types";
+import type { EventOption } from "@/extensions/feedback/types";
 
 export default defineComponent({
   name: "EventSelector",
@@ -120,8 +120,8 @@ export default defineComponent({
   computed: {
     filteredEventOptions() {
       return this.eventQuery === ""
-        ? this.editor.storage.document.eventOptions
-        : this.editor.storage.document.eventOptions.filter((option: EventOption) =>
+        ? this.editor.storage.feedback.eventOptions
+        : this.editor.storage.feedback.eventOptions.filter((option: EventOption) =>
             this.$t("global.event-type-" + option.name)
               .toLowerCase()
               .replace(/\s+/g, "")

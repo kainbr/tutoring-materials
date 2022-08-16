@@ -23,6 +23,7 @@
     >
       {{ textSubmitButton }}
     </button>
+    {{ disabled }}
   </div>
 </template>
 

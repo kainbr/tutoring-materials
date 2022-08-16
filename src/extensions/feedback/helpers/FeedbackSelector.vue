@@ -3,16 +3,8 @@
     <div v-for="(feedbackId, index) in trigger.feedbackIds" :key="feedbackId">
       <span
         class="cursor-default inline-flex flex-nowrap items-center m-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
-        @mouseenter="
-          stateStore.addFeedback(
-            document.node.attrs.feedbacks.find((feedback) => feedback.id === feedbackId)
-          )
-        "
-        @mouseleave="
-          stateStore.removeFeedback(
-            document.node.attrs.feedbacks.find((feedback) => feedback.id === feedbackId)
-          )
-        "
+        @mouseenter="addActiveFeedback(feedbackId)"
+        @mouseleave="removeActiveFeedback(feedbackId)"
       >
         <!-- eslint-disable vue/no-v-html -->
         <span class="pr-1" v-html="calculateHexIcon(feedbackId)" />
@@ -20,8 +12,7 @@
           {{
             $t(
               "global.feedback.type-" +
-                (document.node.attrs.feedbacks.find((feedback) => feedback.id === feedbackId)
-                  ?.type || "missing-label")
+                (feedbacks.find((feedback) => feedback.id === feedbackId)?.type || "missing-label")
             )
           }}
         </span>
@@ -44,11 +35,7 @@
       :model-value="trigger.feedbackIds"
       multiple
       nullable
-      @update:model-value="
-        editor.commands.updateEventTrigger(trigger, {
-          feedbackIds: $event,
-        })
-      "
+      @update:model-value="updateModelValue(trigger, $event)"
     >
       <ComboboxButton class="cursor-pointer">
         <span
@@ -65,65 +52,49 @@
         </span>
       </ComboboxButton>
 
-      <transition
-        leave-active-class="transition duration-100 ease-in"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
+      <ComboboxOptions
+        class="absolute z-50 max-h-60 w-fit overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
       >
-        <ComboboxOptions
-          class="absolute z-50 max-h-60 w-fit overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+        <div class="p-1">
+          <ComboboxInput
+            :display-trigger="(option) => option?.label"
+            class="w-full w-60 border-none py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0"
+            @change="feedbacksQuery = $event.target.value"
+          />
+        </div>
+        <ComboboxOption
+          v-for="option in filteredFeedbackOptions"
+          :key="option"
+          v-slot="{ active, selected }"
+          :value="option"
+          as="template"
         >
-          <div class="p-1">
-            <ComboboxInput
-              :display-trigger="(option) => option?.label"
-              class="w-full w-60 border-none py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0"
-              @change="feedbacksQuery = $event.target.value"
-            />
-          </div>
-
-          <ComboboxOption
-            v-for="option in filteredFeedbackOptions"
-            :key="option"
-            v-slot="{ active, selected }"
-            :value="option"
-            as="template"
-          >
-            <li
-              :class="[
-                active ? 'bg-amber-100 text-amber-900' : 'text-gray-900',
-                'flex flex-row w-full cursor-default select-none py-2',
-              ]"
-              @mouseenter="
-                stateStore.addFeedback(
-                  document.node.attrs.feedbacks.find((feedback) => feedback.id === option)
-                )
-              "
-              @mouseleave="
-                stateStore.removeFeedback(
-                  document.node.attrs.feedbacks.find((feedback) => feedback.id === option)
-                )
-              "
-            >
-              <span class="px-2" v-html="calculateHexIcon(option)" />
-              <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                $t(
-                  "global.feedback.type-" +
-                    (document.node.attrs.feedbacks.find((feedback) => feedback.id === option)
-                      ?.type || "missing-label")
-                )
-              }}</span>
-            </li>
-          </ComboboxOption>
           <li
-            v-if="filteredFeedbackOptions.length === 0"
-            class="text-gray-900 w-full cursor-default select-none py-2 pl-4 pr-4"
+            :class="[
+              active ? 'bg-amber-100 text-amber-900' : 'text-gray-900',
+              'flex flex-row w-full cursor-default select-none py-2',
+            ]"
+            @mouseenter="addActiveFeedback(option)"
+            @mouseleave="removeActiveFeedback(option)"
           >
-            <span class="font-normal text-xs block truncate">{{
-              $t("editor:footer:trigger-empty-list")
+            <span class="px-2" v-html="calculateHexIcon(option)" />
+            <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
+              $t(
+                "global.feedback.type-" +
+                  (feedbacks.find((feedback) => feedback.id === option)?.type || "missing-label")
+              )
             }}</span>
           </li>
-        </ComboboxOptions>
-      </transition>
+        </ComboboxOption>
+        <li
+          v-if="filteredFeedbackOptions.length === 0"
+          class="text-gray-900 w-full cursor-default select-none py-2 pl-4 pr-4"
+        >
+          <span class="font-normal text-xs block truncate">{{
+            $t("editor:footer:trigger-empty-list")
+          }}</span>
+        </li>
+      </ComboboxOptions>
     </Combobox>
   </div>
 </template>
@@ -137,10 +108,9 @@ import {
   ComboboxOption,
   ComboboxOptions,
 } from "@headlessui/vue";
-import type { EventTrigger, Feedback } from "@/types";
+import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
-import { findChildren } from "@tiptap/core";
 import IconClose from "@/helpers/icons/IconClose.vue";
 import { calculateHexIcon } from "@/helpers/util";
 
@@ -172,16 +142,17 @@ export default defineComponent({
   data() {
     return {
       feedbacksQuery: "",
-      stateStore: this.editor.storage.document.stateStore(),
     };
   },
 
   computed: {
-    document() {
-      return findChildren(this.editor.state.doc, (node) => node.type.name === "document")[0];
+    feedbacks() {
+      return this.editor.getAttributes("document").feedbacks;
     },
     feedbackOptions() {
-      return this.document.node.attrs.feedbacks.map((feedback: Feedback) => feedback.id);
+      return this.editor
+        .getAttributes("document")
+        .feedbacks.map((feedback: Feedback) => feedback.id);
     },
     filteredFeedbackOptions() {
       return this.feedbacksQuery === ""
@@ -198,6 +169,25 @@ export default defineComponent({
   methods: {
     calculateHexIcon(str: string | undefined) {
       return calculateHexIcon(str);
+    },
+    addActiveFeedback(feedbackId) {
+      this.editor.commands.addActiveFeedback(
+        this.editor
+          .getAttributes("document")
+          .feedbacks.find((feedback) => feedback.id === feedbackId)
+      );
+    },
+    removeActiveFeedback(feedbackId) {
+      this.editor.commands.removeActiveFeedback(
+        this.editor
+          .getAttributes("document")
+          .feedbacks.find((feedback) => feedback.id === feedbackId)
+      );
+    },
+    updateModelValue(trigger, $event) {
+      this.editor.commands.updateEventTrigger(trigger, {
+        feedbackIds: $event,
+      });
     },
   },
 });

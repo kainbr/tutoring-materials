@@ -81,8 +81,8 @@
           <div style="display: flex; gap: 1px">
             <EditorMenuButton
               :active="options?.shuffle"
-              :on-active-click="() => $emit('update:options', { ...options, shuffle: false })"
-              :on-inactive-click="() => $emit('update:options', { ...options, shuffle: true })"
+              :on-active-click="() => updateOptions({ ...options, shuffle: false })"
+              :on-inactive-click="() => updateOptions({ ...options, shuffle: true })"
             >
               <IconShuffle></IconShuffle>
             </EditorMenuButton>
@@ -103,7 +103,7 @@
         :value="evaluation.name"
         :options="evaluationOptions.map((o) => o.name)"
         :label="$t('editor.task.evaluation-label-type')"
-        @update:value="$emit('update:evaluation', { ...evaluation, name: $event })"
+        @update:value="updateEvaluation({ ...evaluation, name: $event })"
       />
     </template>
 
@@ -123,7 +123,7 @@
           has-correct-state
           has-incorrect-state
           has-final-incorrect-state
-          @update:options="$emit('update:options', $event)"
+          @update:options="updateOptions($event)"
         />
       </div>
     </template>
@@ -157,7 +157,7 @@ import type {
   SCOptions,
   SCState,
 } from "@/extensions/task/single-choice/types";
-import { initializeTask } from "@/extensions/task/helpers";
+import { useTask } from "@/extensions/task/helpers";
 import { formatOptions } from "@/extensions/task/single-choice/options";
 import { formatContent } from "@/extensions/task/single-choice/content";
 import { formatTaskState } from "@/extensions/task/single-choice/state";
@@ -189,15 +189,15 @@ const props = defineProps<SCProps>();
 
 const emit = defineEmits<SCEmits>();
 
-initializeTask<SCProps, SCEmits, SCOption[], SCEvaluation, SCFeedback[], SCOptions, SCState>(
-  props,
-  emit,
-  formatOptions,
-  formatContent,
-  formatTaskState,
-  formatEvaluation,
-  formatFeedbacks
-);
+const { updateContent, updateEvaluation, updateFeedbacks, updateOptions, updateState } = useTask<
+  SCProps,
+  SCEmits,
+  SCOption[],
+  SCEvaluation,
+  SCFeedback[],
+  SCOptions,
+  SCState
+>(props, emit, formatOptions, formatContent, formatTaskState, formatEvaluation, formatFeedbacks);
 
 /**
  * Task specific functions
@@ -210,7 +210,7 @@ const addOption = () => {
       id: uuid(),
       content: { type: "doc", content: [{ type: "paragraph" }] },
     });
-    emit("update:content", contentCopy);
+    updateContent(contentCopy);
   }
 };
 
@@ -219,7 +219,7 @@ const removeOption = (index: number) => {
     if (props.content.length > 1) {
       const contentCopy = props.content;
       contentCopy.splice(index, 1);
-      emit("update:content", contentCopy);
+      updateContent(contentCopy);
     }
   }
 };
@@ -229,7 +229,7 @@ const moveUpOption = (index: number, option: SCOption) => {
     const contentCopy = props.content;
     contentCopy.splice(index - 1, 0, option);
     contentCopy.splice(index + 1, 1);
-    emit("update:content", contentCopy);
+    updateContent(contentCopy);
   }
 };
 
@@ -238,7 +238,7 @@ const moveDownOption = (index: number, option: SCOption) => {
     const contentCopy = props.content;
     contentCopy.splice(index + 2, 0, option);
     contentCopy.splice(index, 1);
-    emit("update:content", contentCopy);
+    updateContent(contentCopy);
   }
 };
 
@@ -247,16 +247,13 @@ const updateAnswerOptionValue = (option: SCOption) => {
     const newSolution = props.evaluation.solution.map((s) => {
       return { ...s, value: s.id === option.id };
     });
-    emit("update:evaluation", { ...props.evaluation, solution: newSolution });
+    updateEvaluation({ ...props.evaluation, solution: newSolution });
   }
 };
 
 const updateAnswerOptionContent = (option: SCOption, $event: JSONContent) => {
   if (Array.isArray(props.content)) {
-    emit(
-      "update:content",
-      props.content.map((o) => (option?.id === o.id ? { ...o, content: $event } : o))
-    );
+    updateContent(props.content.map((o) => (option?.id === o.id ? { ...o, content: $event } : o)));
   }
 };
 
@@ -275,7 +272,7 @@ const changeAnswerOptionValue = (option: SCOption) => {
     });
 
     if (JSON.stringify(oldAnswer) !== JSON.stringify(newAnswer)) {
-      emit("update:state", {
+      updateState({
         ...props.state,
         answer: newAnswer,
       });
@@ -290,6 +287,11 @@ const changeAnswerOptionValue = (option: SCOption) => {
 };
 
 defineExpose({
+  updateContent,
+  updateEvaluation,
+  updateFeedbacks,
+  updateOptions,
+  updateState,
   addOption,
   removeOption,
   moveUpOption,

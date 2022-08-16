@@ -37,7 +37,7 @@ import { defineComponent } from "vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
-import type { NotificationFeedback } from "@/types";
+import type { NotificationFeedback } from "@/extensions/feedback/notification/types";
 
 export default defineComponent({
   name: "NotificationComponent",
@@ -53,12 +53,6 @@ export default defineComponent({
       type: Object as PropType<Editor>,
       required: true,
     },
-  },
-
-  data() {
-    return {
-      stateStore: this.editor.storage.document.stateStore(),
-    };
   },
 });
 </script>
