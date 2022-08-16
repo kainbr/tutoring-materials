@@ -1,7 +1,7 @@
 import { mergeAttributes, Node } from "@tiptap/core";
 import mitt from "mitt";
 import type { Emitter } from "mitt";
-import type { Event } from "@/extensions/feedback/types";
+import type { Event, EventOption } from "@/extensions/feedback/types";
 
 export interface DocumentOptions {
   isEditor: boolean;
@@ -60,6 +60,7 @@ export const Document = Node.create<DocumentOptions, DocumentStorage>({
   },
 
   onCreate() {
+    console.log("onCreate");
     if (!this.editor.isEditable) {
       this.editor.commands.addEventOption({
         name: "document-created",

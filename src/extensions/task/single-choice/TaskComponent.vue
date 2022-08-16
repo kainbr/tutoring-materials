@@ -144,7 +144,7 @@ import IconArrowUp from "@/helpers/icons/IconArrowUp.vue";
 import IconShuffle from "@/helpers/icons/IconShuffle.vue";
 import IconTrash from "@/helpers/icons/IconTrash.vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
-import TaskScaffold from "@/helpers/tasks/TaskScaffold.vue";
+import TaskScaffold from "@/extensions/task/base/TaskScaffold.vue";
 import { v4 as uuid } from "uuid";
 
 // Types

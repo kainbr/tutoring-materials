@@ -59,6 +59,8 @@ export const Task = Extension.create<unknown, TaskExtensionStorage>({
 
           this.storage.taskStates = [...this.storage.taskStates, taskState];
 
+          this.editor.storage.document.eventBus.emit("task-created", taskState);
+
           return true;
         },
       updateTaskState:

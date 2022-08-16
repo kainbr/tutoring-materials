@@ -88,8 +88,9 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
   onBeforeCreate() {
     if (!this.editor.isEditable) {
       this.editor.storage.document.eventBus.on("*", (type: string) => {
-        const feedbacks = this.editor.getAttributes("document").feedbacks;
-        const eventTriggerWithType = feedbacks.filter(
+        const triggers: EventTrigger[] = this.editor.getAttributes("document").triggers;
+        const feedbacks: Feedback[] = this.editor.getAttributes("document").feedbacks;
+        const eventTriggerWithType = triggers.filter(
           (trigger: EventTrigger) => trigger.event === type
         );
 
@@ -98,7 +99,7 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
 
           // If conditions are fulfilled, the feedback is added to the list of active feedbacks
           eventTrigger.feedbackIds.forEach((feedbackId: string) => {
-            const feedback = feedbacks.find((s: Feedback) => s.id === feedbackId);
+            const feedback = feedbacks.find((f: Feedback) => f.id === feedbackId);
             if (feedback) {
               this.editor.commands.addActiveFeedback(feedback);
             }
@@ -243,7 +244,12 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
       },
 
       addEventOption: (option) => () => {
-        this.storage.eventOptions = [...this.storage.eventOptions, option];
+        const eventOption = this.storage.eventOptions.find(
+          (o: EventOption) => o.name === option.name
+        );
+        if (!eventOption) {
+          this.storage.eventOptions = [...this.storage.eventOptions, option];
+        }
 
         return true;
       },

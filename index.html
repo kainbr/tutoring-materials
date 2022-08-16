@@ -147,8 +147,10 @@
         methods: {
           resetPreview() {
             this.playerEvents = [];
-            this.playerState.tasks = [];
-            this.playerState.feedbacks = [];
+            if (!!this.playerState) {
+              this.playerState.tasks = [];
+              this.playerState.feedbacks = [];
+            }
             this.previewKey += 1;
           },
           updateState($event) {
