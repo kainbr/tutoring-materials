@@ -13,6 +13,11 @@ export type Event = {
 
 export interface EventOption {
   name: string;
+  label: {
+    message: string;
+    data?: object;
+    icon?: string;
+  };
   conditions: {
     name: string;
     type: "boolean" | "number" | "string";

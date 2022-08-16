@@ -111,6 +111,14 @@ export default defineComponent({
     },
   },
 
+  beforeCreate() {
+    this.editor.commands.addEventOption({
+      name: "answer-submitted-task-" + this.state.id,
+      label: { message: "global.event.type-answer-submitted", icon: this.state.id },
+      conditions: [],
+    });
+  },
+
   methods: {
     /**
      * Evaluate the response and determine the next state of the task
@@ -121,7 +129,7 @@ export default defineComponent({
       const response = await evaluate(this.type, this.evaluation, this.state);
 
       // Emit event
-      this.editor.storage.document.eventBus.emit("answer-submitted", {
+      this.editor.storage.document.eventBus.emit("answer-submitted-task-" + this.state.id, {
         ...this.state,
         response,
       });

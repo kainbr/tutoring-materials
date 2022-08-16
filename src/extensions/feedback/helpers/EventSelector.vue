@@ -11,20 +11,15 @@
     <div>
       <ComboboxButton class="cursor-pointer">
         <span
-          v-if="
-            editor.storage.feedback.eventOptions.find((option) => option.name === trigger.event)
-              ?.name
-          "
+          v-if="selectedEvent?.name"
           class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
         >
-          {{
-            $t(
-              "global.event.type-" +
-                (editor.storage.feedback.eventOptions.find(
-                  (option) => option.name === trigger.event
-                )?.name || "missing-label")
-            )
-          }}
+          <span
+            v-if="!!selectedEvent.label.icon"
+            class="pr-1"
+            v-html="calculateHexIcon(selectedEvent.label.icon)"
+          />
+          {{ $t(selectedEvent.label.message, selectedEvent.label.data) }}
         </span>
         <span
           v-else
@@ -62,9 +57,14 @@
                 'relative w-full cursor-default select-none py-2 pl-4 pr-4',
               ]"
             >
-              <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                $t("global.event.type-" + option.name)
-              }}</span>
+              <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">
+                <span
+                  v-if="!!option.label.icon"
+                  class="pr-1"
+                  v-html="calculateHexIcon(option.label.icon)"
+                />
+                {{ $t(option.label.message, option.label.data) }}</span
+              >
             </li>
           </ComboboxOption>
         </ComboboxOptions>
@@ -75,6 +75,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { calculateHexIcon } from "@/helpers/util";
 import {
   Combobox,
   ComboboxButton,
@@ -127,6 +128,17 @@ export default defineComponent({
               .replace(/\s+/g, "")
               .includes(this.eventQuery.toLowerCase().replace(/\s+/g, ""))
           );
+    },
+    selectedEvent() {
+      return this.editor.storage.feedback.eventOptions.find(
+        (option: EventOption) => option.name === this.trigger.event
+      );
+    },
+  },
+
+  methods: {
+    calculateHexIcon(id: string | undefined) {
+      return calculateHexIcon(id);
     },
   },
 });

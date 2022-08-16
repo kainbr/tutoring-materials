@@ -2,6 +2,7 @@ import { mergeAttributes, Node } from "@tiptap/core";
 import mitt from "mitt";
 import type { Emitter } from "mitt";
 import type { Event, EventOption } from "@/extensions/feedback/types";
+import { saveAs } from "file-saver";
 
 export interface DocumentOptions {
   isEditor: boolean;
@@ -64,6 +65,7 @@ export const Document = Node.create<DocumentOptions, DocumentStorage>({
     if (!this.editor.isEditable) {
       this.editor.commands.addEventOption({
         name: "document-created",
+        label: { message: "global.event.type-document-created" },
         conditions: [],
       });
     }
@@ -72,43 +74,32 @@ export const Document = Node.create<DocumentOptions, DocumentStorage>({
   addCommands() {
     return {
       saveDocument: () => () => {
-        /*
-        const stateStore = this.storage.stateStore();
-        if (stateStore) {
-          const data = JSON.stringify({
-            content: this.editor.getJSON(),
-            state: stateStore.$state,
-          });
-          const blob = new Blob([data], {
-            type: "application/json;charset=utf-8",
-          });
-          saveAs(blob, "export.json");
-          return true;
-        }
-         */
-        return false;
+        const data = JSON.stringify({
+          content: this.editor.getJSON(),
+        });
+        const blob = new Blob([data], {
+          type: "application/json;charset=utf-8",
+        });
+        saveAs(blob, "export.json");
+        return true;
       },
 
       uploadDocument: (file: Blob) => () => {
-        /*
         if (!file) {
           return false;
         }
 
         const reader = new FileReader();
         reader.onload = (e) => {
-          const stateStore = this.storage.stateStore();
-          if (stateStore && e.target?.result) {
+          if (e.target?.result) {
             const payload = JSON.parse(String(e.target.result));
             this.editor.commands.setContent(
               "content" in payload ? payload.content : undefined,
               true
             );
-            stateStore.$reset();
           }
         };
         reader.readAsText(file);
-         */
         return true;
       },
     };

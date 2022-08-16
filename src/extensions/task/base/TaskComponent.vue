@@ -16,6 +16,7 @@
         draggable="true"
       >
         <div class="flex flex-row grow items-center gap-4">
+          <span class="pl-2 pr-3" v-html="calculateHexIcon(node.attrs.id)" />
           <div class="flex w-full justify-center">
             <span>{{ $t("editor.task.type-" + node.attrs.type.substring(5)) }}</span>
           </div>
@@ -67,6 +68,7 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { NodeViewContent, NodeViewWrapper } from "@tiptap/vue-3";
+import { calculateHexIcon } from "@/helpers/util";
 import IconClose from "@/helpers/icons/IconClose.vue";
 import SubmitButton from "@/extensions/task/base/SubmitButton.vue";
 
@@ -137,7 +139,7 @@ export default defineComponent({
         : [];
     });
 
-    return { state, activeFeedbacks };
+    return { state, activeFeedbacks, calculateHexIcon };
   },
 });
 </script>
