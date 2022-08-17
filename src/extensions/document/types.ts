@@ -5,3 +5,14 @@ export interface DocumentState {
   tasks: TaskState[];
   feedbacks: Feedback[];
 }
+
+export type InteractionEvent = {
+  parent?: string;
+  label?: {
+    message: string;
+    data?: object;
+    hexIcon?: string;
+  };
+  conditions?: object;
+  data: object;
+};

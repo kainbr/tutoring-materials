@@ -3,6 +3,7 @@ import mitt from "mitt";
 import type { Emitter } from "mitt";
 import type { Event, EventOption } from "@/extensions/feedback/types";
 import { saveAs } from "file-saver";
+import type { InteractionEvent } from "@/extensions/document/types";
 
 export interface DocumentOptions {
   isEditor: boolean;
@@ -10,7 +11,7 @@ export interface DocumentOptions {
 }
 
 export interface DocumentStorage {
-  eventBus: Emitter<Event>;
+  eventBus: () => Emitter<InteractionEvent> | null;
 }
 
 declare module "@tiptap/core" {
@@ -48,7 +49,7 @@ export const Document = Node.create<DocumentOptions, DocumentStorage>({
 
   addStorage() {
     return {
-      eventBus: mitt(),
+      eventBus: () => null,
     };
   },
 
@@ -60,15 +61,19 @@ export const Document = Node.create<DocumentOptions, DocumentStorage>({
     return ["div", mergeAttributes(HTMLAttributes), 0];
   },
 
+  onBeforeCreate() {
+    const eventBus = mitt<InteractionEvent>();
+    this.storage.eventBus = () => {
+      return eventBus;
+    };
+  },
+
   onCreate() {
-    console.log("onCreate");
-    if (!this.editor.isEditable) {
-      this.editor.commands.addEventOption({
-        name: "document-created",
-        label: { message: "global.event.type-document-created" },
-        conditions: [],
-      });
-    }
+    this.editor.commands.addEventOption({
+      name: "document-created",
+      label: { message: "global.event.type-document-created" },
+      conditions: [],
+    });
   },
 
   addCommands() {

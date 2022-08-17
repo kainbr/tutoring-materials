@@ -2,6 +2,7 @@ import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey } from "prosemirror-state";
 import { v4 as uuid } from "uuid";
 import type { TaskState } from "@/extensions/task/base/types";
+import { calculateHexIcon } from "@/helpers/util";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -47,19 +48,17 @@ export const Task = Extension.create<unknown, TaskExtensionStorage>({
             return false;
           }
 
-          const index = this.storage.taskStates.findIndex(
+          const state = this.storage.taskStates.find(
             (t: TaskState) =>
               JSON.stringify((({ type, answer }) => ({ type, answer }))(t)) ===
               JSON.stringify((({ type, answer }) => ({ type, answer }))(taskState))
           );
 
-          if (!index) {
+          if (!!state) {
             return false;
           }
 
           this.storage.taskStates = [...this.storage.taskStates, taskState];
-
-          this.editor.storage.document.eventBus.emit("task-created", taskState);
 
           return true;
         },

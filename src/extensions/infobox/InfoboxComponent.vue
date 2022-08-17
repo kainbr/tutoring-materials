@@ -18,7 +18,7 @@
           <!-- Icon -->
           <div class="flex flex-row items-center">
             <span class="text-sm"> {{ $t("editor.infobox.icon-description") }}: </span>
-            <Listbox :model-value="node.attrs.icon" class="ml-2 w-56">
+            <Listbox :model-value="node.attrs.hexIcon" class="ml-2 w-56">
               <div class="relative">
                 <ListboxButton
                   class="relative w-full rounded-lg bg-white py-1.5 pl-2.5 pr-8 text-left cursor-pointer focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
@@ -27,7 +27,7 @@
                     {{
                       $t(
                         "editor.infobox.icon-label-" +
-                          iconOptions.find((option) => option === node.attrs.icon)
+                          iconOptions.find((option) => option === node.attrs.hexIcon)
                       )
                     }}
                   </span>
@@ -306,10 +306,10 @@ export default defineComponent({
           return "#DCFCE6";
       }
     },
-    icon() {
+    hexIcon() {
       let path;
 
-      switch (this.node.attrs.icon) {
+      switch (this.node.attrs.hexIcon) {
         case "error-warning-line":
           path =
             "M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm-1-5h2v2h-2v-2zm0-8h2v6h-2V7z";

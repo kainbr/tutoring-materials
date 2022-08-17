@@ -1,76 +1,76 @@
 <template>
-  <Combobox
-    :model-value="{ value: trigger.event }"
-    class="px-2"
-    @update:model-value="
-      editor.commands.updateEventTrigger(trigger, {
-        event: $event?.name,
-      })
-    "
-  >
-    <div>
-      <ComboboxButton class="cursor-pointer">
-        <span
-          v-if="selectedEvent?.name"
-          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-        >
+  <div class="flex flex-row items-center">
+    <span class="text-sm py-0.5">
+      {{ $t("editor.trigger.builder-if") }}
+    </span>
+
+    <Combobox
+      :model-value="{ value: trigger.event }"
+      class="px-2"
+      @update:model-value="updateEvent"
+    >
+      <span>
+        <!-- Visible button -->
+        <ComboboxButton class="cursor-pointer">
           <span
-            v-if="!!selectedEvent.label.icon"
-            class="pr-1"
-            v-html="calculateHexIcon(selectedEvent.label.icon)"
-          />
-          {{ $t(selectedEvent.label.message, selectedEvent.label.data) }}
-        </span>
-        <span
-          v-else
-          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-        >
-          {{ $t("editor.trigger.builder-select-event") }}
-        </span>
-      </ComboboxButton>
-
-      <transition
-        leave-active-class="transition duration-100 ease-in"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
-      >
-        <ComboboxOptions
-          class="absolute z-50 max-h-60 w-fit overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-        >
-          <div class="p-1">
-            <ComboboxInput
-              class="w-full w-52 border-none py-2 pl-3 text-xs leading-5 text-gray-900 focus:ring-0"
-              @change="eventQuery = $event.target.value"
-            />
-          </div>
-
-          <ComboboxOption
-            v-for="option in filteredEventOptions"
-            :key="option"
-            v-slot="{ active, selected }"
-            :value="option"
-            as="template"
+            v-if="selectedEvent"
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
           >
-            <li
-              :class="[
-                active ? 'bg-amber-100 text-amber-900' : 'text-gray-900',
-                'relative w-full cursor-default select-none py-2 pl-4 pr-4',
-              ]"
+            <span
+              v-if="!!selectedEvent.label.hexIcon"
+              class="pr-1"
+              v-html="selectedEvent.label.hexIcon"
+            />
+            {{ $t(selectedEvent.label.message, selectedEvent.label.data) }}
+          </span>
+          <span
+            v-else
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+          >
+            {{ $t("editor.trigger.builder-select-event") }}
+          </span>
+        </ComboboxButton>
+
+        <!-- Drop-down -->
+        <transition
+          leave-active-class="transition duration-100 ease-in"
+          leave-from-class="opacity-100"
+          leave-to-class="opacity-0"
+        >
+          <ComboboxOptions
+            class="absolute z-50 max-h-60 w-fit overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+          >
+            <div class="p-1">
+              <ComboboxInput
+                class="w-full w-52 border-none py-2 pl-3 text-xs leading-5 text-gray-900 focus:ring-0"
+                @change="eventQuery = $event.target.value"
+              />
+            </div>
+
+            <ComboboxOption
+              v-for="option in filteredEventOptions"
+              :key="option"
+              v-slot="{ active, selected }"
+              :value="option"
+              as="template"
             >
-              <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">
-                <span
-                  v-if="!!option.label.icon"
-                  class="pr-1"
-                  v-html="calculateHexIcon(option.label.icon)"
-                />
-                {{ $t(option.label.message, option.label.data) }}</span
+              <li
+                :class="[
+                  active ? 'bg-amber-100 text-amber-900' : 'text-gray-900',
+                  'relative w-full cursor-default select-none py-2 pl-4 pr-4',
+                ]"
               >
-            </li>
-          </ComboboxOption>
-        </ComboboxOptions>
-      </transition>
-    </div>
-  </Combobox>
+                <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">
+                  <span v-if="!!option.label.hexIcon" class="pr-1" v-html="option.label.hexIcon" />
+                  {{ $t(option.label.message, option.label.data) }}</span
+                >
+              </li>
+            </ComboboxOption>
+          </ComboboxOptions>
+        </transition>
+      </span>
+    </Combobox>
+  </div>
 </template>
 
 <script lang="ts">
@@ -119,7 +119,7 @@ export default defineComponent({
   },
 
   computed: {
-    filteredEventOptions() {
+    filteredEventOptions(): EventOption[] {
       return this.eventQuery === ""
         ? this.editor.storage.feedback.eventOptions
         : this.editor.storage.feedback.eventOptions.filter((option: EventOption) =>
@@ -129,7 +129,7 @@ export default defineComponent({
               .includes(this.eventQuery.toLowerCase().replace(/\s+/g, ""))
           );
     },
-    selectedEvent() {
+    selectedEvent(): EventOption {
       return this.editor.storage.feedback.eventOptions.find(
         (option: EventOption) => option.name === this.trigger.event
       );
@@ -139,6 +139,14 @@ export default defineComponent({
   methods: {
     calculateHexIcon(id: string | undefined) {
       return calculateHexIcon(id);
+    },
+
+    updateEvent($event: EventOption) {
+      this.editor.commands.updateEventTrigger(this.trigger, {
+        event: $event.name,
+        parent: $event?.parent,
+        conditions: [],
+      });
     },
   },
 });

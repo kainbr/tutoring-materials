@@ -79,7 +79,7 @@
             :content="content"
             :state="playerState"
             @update:state="updateState"
-            @event="playerEvents = [...playerEvents, $event]"
+            @event="updateEvents"
             @reset="resetPreview"
           ></tutoring-material-preview>
         </main>
@@ -155,6 +155,9 @@
           },
           updateState($event) {
             this.playerState = $event;
+          },
+          updateEvents($event) {
+            this.playerEvents = [...this.playerEvents, $event];
           },
         },
       });

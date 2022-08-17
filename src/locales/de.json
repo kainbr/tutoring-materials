@@ -63,6 +63,7 @@
       "type-single-choice": "Single-Choice"
     },
     "trigger": {
+      "builder-and": "und",
       "builder-if": "Wenn",
       "builder-select-event": "Ereignis auswählen",
       "builder-select-feedback": "Rückmeldung auswählen",
@@ -71,9 +72,17 @@
   },
   "editor:footer:trigger-empty-list": "Keine Rückmeldungen vorhanden",
   "global": {
+    "condition": {
+      "single-choice": {
+        "answer-option-not-selected": "{index}. Option ist nicht ausgewählt",
+        "answer-option-selected": "{index}. Option ist ausgewählt",
+        "response-correct": "Antwort korrekt",
+        "response-incorrect": "Antwort inkorrekt"
+      }
+    },
     "event": {
+      "type-answer-changed": "Antwort geändert",
       "type-answer-submitted": "Antwort abgeschickt",
-      "type-change-answer": "Antwort geändert",
       "type-document-created": "Dokument erstellt",
       "type-task-created": "Aufgabe erstellt"
     },

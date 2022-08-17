@@ -64,7 +64,8 @@
                 <div class="flex-1 space-y-1">
                   <div class="flex items-center justify-between">
                     <h3 class="text-sm font-medium">
-                      {{ $t("global.event.type-" + event?.type) || "No event type specified" }}
+                      <span v-if="event?.label.hexIcon" v-html="event.label.hexIcon" />
+                      {{ $t(event?.label.message, event?.label.data) }}
                     </h3>
                     <p class="text-sm text-gray-500">
                       {{

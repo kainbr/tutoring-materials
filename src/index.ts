@@ -1,4 +1,3 @@
-import { createPinia } from "pinia";
 import { createI18n } from "vue-i18n";
 import VueTippy from "vue-tippy";
 import TutoringMaterial from "@/TutoringMaterial.vue";
@@ -32,8 +31,6 @@ export default {
         },
       })
     );
-
-    app.use(createPinia());
 
     app.use(VueTippy);
 

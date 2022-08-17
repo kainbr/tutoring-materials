@@ -53,31 +53,26 @@ export function formatTask<C, E, F, O, S, A extends TaskEmits>(
 ): void {
   data.newOptions = formatOptions(data);
   if (!isEqual(data.newOptions, data.oldOptions)) {
-    console.log('emit("update:options", data.newOptions);');
     emit("update:options", data.newOptions);
   }
 
   data.newContent = formatContent(data);
   if (!isEqual(data.newContent, data.oldContent)) {
-    console.log('emit("update:content", data.newContent);');
     emit("update:content", data.newContent);
   }
 
   data.newEvaluation = formatEvaluation(data);
   if (!isEqual(data.newEvaluation, data.oldEvaluation)) {
-    console.log('emit("update:evaluation", data.newEvaluation);');
     emit("update:evaluation", data.newEvaluation);
   }
 
   data.newFeedbacks = formatFeedbacks(data);
   if (!isEqual(data.newFeedbacks, data.oldFeedbacks)) {
-    console.log('emit("update:feedbacks", data.newFeedbacks);');
     emit("update:feedbacks", data.newFeedbacks);
   }
 
   data.newState = formatTaskState(data);
   if (!isEqual(data.newState, data.oldState) && !isEqual(data.newState, currentStateStore)) {
-    console.log('emit("update:state", data.newState);', data.newState, data.oldState);
     emit("update:state", data.newState);
   }
 }
@@ -102,7 +97,6 @@ export function useTask<P extends TaskProps, A extends TaskEmits, C, E, F, O, S>
 
   // Format content on initial laod
   onMounted(() => {
-    console.log("onMounted triggered", props.editor.isEditable);
     formatTask<C, E, F, O, S, A>(
       {
         id: props.id,
@@ -150,7 +144,6 @@ export function useTask<P extends TaskProps, A extends TaskEmits, C, E, F, O, S>
           !isEqual(newState, oldState) ||
           !isEqual(newStateStore, oldStateStore))
       ) {
-        console.log("watch triggered");
         formatTask<C, E, F, O, S, A>(
           {
             id: props.id,

@@ -4,8 +4,8 @@
       $t("editor.footer.trigger-empty-list")
     }}</span>
     <ul v-else class="divide-y divide-gray-200" role="list">
-      <li v-for="(trigger, index) in triggers" :key="trigger.id" class="flex flex-row py-1">
-        <div class="px-3.5">
+      <li v-for="(trigger, index) in triggers" :key="trigger.id" class="flex flex-row">
+        <div class="px-3.5 pt-0.5">
           <span> {{ index + 1 }}. </span>
         </div>
         <EventTriggerComponent

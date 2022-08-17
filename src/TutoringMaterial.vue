@@ -67,7 +67,7 @@ import { Task } from "@/extensions/task";
 import { FeedbackExtension } from "@/extensions/feedback";
 import type { PropType } from "vue";
 import type { JSONContent } from "@tiptap/vue-3";
-import type { DocumentState } from "@/extensions/document/types";
+import type { DocumentState, InteractionEvent } from "@/extensions/document/types";
 import { isEqual } from "lodash-es";
 
 export default defineComponent({
@@ -127,11 +127,16 @@ export default defineComponent({
     const receivedState = props.state;
 
     onMounted(() => {
-      editor.storage.document.eventBus.emit("document-created", {
-        startTimestamp: startTimestamp,
-        endTimestamp: Date.now(),
-        receivedContent: receivedContent,
-        receivedState: receivedState,
+      editor.storage.document.eventBus().emit("document-created", {
+        label: {
+          message: "global.event.type-document-created",
+        },
+        data: {
+          startTimestamp: startTimestamp,
+          endTimestamp: Date.now(),
+          receivedContent: receivedContent,
+          receivedState: receivedState,
+        },
       });
     });
 
@@ -208,9 +213,18 @@ export default defineComponent({
     });
 
     // Register event bus
-    editor.storage.document.eventBus.on("*", (type: string, e: object) =>
-      context.emit("event", { ts: Date.now(), type: type, data: e })
-    );
+    editor.storage.document.eventBus().on("*", (type: string, e: InteractionEvent) => {
+      context.emit("event", {
+        ts: Date.now(),
+        type: type,
+        label: {
+          message: !!e.label?.message ? e.label.message : type,
+          data: e.label?.data,
+          hexIcon: e.label?.hexIcon,
+        },
+        data: e.data,
+      });
+    });
 
     watch(
       () => props.content,

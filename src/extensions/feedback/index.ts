@@ -2,6 +2,7 @@ import { Extension, findChildren } from "@tiptap/core";
 import { v4 as uuid } from "uuid";
 import type { Feedback, EventTrigger, EventOption } from "@/extensions/feedback/types";
 import type { MarkFeedback } from "@/extensions/feedback/mark/types";
+import type { InteractionEvent } from "@/extensions/document/types";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -13,7 +14,7 @@ declare module "@tiptap/core" {
       /**
        * Todo: Add method description
        */
-      updateFeedback: (feedback: Feedback, attributes: object) => ReturnType;
+      updateFeedback: (feedback: Feedback, attributes: Partial<Feedback>) => ReturnType;
       /**
        * Todo: Add method description
        */
@@ -25,7 +26,7 @@ declare module "@tiptap/core" {
       /**
        * Todo: Add method description
        */
-      updateActiveFeedback: (feedback: Feedback, attributes: object) => ReturnType;
+      updateActiveFeedback: (feedback: Feedback, attributes: Partial<Feedback>) => ReturnType;
       /**
        * Todo: Add method description
        */
@@ -37,6 +38,10 @@ declare module "@tiptap/core" {
       /**
        * Todo: Add method description
        */
+      updateEventOption: (event: EventOption, attributes: Partial<EventOption>) => ReturnType;
+      /**
+       * Todo: Add method description
+       */
       removeEventOption: (trigger: EventOption) => ReturnType;
       /**
        * Todo: Add method description
@@ -45,7 +50,7 @@ declare module "@tiptap/core" {
       /**
        * Todo: Add method description
        */
-      updateEventTrigger: (trigger: EventTrigger, attributes: object) => ReturnType;
+      updateEventTrigger: (trigger: EventTrigger, attributes: Partial<EventTrigger>) => ReturnType;
       /**
        * Todo: Add method description
        */
@@ -87,19 +92,24 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
 
   onBeforeCreate() {
     if (!this.editor.isEditable) {
-      this.editor.storage.document.eventBus.on("*", (type: string) => {
+      this.editor.storage.document.eventBus().on("*", (type: string, event: InteractionEvent) => {
         const triggers: EventTrigger[] = this.editor.getAttributes("document").triggers;
         const feedbacks: Feedback[] = this.editor.getAttributes("document").feedbacks;
+
         const eventTriggerWithType = triggers.filter(
-          (trigger: EventTrigger) => trigger.event === type
+          (trigger: EventTrigger) => trigger.event === type && trigger.parent === event.parent
         );
 
-        eventTriggerWithType.forEach((eventTrigger: EventTrigger) => {
+        console.log("eventTriggerWithType", eventTriggerWithType);
+
+        eventTriggerWithType.forEach((trigger: EventTrigger) => {
           // Todo: Check conditions
+          console.log("Set conditions: ", trigger.conditions);
+          console.log("Available conditions: ", event.conditions);
 
           // If conditions are fulfilled, the feedback is added to the list of active feedbacks
-          eventTrigger.feedbackIds.forEach((feedbackId: string) => {
-            const feedback = feedbacks.find((f: Feedback) => f.id === feedbackId);
+          trigger.feedbacks.forEach((id: string) => {
+            const feedback = feedbacks.find((f: Feedback) => f.id === id);
             if (feedback) {
               this.editor.commands.addActiveFeedback(feedback);
             }
@@ -117,7 +127,7 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
           commands.updateAttributes("document", {
             feedbacks: [
               ...this.editor.getAttributes("document").feedbacks,
-              { ...feedback, id: uuid() },
+              { ...feedback, ...(feedback.id ? {} : { id: uuid() }) },
             ],
           });
           return true;
@@ -176,7 +186,7 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
             feedbacks: feedbacks.filter((s: Feedback) => s.id !== feedback.id),
             // Remove feedback from triggers using it
             triggers: documentNode.node.attrs.triggers.map((trigger: EventTrigger) => {
-              trigger.feedbackIds = trigger.feedbackIds.filter((id) => id !== feedback.id);
+              trigger.feedbacks = trigger.feedbacks.filter((id) => id !== feedback.id);
               return trigger;
             }),
           });
@@ -191,6 +201,8 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
         },
 
       addActiveFeedback: (feedback) => () => {
+        console.log("feedback", feedback);
+
         if (!feedback.type) {
           return false;
         }
@@ -245,7 +257,7 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
 
       addEventOption: (option) => () => {
         const eventOption = this.storage.eventOptions.find(
-          (o: EventOption) => o.name === option.name
+          (o: EventOption) => o.name === option.name && o.parent === option.parent
         );
         if (!eventOption) {
           this.storage.eventOptions = [...this.storage.eventOptions, option];
@@ -254,9 +266,21 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
         return true;
       },
 
+      updateEventOption: (option, attributes) => () => {
+        this.storage.eventOptions = this.storage.eventOptions.map((o: EventOption) => {
+          if (o.name === option.name && o.parent === option.parent) {
+            return { ...o, ...attributes };
+          } else {
+            return { ...o };
+          }
+        });
+
+        return true;
+      },
+
       removeEventOption: (option) => () => {
         this.storage.eventOptions = this.storage.eventOptions.filter(
-          (o: EventOption) => JSON.stringify(o) !== JSON.stringify(option)
+          (o: EventOption) => o.name !== option.name && o.parent !== option.parent
         );
 
         return true;

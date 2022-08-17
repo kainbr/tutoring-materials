@@ -44,11 +44,7 @@
         @update:evaluation="updateAttributes({ evaluation: $event })"
         @update:feedbacks="updateAttributes({ feedbacks: $event })"
         @update:options="updateAttributes({ options: $event })"
-        @update:state="
-          !state
-            ? editor.commands.addTaskState($event)
-            : editor.commands.updateTaskState(state, $event)
-        "
+        @update:state="updateState"
       />
 
       <div v-if="!editor.isEditable && !!state" class="my-1 w-full">
@@ -139,7 +135,22 @@ export default defineComponent({
         : [];
     });
 
-    return { state, activeFeedbacks, calculateHexIcon };
+    const updateState = ($event) => {
+      !state.value
+        ? props.editor.commands.addTaskState($event)
+        : props.editor.commands.updateTaskState(state.value, $event);
+    };
+
+    props.editor.storage.document.eventBus().emit("task-created", {
+      parent: props.node.attrs.id,
+      label: {
+        message: "global.event.type-task-created",
+        hexIcon: calculateHexIcon(props.node.attrs.id),
+      },
+      data: props.node.attrs,
+    });
+
+    return { state, activeFeedbacks, calculateHexIcon, updateState };
   },
 });
 </script>

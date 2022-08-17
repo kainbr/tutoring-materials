@@ -63,6 +63,7 @@
       "type-single-choice": "Single-Choice"
     },
     "trigger": {
+      "builder-and": "and",
       "builder-if": "If",
       "builder-select-event": "Select event",
       "builder-select-feedback": "Select feedback",
@@ -71,9 +72,17 @@
   },
   "editor:footer:trigger-empty-list": "No feedbacks defined",
   "global": {
+    "condition": {
+      "single-choice": {
+        "answer-option-not-selected": "{index}. Option is not selected",
+        "answer-option-selected": "{index}. Option is selected",
+        "response-correct": "Response correct",
+        "response-incorrect": "Response incorrect"
+      }
+    },
     "event": {
+      "type-answer-changed": "Answer changed",
       "type-answer-submitted": "Answer submitted",
-      "type-change-answer": "Answer changed",
       "type-document-created": "Document created",
       "type-task-created": "Task created"
     },

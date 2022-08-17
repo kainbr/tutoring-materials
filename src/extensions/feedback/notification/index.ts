@@ -1,5 +1,7 @@
 import { Extension } from "@tiptap/core";
 import type { Feedback } from "@/extensions/feedback/types";
+import { calculateHexIcon } from "@/helpers/util";
+import { v4 as uuid } from "uuid";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -40,8 +42,14 @@ export const FeedbackNotification = Extension.create({
             },
           };
 
+          const uid = uuid();
           const feedback: Feedback = {
+            id: uid,
             type: this.name,
+            label: {
+              message: "global.feedback.type-feedback-notification",
+              hexIcon: calculateHexIcon(uid),
+            },
             parent: null,
             config: { ...defaults, ...attributes },
           };

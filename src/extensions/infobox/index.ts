@@ -27,7 +27,7 @@ export const Infobox = Node.create({
       color: {
         default: "blue",
       },
-      icon: {
+      hexIcon: {
         default: "error-warning-line",
       },
     };

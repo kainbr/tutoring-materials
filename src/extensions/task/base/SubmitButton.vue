@@ -35,6 +35,7 @@ import { evaluate } from "@/extensions/task/evaluate";
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
 import type { TaskEvaluation, TaskOptions, TaskState } from "@/extensions/task/base/types";
+import { calculateHexIcon } from "@/helpers/util";
 
 export default defineComponent({
   name: "SubmitButton",
@@ -111,14 +112,6 @@ export default defineComponent({
     },
   },
 
-  beforeCreate() {
-    this.editor.commands.addEventOption({
-      name: "answer-submitted-task-" + this.state.id,
-      label: { message: "global.event.type-answer-submitted", icon: this.state.id },
-      conditions: [],
-    });
-  },
-
   methods: {
     /**
      * Evaluate the response and determine the next state of the task
@@ -129,9 +122,16 @@ export default defineComponent({
       const response = await evaluate(this.type, this.evaluation, this.state);
 
       // Emit event
-      this.editor.storage.document.eventBus.emit("answer-submitted-task-" + this.state.id, {
-        ...this.state,
-        response,
+      this.editor.storage.document.eventBus().emit("answer-submitted", {
+        parent: this.state.id,
+        label: {
+          message: "global.event.type-answer-submitted",
+          hexIcon: calculateHexIcon(this.state.id),
+        },
+        data: {
+          ...this.state,
+          response,
+        },
       });
 
       // Set the next state depending on the result and the configuration of the task

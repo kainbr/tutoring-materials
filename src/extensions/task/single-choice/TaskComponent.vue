@@ -165,6 +165,13 @@ import { formatFeedbacks } from "@/extensions/task/single-choice/feedbacks";
 import { formatEvaluation, evaluationOptions } from "@/extensions/task/single-choice/evaluation";
 import OptionsDefaults from "@/helpers/tasks/OptionsDefaults.vue";
 import OptionsFormEnum from "@/helpers/tasks/OptionsFormEnum.vue";
+import { calculateHexIcon } from "@/helpers/util";
+import { onBeforeUnmount, onMounted, watch, watchEffect } from "vue";
+import type {
+  EventOption,
+  EventOptionCondition,
+  EventOptionConditionBoolean,
+} from "@/extensions/feedback/types";
 
 interface SCProps extends TaskProps {
   id: string;
@@ -277,14 +284,116 @@ const changeAnswerOptionValue = (option: SCOption) => {
         answer: newAnswer,
       });
 
-      props.editor.storage.document.eventBus.emit("change-answer", {
-        ...props.state,
-        answer: newAnswer,
-        oldAnswer: oldAnswer,
+      props.editor.storage.document.eventBus().emit("answer-changed", {
+        parent: props.id,
+        label: {
+          message: "global.event.type-answer-changed",
+          hexIcon: calculateHexIcon(props.id),
+        },
+        data: {
+          ...props.state,
+          answer: newAnswer,
+          oldAnswer: oldAnswer,
+        },
       });
     }
   }
 };
+
+const getEventOptionConditions = (content: SCOption[] | undefined): EventOptionCondition[] => {
+  return [
+    {
+      name: "response-correct",
+      variable: "response",
+      type: "Boolean" as const,
+      label: {
+        message: "global.condition.single-choice.response-correct",
+      },
+      editable: false,
+      default: true,
+    },
+    {
+      name: "response-incorrect",
+      variable: "response",
+      type: "Boolean" as const,
+      label: {
+        message: "global.condition.single-choice.response-incorrect",
+      },
+      editable: false,
+      default: false,
+    },
+    ...getAnswerOptionConditions(content),
+  ];
+};
+
+const getAnswerOptionConditions = (
+  content: SCOption[] | undefined
+): EventOptionConditionBoolean[] => {
+  return !!content && Array.isArray(content)
+    ? [
+        ...content.map((option, index) => {
+          return {
+            name: "answer-option-selected-" + option.id,
+            variable: "answer-option-" + option.id,
+            type: "Boolean" as const,
+            label: {
+              message: "global.condition.single-choice.answer-option-selected",
+              data: {
+                index: index + 1,
+              },
+            },
+            editable: false,
+            default: true,
+          };
+        }),
+        ...content.map((option, index) => {
+          return {
+            name: "answer-option-not-selected-" + option.id,
+            variable: "answer-option-" + option.id,
+            type: "Boolean" as const,
+            label: {
+              message: "global.condition.single-choice.answer-option-not-selected",
+              data: {
+                index: index + 1,
+              },
+            },
+            editable: false,
+            default: false,
+          };
+        }),
+      ]
+    : [];
+};
+
+const eventOption: EventOption = {
+  name: "answer-submitted",
+  parent: props.id,
+  label: {
+    message: "global.event.type-answer-submitted",
+    hexIcon: calculateHexIcon(props.id),
+  },
+  conditions: getEventOptionConditions(props.content),
+};
+
+onMounted(() => {
+  props.editor.commands.addEventOption(eventOption);
+});
+
+onBeforeUnmount(() => {
+  props.editor.commands.removeEventOption(eventOption);
+});
+
+watch(
+  [() => props.content, () => props.options, () => props.evaluation],
+  ([newContent, newOptions, newEvaluation]) => {
+    console.log("Watch in SC TaskComponent triggered");
+
+    props.editor.commands.updateEventOption(eventOption, {
+      conditions: getEventOptionConditions(newContent),
+    });
+  },
+  { deep: true }
+);
 
 defineExpose({
   updateContent,

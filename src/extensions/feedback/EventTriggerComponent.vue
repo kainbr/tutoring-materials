@@ -1,24 +1,11 @@
 <template>
   <div class="flex flex-row justify-between">
     <div class="flex flex-col grow">
-      <div class="flex flex-row items-center">
-        <span class="text-sm">
-          {{ $t("editor.trigger.builder-if") }}
-        </span>
+      <EventSelector :trigger="trigger" :editor="editor" />
 
-        <!-- Event selector -->
-        <EventSelector :trigger="trigger" :editor="editor" />
+      <ConditionSelector :trigger="trigger" :editor="editor" />
 
-        <!-- Condition selector -->
-        <ConditionSelector :trigger="trigger" :editor="editor" />
-      </div>
-
-      <div class="flex flex-row items-center">
-        <span class="text-sm py-1.5"> {{ $t("editor.trigger.builder-then") }} </span>
-
-        <!-- Feedback selector -->
-        <FeedbackSelector :trigger="trigger" :editor="editor" />
-      </div>
+      <FeedbackSelector :trigger="trigger" :editor="editor" />
     </div>
     <!-- Standard buttons -->
     <div class="flex gap-0.5 ml-3 h-fit">

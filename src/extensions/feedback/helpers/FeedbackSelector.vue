@@ -1,27 +1,26 @@
 <template>
-  <div class="flex flex-row w-full flex-wrap items-center">
-    <div v-for="(feedbackId, index) in trigger.feedbackIds" :key="feedbackId">
+  <div class="flex flex-row items-center">
+    <span class="text-sm py-0.5"> {{ $t("editor.trigger.builder-then") }} </span>
+
+    <div v-for="(id, index) in trigger.feedbacks" :key="id">
       <span
         class="cursor-default inline-flex flex-nowrap items-center m-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
-        @mouseenter="addActiveFeedback(feedbackId)"
-        @mouseleave="removeActiveFeedback(feedbackId)"
+        @mouseenter="
+          editor.commands.addActiveFeedback(feedbacks.find((feedback) => feedback.id === id))
+        "
+        @mouseleave="
+          editor.commands.removeActiveFeedback(feedbacks.find((feedback) => feedback.id === id))
+        "
       >
         <!-- eslint-disable vue/no-v-html -->
-        <span class="pr-1" v-html="calculateHexIcon(feedbackId)" />
-        <span>
-          {{
-            $t(
-              "global.feedback.type-" +
-                (feedbacks.find((feedback) => feedback.id === feedbackId)?.type || "missing-label")
-            )
-          }}
-        </span>
+        <LabelComponent :label="feedbacks.find((feedback) => feedback.id === id)?.label" />
+
         <button
           class="cursor-pointer flex-shrink-0 ml-0.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-green-700 hover:bg-green-200 hover:text-green-800 focus:outline-none focus:bg-green-800 focus:text-white"
           type="button"
           @click="
             editor.commands.updateEventTrigger(trigger, {
-              feedbackIds: trigger.feedbackIds.filter((s) => feedbackId !== s),
+              feedbacks: trigger.feedbacks.filter((s) => id !== s),
             })
           "
         >
@@ -29,17 +28,17 @@
           <IconClose class="h-3 w-3 fill-green-700" />
         </button>
       </span>
-      <span v-if="index < trigger.feedbackIds.length - 1">and </span>
+      <span v-if="index < trigger.feedbacks.length - 1">and </span>
     </div>
     <Combobox
-      :model-value="trigger.feedbackIds"
+      :model-value="trigger.feedbacks"
       multiple
       nullable
       @update:model-value="updateModelValue(trigger, $event)"
     >
       <ComboboxButton class="cursor-pointer">
         <span
-          v-if="trigger.feedbackIds.length === 0"
+          v-if="trigger.feedbacks.length === 0"
           class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
         >
           {{ $t("editor.trigger.builder-select-feedback") }}
@@ -74,16 +73,21 @@
               active ? 'bg-amber-100 text-amber-900' : 'text-gray-900',
               'flex flex-row w-full cursor-default select-none py-2',
             ]"
-            @mouseenter="addActiveFeedback(option)"
-            @mouseleave="removeActiveFeedback(option)"
-          >
-            <span class="px-2" v-html="calculateHexIcon(option)" />
-            <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-              $t(
-                "global.feedback.type-" +
-                  (feedbacks.find((feedback) => feedback.id === option)?.type || "missing-label")
+            @mouseenter="
+              editor.commands.addActiveFeedback(
+                feedbacks.find((feedback) => feedback.id === option)
               )
-            }}</span>
+            "
+            @mouseleave="
+              editor.commands.removeActiveFeedback(
+                feedbacks.find((feedback) => feedback.id === option)
+              )
+            "
+          >
+            <LabelComponent
+              :label="feedbacks.find((feedback) => feedback.id === option)?.label"
+              :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']"
+            />
           </li>
         </ComboboxOption>
         <li
@@ -113,11 +117,13 @@ import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
 import IconClose from "@/helpers/icons/IconClose.vue";
 import { calculateHexIcon } from "@/helpers/util";
+import LabelComponent from "@/helpers/LabelComponent.vue";
 
 export default defineComponent({
   name: "FeedbackSelector",
 
   components: {
+    LabelComponent,
     IconClose,
     Combobox,
     ComboboxButton,
@@ -170,23 +176,20 @@ export default defineComponent({
     calculateHexIcon(str: string | undefined) {
       return calculateHexIcon(str);
     },
-    addActiveFeedback(feedbackId) {
+    addActiveFeedback(feedback) {
+      console.log("addActiveFeedback", feedback);
       this.editor.commands.addActiveFeedback(
-        this.editor
-          .getAttributes("document")
-          .feedbacks.find((feedback) => feedback.id === feedbackId)
+        this.editor.getAttributes("document").feedbacks.find((feedback) => feedback.id === feedback)
       );
     },
-    removeActiveFeedback(feedbackId) {
+    removeActiveFeedback(feedback) {
       this.editor.commands.removeActiveFeedback(
-        this.editor
-          .getAttributes("document")
-          .feedbacks.find((feedback) => feedback.id === feedbackId)
+        this.editor.getAttributes("document").feedbacks.find((feedback) => feedback.id === feedback)
       );
     },
     updateModelValue(trigger, $event) {
       this.editor.commands.updateEventTrigger(trigger, {
-        feedbackIds: $event,
+        feedbacks: $event,
       });
     },
   },

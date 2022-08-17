@@ -60,7 +60,7 @@
                 editor.commands.addEventTrigger({
                   event: null,
                   conditions: [],
-                  feedbackIds: [],
+                  feedbacks: [],
                 })
             "
           >
