@@ -26,7 +26,7 @@ export default defineComponent({
       type: Object as PropType<JSONContent>,
       default() {
         return {
-          type: "tutoring-material",
+          type: "doc",
           content: [
             {
               type: "document",

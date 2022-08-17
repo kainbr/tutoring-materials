@@ -41,6 +41,7 @@ import EditorMenu from "@/helpers/EditorMenu.vue";
 
 // Editor imports
 import { Editor, EditorContent } from "@tiptap/vue-3";
+import { Document as BaseDocument } from "@tiptap/extension-document";
 import StarterKit from "@tiptap/starter-kit";
 import { Color } from "@tiptap/extension-color";
 import { Placeholder } from "@tiptap/extension-placeholder";
@@ -53,7 +54,6 @@ import { Underline } from "@tiptap/extension-underline";
 
 // Custom editor extensions
 import { Document } from "@/extensions/document";
-import { TutoringMaterial } from "@/extensions/tutoring-material";
 import { Indent } from "@/extensions/indent";
 import { Infobox } from "@/extensions/infobox";
 import { CustomImage } from "@/extensions/image";
@@ -83,7 +83,7 @@ export default defineComponent({
       type: Object as PropType<JSONContent>,
       default() {
         return {
-          type: "tutoring-material",
+          type: "doc",
           content: [
             {
               type: "document",
@@ -151,6 +151,14 @@ export default defineComponent({
         },
       },
       extensions: [
+        // Basic setup
+        BaseDocument.extend({
+          content: "document",
+        }),
+        Document.configure({
+          isEditor: props.isEditor,
+          taskLimit: props.taskLimit,
+        }),
         StarterKit.configure({
           document: false,
           dropcursor: {
@@ -184,11 +192,6 @@ export default defineComponent({
         FeedbackMark.configure({ showOutline: props.isEditor }),
         Task,
         SingleChoiceTask,
-        TutoringMaterial,
-        Document.configure({
-          isEditor: props.isEditor,
-          taskLimit: props.taskLimit,
-        }),
       ],
       content: props.content,
       autofocus: false,
@@ -232,7 +235,7 @@ export default defineComponent({
         if (!isEqual(newContent, editor.getJSON())) {
           if (!newContent) {
             newContent = {
-              type: "tutoring-material",
+              type: "doc",
               content: [
                 {
                   type: "document",

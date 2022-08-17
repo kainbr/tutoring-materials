@@ -80,8 +80,6 @@ import { defineComponent } from "vue";
 import TutoringMaterialPlayer from "@/TutoringMaterialPlayer.vue";
 import type { JSONContent } from "@tiptap/vue-3";
 import type { PropType } from "vue";
-import type { TaskState } from "@/extensions/task/base/types";
-import type { Feedback } from "@/extensions/feedback/types";
 import type { DocumentState } from "@/extensions/document/types";
 
 export default defineComponent({
@@ -96,7 +94,7 @@ export default defineComponent({
       type: Object as PropType<JSONContent>,
       default() {
         return {
-          type: "tutoring-material",
+          type: "doc",
           content: [
             {
               type: "document",
