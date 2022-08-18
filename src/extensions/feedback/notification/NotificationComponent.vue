@@ -35,6 +35,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
+
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
 import type { NotificationFeedback } from "@/extensions/feedback/notification/types";

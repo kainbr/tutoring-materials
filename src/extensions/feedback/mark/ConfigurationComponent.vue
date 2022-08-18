@@ -1,12 +1,21 @@
 <template>
   <feedback-configuration-component :editor="editor" :feedback="feedback">
-    <template #title> {{ $t("global.feedback.type-feedback-mark") }}</template>
     <template #default>
       <!-- Bold -->
       <MenuButton
         :active="!!feedback.config.bold"
-        :on-active-click="() => editor.commands.updateFeedback(feedback, { bold: undefined })"
-        :on-inactive-click="() => editor.commands.updateFeedback(feedback, { bold: {} })"
+        :on-active-click="
+          () =>
+            editor.commands.updateFeedback(feedback, {
+              config: { ...feedback.config, bold: undefined },
+            })
+        "
+        :on-inactive-click="
+          () =>
+            editor.commands.updateFeedback(feedback, {
+              config: { ...feedback.config, bold: {} },
+            })
+        "
       >
         <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
           <path d="M0 0h24v24H0z" fill="none" />
@@ -19,8 +28,18 @@
       <!-- Italic -->
       <MenuButton
         :active="!!feedback.config.italic"
-        :on-active-click="() => editor.commands.updateFeedback(feedback, { italic: undefined })"
-        :on-inactive-click="() => editor.commands.updateFeedback(feedback, { italic: {} })"
+        :on-active-click="
+          () =>
+            editor.commands.updateFeedback(feedback, {
+              config: { ...feedback.config, italic: undefined },
+            })
+        "
+        :on-inactive-click="
+          () =>
+            editor.commands.updateFeedback(feedback, {
+              config: { ...feedback.config, italic: {} },
+            })
+        "
         ><svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
           <path d="M0 0h24v24H0z" fill="none" />
           <path d="M15 20H7v-2h2.927l2.116-12H9V4h8v2h-2.927l-2.116 12H15z" />
@@ -30,8 +49,18 @@
       <!-- Underline -->
       <MenuButton
         :active="!!feedback.config.underline"
-        :on-active-click="() => editor.commands.updateFeedback(feedback, { underline: undefined })"
-        :on-inactive-click="() => editor.commands.updateFeedback(feedback, { underline: {} })"
+        :on-active-click="
+          () =>
+            editor.commands.updateFeedback(feedback, {
+              config: { ...feedback.config, underline: undefined },
+            })
+        "
+        :on-inactive-click="
+          () =>
+            editor.commands.updateFeedback(feedback, {
+              config: { ...feedback.config, underline: {} },
+            })
+        "
         ><svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
           <path d="M0 0h24v24H0z" fill="none" />
           <path d="M8 3v9a4 4 0 1 0 8 0V3h2v9a6 6 0 1 1-12 0V3h2zM4 20h16v2H4v-2z" />
@@ -41,8 +70,18 @@
       <!-- Highlight -->
       <MenuButton
         :active="!!feedback.config.highlight"
-        :on-active-click="() => editor.commands.updateFeedback(feedback, { highlight: undefined })"
-        :on-inactive-click="() => editor.commands.updateFeedback(feedback, { highlight: {} })"
+        :on-active-click="
+          () =>
+            editor.commands.updateFeedback(feedback, {
+              config: { ...feedback.config, highlight: undefined },
+            })
+        "
+        :on-inactive-click="
+          () =>
+            editor.commands.updateFeedback(feedback, {
+              config: { ...feedback.config, highlight: {} },
+            })
+        "
         ><svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
           <path d="M0 0h24v24H0z" fill="none" />
           <path
@@ -56,11 +95,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import type { PropType } from "vue";
-import FeedbackConfigurationComponent from "@/extensions/feedback/ConfigurationComponent.vue";
+import FeedbackConfigurationComponent from "@/extensions/feedback/FeedbackConfigurationComponent.vue";
 import MenuButton from "@/helpers/EditorMenuButton.vue";
+
 import type { Editor } from "@tiptap/vue-3";
 import type { MarkFeedback } from "@/extensions/feedback/mark/types";
+import type { PropType } from "vue";
 
 export default defineComponent({
   name: "FeedbackMarkConfigurationComponent",
@@ -75,14 +115,6 @@ export default defineComponent({
     editor: {
       type: Object as PropType<Editor>,
       required: true,
-    },
-  },
-
-  methods: {
-    convertKebabToPascalCase: (s: string) => {
-      return s.replace(/(^\w|-\w)/g, (text) => {
-        return text.replace(/-/, "").toUpperCase();
-      });
     },
   },
 });

@@ -1,6 +1,5 @@
 <template>
   <feedback-configuration-component :editor="editor" :feedback="feedback">
-    <template #title> {{ $t("global.feedback.type-feedback-notification") }}</template>
     <template #default>
       <button
         type="button"
@@ -49,7 +48,7 @@
                     <button
                       type="button"
                       class="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      @click="save"
+                      @click="updateContent"
                     >
                       {{ $t("editor.feedback.notification-modal-edit-save-button") }}
                     </button>
@@ -66,12 +65,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import FeedbackConfigurationComponent from "../ConfigurationComponent.vue";
 import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } from "@headlessui/vue";
+import FeedbackConfigurationComponent from "@/extensions/feedback/FeedbackConfigurationComponent.vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
-import type { PropType } from "vue";
+
 import type { Editor } from "@tiptap/vue-3";
 import type { NotificationFeedback } from "@/extensions/feedback/notification/types";
+import type { PropType } from "vue";
 
 export default defineComponent({
   name: "FeedbackNotificationConfigurationComponent",
@@ -106,9 +106,11 @@ export default defineComponent({
   },
 
   methods: {
-    save() {
+    updateContent() {
       this.editor.commands.updateFeedback(this.feedback, {
-        content: this.contentCandidate,
+        config: {
+          content: this.contentCandidate,
+        },
       });
 
       this.isOpen = false;

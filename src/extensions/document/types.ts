@@ -6,13 +6,31 @@ export interface DocumentState {
   feedbacks: Feedback[];
 }
 
-export type InteractionEvent = {
-  parent?: string;
-  label?: {
-    message: string;
-    data?: object;
-    hexIcon?: string;
-  };
-  conditions?: object;
+/**
+ * Events
+ */
+
+export type Event = {
+  type: string;
+  parent: string | null;
+  conditions: object;
   data: object;
+  label: Label;
+};
+
+export type EmittedEvent = {
+  type: string;
+  ts: number;
+  label: Label;
+  data: object;
+};
+
+/**
+ * Helper
+ */
+
+export type Label = {
+  message: string;
+  data?: object;
+  hexIcon?: string;
 };

@@ -64,8 +64,7 @@
                 <div class="flex-1 space-y-1">
                   <div class="flex items-center justify-between">
                     <h3 class="text-sm font-medium">
-                      <span v-if="event?.label.hexIcon" v-html="event.label.hexIcon" />
-                      {{ $t(event?.label.message, event?.label.data) }}
+                      <LabelComponent :label="event.label" />
                     </h3>
                     <p class="text-sm text-gray-500">
                       {{
@@ -124,15 +123,16 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import dayjs from "dayjs";
-import type { Event } from "@/extensions/feedback/types";
+import type { EmittedEvent } from "@/extensions/document/types";
 import type { PropType } from "vue";
+import LabelComponent from "@/helpers/LabelComponent.vue";
 
 export default defineComponent({
   name: "TutoringMaterialStatistics",
-
+  components: { LabelComponent },
   props: {
     events: {
-      type: Array as PropType<Event[]>,
+      type: Array as PropType<EmittedEvent[]>,
       required: true,
     },
   },
@@ -140,13 +140,13 @@ export default defineComponent({
   data() {
     return {
       selectedTab: "Events",
-      selectedEvent: null as Event | null,
+      selectedEvent: null as EmittedEvent | null,
     };
   },
 
   computed: {
-    filteredEventsPlayer(): Event[] {
-      return this.events.map((e: Event) => e);
+    filteredEventsPlayer(): EmittedEvent[] {
+      return this.events.map((e: EmittedEvent) => e);
     },
   },
 

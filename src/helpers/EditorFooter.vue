@@ -29,7 +29,7 @@
 
           <DisclosurePanel class="basis-full text-sm text-gray-500">
             <div class="flex flex-col w-full max-h-44 overflow-auto">
-              <FeedbackConfigurationListComponent
+              <FeedbackListComponent
                 :editor="editor"
                 :feedbacks="[
                   ...editor.getAttributes('document').feedbacks.filter((s) => s.parent === null),
@@ -53,17 +53,7 @@
             }}</span>
           </DisclosureButton>
 
-          <EditorMenuButton
-            class="mr-2"
-            :on-inactive-click="
-              () =>
-                editor.commands.addEventTrigger({
-                  event: null,
-                  conditions: [],
-                  feedbacks: [],
-                })
-            "
-          >
+          <EditorMenuButton class="mr-2" :on-inactive-click="addEventTrigger">
             <IconAdd />
           </EditorMenuButton>
 
@@ -87,10 +77,11 @@ import IconDropDown from "@/helpers/icons/IconDropDown.vue";
 import IconNotification from "@/helpers/icons/IconNotification.vue";
 import IconText from "@/helpers/icons/IconText.vue";
 import IconAdd from "@/helpers/icons/IconAdd.vue";
-import FeedbackConfigurationListComponent from "@/extensions/feedback/ConfigurationListComponent.vue";
+import FeedbackListComponent from "@/extensions/feedback/FeedbackListComponent.vue";
 import EventTriggerListComponent from "@/extensions/feedback/EventTriggerListComponent.vue";
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
+import { v4 as uuid } from "uuid";
 import type { Editor } from "@tiptap/vue-3";
 import type { PropType } from "vue";
 
@@ -102,7 +93,7 @@ export default defineComponent({
     IconDropDown,
     IconNotification,
     IconText,
-    FeedbackConfigurationListComponent,
+    FeedbackListComponent,
     EventTriggerListComponent,
     EditorMenuButton,
     Disclosure,
@@ -120,6 +111,17 @@ export default defineComponent({
   computed: {
     document() {
       return findChildren(this.editor.state.doc, (node) => node.type.name === "document")[0];
+    },
+  },
+
+  methods: {
+    addEventTrigger() {
+      this.editor.commands.addEventTrigger({
+        id: uuid(),
+        event: null,
+        conditions: [],
+        feedbacks: [],
+      });
     },
   },
 });

@@ -1,22 +1,22 @@
+// noinspection JSUnusedGlobalSymbols
+
 import { Extension } from "@tiptap/core";
-import type { Feedback } from "@/extensions/feedback/types";
 import { calculateHexIcon } from "@/helpers/util";
 import { v4 as uuid } from "uuid";
+
+import type { StoredFeedback } from "@/extensions/feedback/types";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     feedbackNotification: {
       /**
-       *
+       * Add a default notification feedback to permanent feedback store.
        */
       addFeedbackNotification: (attributes: object) => ReturnType;
     };
   }
 }
 
-// This notification is only used to add commands to the editor instance.
-// See feedbacks/notification/NotificationComponent.vue and
-// feedbacks/notification/NotificationContainerComponent.vue for more information
 export const FeedbackNotification = Extension.create({
   name: "feedback-notification",
 
@@ -34,7 +34,7 @@ export const FeedbackNotification = Extension.create({
                   content: [
                     {
                       type: "text",
-                      text: "Lorem ipsum",
+                      text: "Hello world!",
                     },
                   ],
                 },
@@ -43,7 +43,7 @@ export const FeedbackNotification = Extension.create({
           };
 
           const uid = uuid();
-          const feedback: Feedback = {
+          const feedback: StoredFeedback = {
             id: uid,
             type: this.name,
             label: {
@@ -53,7 +53,9 @@ export const FeedbackNotification = Extension.create({
             parent: null,
             config: { ...defaults, ...attributes },
           };
+
           commands.addFeedback(feedback);
+
           return true;
         },
     };

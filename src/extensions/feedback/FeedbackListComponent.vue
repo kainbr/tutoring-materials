@@ -1,8 +1,11 @@
 <template>
   <div class="w-full">
-    <span v-if="feedbacks.length === 0" class="text-sm ml-2.5">{{
-      $t("editor.footer.feedback-empty-list")
-    }}</span>
+    <!-- Empty list -->
+    <span v-if="feedbacks.length === 0" class="text-sm ml-2.5">
+      {{ $t("editor.footer.feedback-empty-list") }}
+    </span>
+
+    <!-- Loop over all list entries -->
     <ul v-else class="divide-y divide-gray-200" role="list">
       <li
         v-for="feedback in feedbacks"
@@ -24,14 +27,15 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import FeedbackMark from "./mark/ConfigurationComponent.vue";
-import FeedbackNotification from "./notification/ConfigurationComponent.vue";
+import FeedbackMark from "@/extensions/feedback/mark/ConfigurationComponent.vue";
+import FeedbackNotification from "@/extensions/feedback/notification/ConfigurationComponent.vue";
+
 import type { Editor } from "@tiptap/vue-3";
 import type { PropType } from "vue";
-import type { Feedback } from "@/extensions/feedback/types";
+import type { StoredFeedback } from "@/extensions/feedback/types";
 
 export default defineComponent({
-  name: "FeedbackConfigurationComponent",
+  name: "FeedbackListComponent",
 
   components: {
     "feedback-mark": FeedbackMark,
@@ -44,7 +48,7 @@ export default defineComponent({
       required: true,
     },
     feedbacks: {
-      type: Array as PropType<Feedback[]>,
+      type: Array as PropType<StoredFeedback[]>,
       required: true,
     },
   },

@@ -1,7 +1,10 @@
+// noinspection JSUnusedGlobalSymbols
+
 import { findChildren, Mark, mergeAttributes } from "@tiptap/core";
 import { v4 as uuid } from "uuid";
 import type { Feedback } from "@/extensions/feedback/types";
 import type { MarkFeedback } from "@/extensions/feedback/mark/types";
+import { calculateHexIcon } from "@/helpers/util";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -162,9 +165,14 @@ export const FeedbackMark = Mark.create({
       setFeedbackMark:
         (attributes) =>
         ({ commands }) => {
+          const uid = uuid();
           const feedback = {
-            id: uuid(),
+            id: uid,
             type: this.name,
+            label: {
+              message: "global.feedback.type-feedback-mark",
+              hexIcon: calculateHexIcon(uid),
+            },
             parent: null,
             config: { ...attributes, ref: uuid() },
           };

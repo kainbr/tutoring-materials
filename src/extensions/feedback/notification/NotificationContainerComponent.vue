@@ -6,9 +6,9 @@
   >
     <div class="w-full flex flex-col items-center space-y-4 sm:items-end">
       <notification-component
-        v-for="notificationFeedback in notificationFeedbacks"
-        :key="notificationFeedback"
-        :feedback="notificationFeedback"
+        v-for="activeNotificationFeedback in activeNotificationFeedbacks"
+        :key="activeNotificationFeedback"
+        :feedback="activeNotificationFeedback"
         :editor="editor"
       ></notification-component>
     </div>
@@ -18,6 +18,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import NotificationComponent from "@/extensions/feedback/notification/NotificationComponent.vue";
+
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
 import type { Feedback } from "@/extensions/feedback/types";
@@ -35,16 +36,12 @@ export default defineComponent({
   },
 
   computed: {
-    notificationFeedbacks() {
-      if (!!this.editor?.storage?.feedback?.activeFeedbacks) {
-        return (
-          this.editor.storage.feedback.activeFeedbacks.filter(
-            (s: Feedback) => s.type === "feedback-notification"
-          ) || []
-        );
-      } else {
-        return [];
-      }
+    activeNotificationFeedbacks() {
+      return (
+        this.editor.storage.feedback?.activeFeedbacks.filter(
+          (s: Feedback) => s.type === "feedback-notification"
+        ) || []
+      );
     },
   },
 });

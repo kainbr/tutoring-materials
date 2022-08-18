@@ -1,22 +1,23 @@
-export type Label = {
-  message: string;
-  data?: object;
-  hexIcon?: string;
-};
+import type { Label } from "@/extensions/document/types";
+
+/**
+ * Feedback
+ */
 
 export interface Feedback {
-  id?: string;
-  label?: Label;
   type: string;
   parent: string | null;
   config: object;
 }
 
-export type Event = {
-  type: string;
-  ts: number;
-  data: object;
-};
+export interface StoredFeedback extends Feedback {
+  id: string;
+  label: Label;
+}
+
+/**
+ * Triggers
+ */
 
 export type EventTrigger = {
   id: string;

@@ -67,7 +67,7 @@ import { Task } from "@/extensions/task";
 import { FeedbackExtension } from "@/extensions/feedback";
 import type { PropType } from "vue";
 import type { JSONContent } from "@tiptap/vue-3";
-import type { DocumentState, InteractionEvent } from "@/extensions/document/types";
+import type { DocumentState, EmittedEvent, Event } from "@/extensions/document/types";
 import { isEqual } from "lodash-es";
 
 export default defineComponent({
@@ -157,7 +157,6 @@ export default defineComponent({
         }),
         Document.configure({
           isEditor: props.isEditor,
-          taskLimit: props.taskLimit,
         }),
         StarterKit.configure({
           document: false,
@@ -216,7 +215,7 @@ export default defineComponent({
     });
 
     // Register event bus
-    editor.storage.document.eventBus().on("*", (type: string, e: InteractionEvent) => {
+    editor.storage.document.eventBus().on("*", (type: string, e: Event) => {
       context.emit("event", {
         ts: Date.now(),
         type: type,
@@ -226,7 +225,7 @@ export default defineComponent({
           hexIcon: e.label?.hexIcon,
         },
         data: e.data,
-      });
+      } as EmittedEvent);
     });
 
     watch(

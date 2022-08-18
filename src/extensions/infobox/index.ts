@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 import { mergeAttributes, Node } from "@tiptap/core";
 import { VueNodeViewRenderer } from "@tiptap/vue-3";
 import InfoboxComponent from "./InfoboxComponent.vue";
@@ -27,7 +29,7 @@ export const Infobox = Node.create({
       color: {
         default: "blue",
       },
-      hexIcon: {
+      icon: {
         default: "error-warning-line",
       },
     };
