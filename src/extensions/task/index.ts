@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey } from "prosemirror-state";
 import { v4 as uuid } from "uuid";

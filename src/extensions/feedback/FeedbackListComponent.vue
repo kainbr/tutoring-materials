@@ -7,13 +7,7 @@
 
     <!-- Loop over all list entries -->
     <ul v-else class="divide-y divide-gray-200" role="list">
-      <li
-        v-for="feedback in feedbacks"
-        :key="feedback.id"
-        class="py-1"
-        @mouseenter="editor.commands.addActiveFeedback(feedback)"
-        @mouseleave="editor.commands.removeActiveFeedback(feedback)"
-      >
+      <li v-for="feedback in feedbacks" :key="feedback.id" class="py-1">
         <component
           :is="feedback.type"
           :key="feedback.config"

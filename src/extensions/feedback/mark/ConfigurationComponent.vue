@@ -3,6 +3,7 @@
     <template #default>
       <!-- Bold -->
       <MenuButton
+        v-tippy="$t('editor.menu.feedback-typography-bold-tooltip')"
         :active="!!feedback.config.bold"
         :on-active-click="
           () =>
@@ -27,6 +28,7 @@
 
       <!-- Italic -->
       <MenuButton
+        v-tippy="$t('editor.menu.feedback-typography-italic-tooltip')"
         :active="!!feedback.config.italic"
         :on-active-click="
           () =>
@@ -48,6 +50,7 @@
 
       <!-- Underline -->
       <MenuButton
+        v-tippy="$t('editor.menu.feedback-typography-underline-tooltip')"
         :active="!!feedback.config.underline"
         :on-active-click="
           () =>
@@ -69,6 +72,7 @@
 
       <!-- Highlight -->
       <MenuButton
+        v-tippy="$t('editor.menu.feedback-typography-highlight-tooltip')"
         :active="!!feedback.config.highlight"
         :on-active-click="
           () =>

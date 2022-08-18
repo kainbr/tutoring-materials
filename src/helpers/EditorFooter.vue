@@ -13,12 +13,16 @@
           </DisclosureButton>
 
           <!-- Notification -->
-          <EditorMenuButton :on-inactive-click="() => editor.commands.addFeedbackNotification({})">
+          <EditorMenuButton
+            v-tippy="$t('editor.menu.feedback-notification-add-tooltip')"
+            :on-inactive-click="() => editor.commands.addFeedbackNotification({})"
+          >
             <IconNotification />
           </EditorMenuButton>
 
           <!-- Mark -->
           <EditorMenuButton
+            v-tippy="$t('editor.menu.feedback-typography-toggle-tooltip')"
             class="mr-2"
             :active="editor.isActive('feedback-mark')"
             :on-active-click="() => editor.chain().focus().unsetFeedbackMark().run()"
@@ -72,7 +76,6 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { findChildren } from "@tiptap/core";
 import IconDropDown from "@/helpers/icons/IconDropDown.vue";
 import IconNotification from "@/helpers/icons/IconNotification.vue";
 import IconText from "@/helpers/icons/IconText.vue";
@@ -108,21 +111,17 @@ export default defineComponent({
     },
   },
 
-  computed: {
-    document() {
-      return findChildren(this.editor.state.doc, (node) => node.type.name === "document")[0];
-    },
-  },
-
-  methods: {
-    addEventTrigger() {
-      this.editor.commands.addEventTrigger({
+  setup(props) {
+    const addEventTrigger = () => {
+      props.editor.commands.addEventTrigger({
         id: uuid(),
         event: null,
         conditions: [],
         feedbacks: [],
       });
-    },
+    };
+
+    return { addEventTrigger };
   },
 });
 </script>

@@ -107,6 +107,8 @@ export default defineComponent({
 
   methods: {
     updateContent() {
+      this.editor.commands.removeActiveFeedback(this.feedback);
+
       this.editor.commands.updateFeedback(this.feedback, {
         config: {
           content: this.contentCandidate,

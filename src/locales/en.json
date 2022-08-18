@@ -1,17 +1,17 @@
 {
   "editor": {
     "feedback": {
-      "notification-modal-description": "Pop-up Notification",
+      "notification-modal-description": "Notification",
       "notification-modal-edit-button": "Edit content",
       "notification-modal-edit-save-button": "Save",
-      "notification-modal-edit-title": "Edit Pop-up Notification Content",
+      "notification-modal-edit-title": "Edit Notification",
       "text-style-description": "Change Text Style"
     },
     "footer": {
       "feedback-empty-list": "No feedbacks available",
       "headline-feedback": "Feedbacks",
       "headline-trigger": "Event Trigger",
-      "trigger-empty-list": "No event trigger available"
+      "trigger-empty-list": "No feedbacks defined"
     },
     "infobox": {
       "color-description": "Color",
@@ -27,6 +27,15 @@
       "icon-label-rainbow-line": "Rainbow"
     },
     "menu": {
+      "feedback-copy-tooltip": "Copy feedback",
+      "feedback-notification-add-tooltip": "Add notification",
+      "feedback-remove-tooltip": "Remove feedback",
+      "feedback-toggle-tooltip": "Toggle feedback",
+      "feedback-typography-bold-tooltip": "Bold",
+      "feedback-typography-highlight-tooltip": "Highlight",
+      "feedback-typography-italic-tooltip": "Italic",
+      "feedback-typography-toggle-tooltip": "Change typography",
+      "feedback-typography-underline-tooltip": "Underline",
       "file-upload-headline": "Upload Task File",
       "file-upload-supported-formats": "Supported file formats: JSON documents",
       "image-alt-description": "Alternative Text",
@@ -70,7 +79,6 @@
       "builder-then": "then"
     }
   },
-  "editor:footer:trigger-empty-list": "No feedbacks defined",
   "global": {
     "condition": {
       "single-choice": {
@@ -88,7 +96,7 @@
     },
     "feedback": {
       "type-feedback-mark": "Change Text Style",
-      "type-feedback-notification": "Show Pop-up Notification"
+      "type-feedback-notification": "Show Notification"
     }
   },
   "index": {

@@ -1,20 +1,19 @@
+// noinspection JSUnusedGlobalSymbols
+
 import { createI18n } from "vue-i18n";
-import VueTippy from "vue-tippy";
+import { directive } from "vue-tippy";
 import TutoringMaterial from "@/TutoringMaterial.vue";
 import TutoringMaterialEditor from "@/TutoringMaterialEditor.vue";
 import TutoringMaterialPlayer from "@/TutoringMaterialPlayer.vue";
 import TutoringMaterialPreview from "@/TutoringMaterialPreview.vue";
 import TutoringMaterialStatistics from "@/TutoringMaterialStatistics.vue";
-// Todo: Fix import error of locales files.
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import de from "@/locales/de.json";
-// Todo: Fix import error of locales files
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import en from "@/locales/en.json";
+
+import "tippy.js/dist/tippy.css";
 import "tippy.js/themes/light-border.css";
 import "./index.css";
+
 import type { App } from "vue";
 
 export default {
@@ -32,7 +31,7 @@ export default {
       })
     );
 
-    app.use(VueTippy);
+    app.directive("tippy", directive);
 
     app.component("TutoringMaterial", TutoringMaterial);
     app.component("TutoringMaterialEditor", TutoringMaterialEditor);

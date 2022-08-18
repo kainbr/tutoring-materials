@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 import { BaseTask } from "@/extensions/task/base";
 
 declare module "@tiptap/core" {
