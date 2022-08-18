@@ -16,11 +16,17 @@
         draggable="true"
       >
         <div class="flex flex-row grow items-center gap-4">
+          <!-- eslint-disable vue/no-v-html -->
           <span class="pl-2 pr-3" v-html="calculateHexIcon(node.attrs.id)" />
           <div class="flex w-full justify-center">
             <span>{{ $t("editor.task.type-" + node.attrs.type.substring(5)) }}</span>
           </div>
-          <IconClose @click="deleteNode()"></IconClose>
+          <IconClose
+            @click="
+              deleteNode();
+              editor.commands.removeTaskState(state);
+            "
+          ></IconClose>
         </div>
       </div>
 
@@ -74,7 +80,7 @@ import type { Ref } from "vue";
 import type { Feedback } from "@/extensions/feedback/types";
 import type { NodeViewProps } from "@tiptap/core";
 import type { PropType } from "vue";
-import type { TaskState } from "@/extensions/task/base/types";
+import type { TaskState } from "@/extensions/task/types";
 
 export default defineComponent({
   components: {
@@ -140,15 +146,6 @@ export default defineComponent({
         ? props.editor.commands.addTaskState($event)
         : props.editor.commands.updateTaskState(state.value, $event);
     };
-
-    props.editor.storage.document.eventBus().emit("task-created", {
-      parent: props.node.attrs.id,
-      label: {
-        message: "global.event.type-task-created",
-        hexIcon: calculateHexIcon(props.node.attrs.id),
-      },
-      data: props.node.attrs,
-    });
 
     return { state, activeFeedbacks, calculateHexIcon, updateState };
   },

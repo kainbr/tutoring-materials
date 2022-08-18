@@ -1,7 +1,8 @@
 import { onMounted, watch } from "vue";
-import type { formatFunction, TaskEmits, TaskProps, TaskState } from "@/extensions/task/base/types";
-import type { TaskOptions } from "@/extensions/task/base/types";
+import type { formatFunction, TaskEmits, TaskProps, TaskState } from "@/extensions/task/types";
+import type { TaskOptions } from "@/extensions/task/types";
 import { isEqual } from "lodash-es";
+import { calculateHexIcon } from "@/helpers/util";
 
 export const defaultTaskOptions: TaskOptions = {
   allowEmptyAnswerSubmission: false,
@@ -92,10 +93,12 @@ export function useTask<P extends TaskProps, A extends TaskEmits, C, E, F, O, S>
   updateOptions: (newOptions: O) => void;
   updateState: (newState: S) => void;
 } {
+  console.log("useTask called");
+
   // Prevent that formatting is performed twice after the onMounted hook
   let justInitialized = true;
 
-  // Format content on initial laod
+  // Format content on initial load
   onMounted(() => {
     formatTask<C, E, F, O, S, A>(
       {
@@ -135,6 +138,24 @@ export function useTask<P extends TaskProps, A extends TaskEmits, C, E, F, O, S>
       [newContent, newEvaluation, newFeedbacks, newOptions, newState, newStateStore],
       [oldContent, oldEvaluation, oldFeedbacks, oldOptions, oldState, oldStateStore]
     ) => {
+      if (justInitialized) {
+        props.editor.storage.document.eventBus().emit("task-created", {
+          parent: props.id,
+          label: {
+            message: "global.event.type-task-created",
+            hexIcon: calculateHexIcon(props.id),
+          },
+          data: {
+            id: props.id,
+            content: props.content,
+            evaluation: props.evaluation,
+            feedbacks: props.feedbacks,
+            options: props.options,
+            state: props.state,
+          },
+        });
+      }
+
       if (
         !justInitialized &&
         (!isEqual(newContent, oldContent) ||

@@ -30,13 +30,9 @@ declare module "@tiptap/core" {
 export const Document = Node.create<{}, DocumentStorage>({
   name: "document",
 
-  priority: 1000,
-
-  defining: true,
-
   group: "block",
 
-  content: "block*",
+  content: "block+",
 
   addStorage() {
     return {
@@ -80,9 +76,7 @@ export const Document = Node.create<{}, DocumentStorage>({
             type: "application/json;charset=utf-8",
           }
         );
-
         saveAs(blob, "export.json");
-
         return true;
       },
 
@@ -92,7 +86,6 @@ export const Document = Node.create<{}, DocumentStorage>({
         }
 
         const reader = new FileReader();
-
         reader.onload = (e) => {
           if (e.target?.result) {
             const payload = JSON.parse(String(e.target.result));
@@ -102,9 +95,7 @@ export const Document = Node.create<{}, DocumentStorage>({
             );
           }
         };
-
         reader.readAsText(file);
-
         return true;
       },
     };

@@ -110,7 +110,7 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
           (trigger: EventTrigger) => trigger.event === type && trigger.parent === event.parent
         );
 
-        console.log("eventTriggerWithType", eventTriggerWithType);
+        // console.log("eventTriggerWithType", eventTriggerWithType);
 
         // For each event trigger in the filtered list, check if the conditions are fulfilled and if true
         // add them to the state store of active feedbacks.

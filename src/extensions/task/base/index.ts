@@ -7,7 +7,7 @@ export const BaseTask = Node.create({
 
   group: "block",
 
-  content: "(paragraph|list|image|heading)*",
+  content: "(paragraph|list|image|heading)+",
 
   draggable: true,
 

@@ -27,6 +27,9 @@ export const SingleChoiceTask = BaseTask.extend({
               },
             ],
           });
+
+          commands.focus();
+
           return true;
         },
     };

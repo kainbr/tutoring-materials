@@ -149,7 +149,7 @@ import { v4 as uuid } from "uuid";
 
 // Types
 import type { Editor, JSONContent } from "@tiptap/vue-3";
-import type { TaskEmits, TaskProps } from "@/extensions/task/base/types";
+import type { TaskEmits, TaskProps } from "@/extensions/task/types";
 import type {
   SCOption,
   SCEvaluation,
@@ -166,7 +166,7 @@ import { formatEvaluation, evaluationOptions } from "@/extensions/task/single-ch
 import OptionsDefaults from "@/helpers/tasks/OptionsDefaults.vue";
 import OptionsFormEnum from "@/helpers/tasks/OptionsFormEnum.vue";
 import { calculateHexIcon } from "@/helpers/util";
-import { onBeforeUnmount, onMounted, watch, watchEffect } from "vue";
+import { onBeforeUnmount, onMounted, watch } from "vue";
 import type {
   EventOption,
   EventOptionCondition,
@@ -380,13 +380,13 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  props.editor.commands.removeEventOption(eventOption);
+  // props.editor.commands.removeEventOption(eventOption);
 });
 
 watch(
   [() => props.content, () => props.options, () => props.evaluation],
-  ([newContent, newOptions, newEvaluation]) => {
-    console.log("Watch in SC TaskComponent triggered");
+  ([newContent]) => {
+    // console.log("Watch in SC TaskComponent triggered");
 
     props.editor.commands.updateEventOption(eventOption, {
       conditions: getEventOptionConditions(newContent),

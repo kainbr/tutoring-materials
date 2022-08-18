@@ -3,10 +3,10 @@ import type {
   TaskEvaluationOption,
   TaskOptions,
   TaskState,
-} from "@/extensions/task/base/types";
+} from "@/extensions/task/types";
 import type { Feedback } from "@/extensions/feedback/types";
 import type { JSONContent } from "@tiptap/vue-3";
-import type { formatFunction } from "@/extensions/task/base/types";
+import type { formatFunction } from "@/extensions/task/types";
 
 // Content
 export interface SCOption {

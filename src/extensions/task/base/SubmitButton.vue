@@ -34,7 +34,7 @@ import { evaluate } from "@/extensions/task/evaluate";
 
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
-import type { TaskEvaluation, TaskOptions, TaskState } from "@/extensions/task/base/types";
+import type { TaskEvaluation, TaskOptions, TaskState } from "@/extensions/task/types";
 import { calculateHexIcon } from "@/helpers/util";
 
 export default defineComponent({

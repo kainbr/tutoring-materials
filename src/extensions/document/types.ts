@@ -1,5 +1,6 @@
-import type { TaskState } from "@/extensions/task/base/types";
+import type { TaskState } from "@/extensions/task/types";
 import type { Feedback } from "@/extensions/feedback/types";
+import type { NamedValue } from "vue-i18n";
 
 export interface DocumentState {
   tasks: TaskState[];
@@ -31,6 +32,6 @@ export type EmittedEvent = {
 
 export type Label = {
   message: string;
-  data?: object;
+  data?: NamedValue;
   hexIcon?: string;
 };
