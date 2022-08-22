@@ -8,7 +8,6 @@ export interface Feedback {
   type: string;
   parent: string | null;
   config: object;
-  ref?: string;
 }
 
 export interface StoredFeedback extends Feedback {

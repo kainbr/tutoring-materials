@@ -14,7 +14,9 @@ declare module "@tiptap/core" {
 }
 
 export const SingleChoiceTask = BaseTask.extend({
-  name: "task-single-choice",
+  addAttributes() {
+    return { ...this.parent?.(), type: "single-choice" };
+  },
 
   addCommands() {
     return {
@@ -28,6 +30,9 @@ export const SingleChoiceTask = BaseTask.extend({
                 type: "paragraph",
               },
             ],
+            attrs: {
+              type: "single-choice",
+            },
           });
 
           commands.focus();

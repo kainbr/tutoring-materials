@@ -1,8 +1,15 @@
 import { onMounted, watch } from "vue";
-import type { formatFunction, TaskEmits, TaskProps, TaskState } from "@/extensions/task/types";
+import type {
+  formatFunction,
+  TaskContent,
+  TaskEmits,
+  TaskEvaluation,
+  TaskProps,
+  TaskState,
+} from "@/extensions/task/types";
 import type { TaskOptions } from "@/extensions/task/types";
 import { isEqual } from "lodash-es";
-import { calculateHexIcon } from "@/helpers/util";
+import type { StoredFeedback } from "@/extensions/feedback/types";
 
 export const defaultTaskOptions: TaskOptions = {
   allowEmptyAnswerSubmission: false,
@@ -28,57 +35,52 @@ export function getDefaultTaskState(id: string): TaskState {
   };
 }
 
-interface dataInterface<C, E, F, O, S> {
+interface propsInterface<C, E, F, O, S> {
   id: string;
-  newContent: C | null;
-  newEvaluation: E | null;
-  newFeedbacks: F | null;
-  newOptions: O | null;
-  newState: S | null;
-  oldContent: C | null;
-  oldEvaluation: E | null;
-  oldFeedbacks: F | null;
-  oldOptions: O | null;
-  oldState: S | null;
+  newContent?: C;
+  newEvaluation?: E;
+  newFeedbacks?: F;
+  newOptions?: O;
+  newState?: S;
+  oldContent?: C;
+  oldEvaluation?: E;
+  oldFeedbacks?: F;
+  oldOptions?: O;
+  oldState?: S;
 }
 
 export function formatTask<C, E, F, O, S, A extends TaskEmits>(
-  data: dataInterface<C, E, F, O, S>,
+  data: propsInterface<C, E, F, O, S>,
   formatOptions: formatFunction<C, E, F, O, S, O>,
   formatContent: formatFunction<C, E, F, O, S, C>,
   formatTaskState: formatFunction<C, E, F, O, S, S>,
   formatEvaluation: formatFunction<C, E, F, O, S, E>,
   formatFeedbacks: formatFunction<C, E, F, O, S, F>,
-  currentStateStore: S,
   emit: A
 ): void {
   data.newOptions = formatOptions(data);
-  if (!isEqual(data.newOptions, data.oldOptions)) {
-    emit("update:options", data.newOptions);
-  }
-
   data.newContent = formatContent(data);
-  if (!isEqual(data.newContent, data.oldContent)) {
-    emit("update:content", data.newContent);
-  }
-
   data.newEvaluation = formatEvaluation(data);
-  if (!isEqual(data.newEvaluation, data.oldEvaluation)) {
-    emit("update:evaluation", data.newEvaluation);
-  }
-
   data.newFeedbacks = formatFeedbacks(data);
-  if (!isEqual(data.newFeedbacks, data.oldFeedbacks)) {
-    emit("update:feedbacks", data.newFeedbacks);
-  }
-
   data.newState = formatTaskState(data);
-  if (!isEqual(data.newState, data.oldState) && !isEqual(data.newState, currentStateStore)) {
-    emit("update:state", data.newState);
-  }
+  emit("update", {
+    content: data.newContent,
+    evaluation: data.newEvaluation,
+    feedbacks: data.newFeedbacks,
+    options: data.newOptions,
+    state: data.newState,
+  });
 }
 
-export function useTask<P extends TaskProps, A extends TaskEmits, C, E, F, O, S>(
+export function useTask<
+  P extends TaskProps,
+  A extends TaskEmits,
+  C extends TaskContent,
+  E extends TaskEvaluation,
+  F extends StoredFeedback[],
+  O extends TaskOptions,
+  S extends TaskState
+>(
   props: P,
   emit: A,
   formatOptions: formatFunction<C, E, F, O, S, O>,
@@ -93,33 +95,59 @@ export function useTask<P extends TaskProps, A extends TaskEmits, C, E, F, O, S>
   updateOptions: (newOptions: O) => void;
   updateState: (newState: S) => void;
 } {
-  // Prevent that formatting is performed twice after the onMounted hook
-  let justInitialized = true;
+  const data = {
+    id: props.id,
+    newContent: props.content,
+    newEvaluation: props.evaluation,
+    newFeedbacks: props.feedbacks,
+    newOptions: props.options,
+    newState: props.state,
+    oldContent: props.content,
+    oldEvaluation: props.evaluation,
+    oldFeedbacks: props.feedbacks,
+    oldOptions: props.options,
+    oldState: props.state,
+  };
 
-  // Format content on initial load
+  const createFeedback = (feedback: StoredFeedback) => {
+    if (!!props.feedbacks && Array.isArray(props.feedbacks)) {
+      updateFeedbacks([...props.feedbacks, feedback]);
+    } else {
+      updateFeedbacks([feedback]);
+    }
+  };
+
+  const updateFeedback = (feedback: StoredFeedback, attributes: Partial<StoredFeedback>) => {
+    if (!!props.feedbacks) {
+      updateFeedbacks(
+        props.feedbacks.map((f: StoredFeedback) =>
+          f.id === feedback.id ? { ...f, ...attributes } : f
+        )
+      );
+    }
+  };
+
+  const removeFeedback = (feedback: StoredFeedback) => {
+    if (!!props.feedbacks) {
+      updateFeedbacks(props.feedbacks.filter((f: StoredFeedback) => f.id !== feedback.id));
+    }
+  };
+
   onMounted(() => {
-    console.log("onMounted");
-
     formatTask<C, E, F, O, S, A>(
-      {
-        id: props.id,
-        newContent: <C | null>props.content,
-        newEvaluation: <E | null>props.evaluation,
-        newFeedbacks: <F | null>props.feedbacks,
-        newOptions: <O | null>props.options,
-        newState: <S | null>props.state,
-        oldContent: null,
-        oldEvaluation: null,
-        oldFeedbacks: null,
-        oldOptions: null,
-        oldState: null,
+      <propsInterface<C, E, F, O, S>>{
+        ...data,
+        oldContent: undefined,
+        oldEvaluation: undefined,
+        oldFeedbacks: undefined,
+        oldOptions: undefined,
+        oldState: undefined,
       },
       formatOptions,
       formatContent,
       formatTaskState,
       formatEvaluation,
       formatFeedbacks,
-      props.editor.storage.task.taskStates.find((ts: TaskState) => ts.id === props.id),
       emit
     );
   });
@@ -127,60 +155,25 @@ export function useTask<P extends TaskProps, A extends TaskEmits, C, E, F, O, S>
   // Watch for external changes
   watch(
     [
-      () => <C | null>props.content,
-      () => <E | null>props.evaluation,
-      () => <F | null>props.feedbacks,
-      () => <O | null>props.options,
-      () => <S | null>props.state,
-      () => props.editor.storage.task.taskStates.find((ts: TaskState) => ts.id === props.id),
+      () => <C | undefined>props.content,
+      () => <E | undefined>props.evaluation,
+      () => <F | undefined>props.feedbacks,
+      () => <O | undefined>props.options,
+      () => <S | undefined>props.state,
     ],
     (
-      [newContent, newEvaluation, newFeedbacks, newOptions, newState, newStateStore],
-      [oldContent, oldEvaluation, oldFeedbacks, oldOptions, oldState, oldStateStore]
+      [newContent, newEvaluation, newFeedbacks, newOptions, newState],
+      [oldContent, oldEvaluation, oldFeedbacks, oldOptions, oldState]
     ) => {
-      // console.log("watch formatTask", props.feedbacks, newFeedbacks, oldFeedbacks);
-
-      if (justInitialized) {
-        props.editor.storage.document.eventBus().emit("task-created", {
-          parent: props.id,
-          label: {
-            message: "global.event.type-task-created",
-            hexIcon: calculateHexIcon(props.id),
-          },
-          data: {
-            id: props.id,
-            content: props.content,
-            evaluation: props.evaluation,
-            feedbacks: props.feedbacks,
-            options: props.options,
-            state: props.state,
-          },
-        });
-      }
-
-      console.log(
-        "watch formatTask",
-        !justInitialized,
-        !isEqual(newContent, oldContent),
-        !isEqual(newEvaluation, oldEvaluation),
-        "!",
-        !isEqual(newFeedbacks, oldFeedbacks),
-        !isEqual(newOptions, oldOptions),
-        !isEqual(newState, oldState),
-        !isEqual(newStateStore, oldStateStore)
-      );
-
       if (
-        // !justInitialized &&
         !isEqual(newContent, oldContent) ||
         !isEqual(newEvaluation, oldEvaluation) ||
         !isEqual(newFeedbacks, oldFeedbacks) ||
         !isEqual(newOptions, oldOptions) ||
-        !isEqual(newState, oldState) ||
-        !isEqual(newStateStore, oldStateStore)
+        !isEqual(newState, oldState)
       ) {
         formatTask<C, E, F, O, S, A>(
-          {
+          <propsInterface<C, E, F, O, S>>{
             id: props.id,
             newContent,
             newEvaluation,
@@ -198,134 +191,68 @@ export function useTask<P extends TaskProps, A extends TaskEmits, C, E, F, O, S>
           formatTaskState,
           formatEvaluation,
           formatFeedbacks,
-          newStateStore,
           emit
         );
-      } else {
-        justInitialized = false;
       }
     },
-    { deep: true }
+    {
+      deep: true,
+    }
   );
 
   // Format on internal changes
   const updateContent = (newContent: C): void => {
     formatTask<C, E, F, O, S, A>(
-      {
-        id: props.id,
-        newContent: <C>newContent,
-        newEvaluation: <E>props.evaluation,
-        newFeedbacks: <F>props.feedbacks,
-        newOptions: <O>props.options,
-        newState: <S>props.state,
-        oldContent: <C>props.content,
-        oldEvaluation: <E>props.evaluation,
-        oldFeedbacks: <F>props.feedbacks,
-        oldOptions: <O>props.options,
-        oldState: <S>props.state,
-      },
+      { ...data, newContent: <C>newContent },
       formatOptions,
       formatContent,
       formatTaskState,
       formatEvaluation,
       formatFeedbacks,
-      props.editor.storage.task.taskStates.find((ts: TaskState) => ts.id === props.id),
       emit
     );
   };
   const updateEvaluation = (newEvaluation: E): void => {
     formatTask<C, E, F, O, S, A>(
-      {
-        id: props.id,
-        newContent: <C>props.content,
-        newEvaluation: <E>newEvaluation,
-        newFeedbacks: <F>props.feedbacks,
-        newOptions: <O>props.options,
-        newState: <S>props.state,
-        oldContent: <C>props.content,
-        oldEvaluation: <E>props.evaluation,
-        oldFeedbacks: <F>props.feedbacks,
-        oldOptions: <O>props.options,
-        oldState: <S>props.state,
-      },
+      { ...data, newEvaluation: <E>newEvaluation },
       formatOptions,
       formatContent,
       formatTaskState,
       formatEvaluation,
       formatFeedbacks,
-      props.editor.storage.task.taskStates.find((ts: TaskState) => ts.id === props.id),
       emit
     );
   };
   const updateFeedbacks = (newFeedbacks: F): void => {
     formatTask<C, E, F, O, S, A>(
-      {
-        id: props.id,
-        newContent: <C>props.content,
-        newEvaluation: <E>props.evaluation,
-        newFeedbacks: <F>newFeedbacks,
-        newOptions: <O>props.options,
-        newState: <S>props.state,
-        oldContent: <C>props.content,
-        oldEvaluation: <E>props.evaluation,
-        oldFeedbacks: <F>props.feedbacks,
-        oldOptions: <O>props.options,
-        oldState: <S>props.state,
-      },
+      { ...data, newFeedbacks: <F>newFeedbacks },
       formatOptions,
       formatContent,
       formatTaskState,
       formatEvaluation,
       formatFeedbacks,
-      props.editor.storage.task.taskStates.find((ts: TaskState) => ts.id === props.id),
       emit
     );
   };
   const updateOptions = (newOptions: O): void => {
     formatTask<C, E, F, O, S, A>(
-      {
-        id: props.id,
-        newContent: <C>props.content,
-        newEvaluation: <E>props.evaluation,
-        newFeedbacks: <F>props.feedbacks,
-        newOptions: <O>newOptions,
-        newState: <S>props.state,
-        oldContent: <C>props.content,
-        oldEvaluation: <E>props.evaluation,
-        oldFeedbacks: <F>props.feedbacks,
-        oldOptions: <O>props.options,
-        oldState: <S>props.state,
-      },
+      { ...data, newOptions: <O>newOptions },
       formatOptions,
       formatContent,
       formatTaskState,
       formatEvaluation,
       formatFeedbacks,
-      props.editor.storage.task.taskStates.find((ts: TaskState) => ts.id === props.id),
       emit
     );
   };
   const updateState = (newState: S): void => {
     formatTask<C, E, F, O, S, A>(
-      {
-        id: props.id,
-        newContent: <C>props.content,
-        newEvaluation: <E>props.evaluation,
-        newFeedbacks: <F>props.feedbacks,
-        newOptions: <O>props.options,
-        newState: <S>newState,
-        oldContent: <C>props.content,
-        oldEvaluation: <E>props.evaluation,
-        oldFeedbacks: <F>props.feedbacks,
-        oldOptions: <O>props.options,
-        oldState: <S>props.state,
-      },
+      { ...data, newState: <S>newState },
       formatOptions,
       formatContent,
       formatTaskState,
       formatEvaluation,
       formatFeedbacks,
-      props.editor.storage.task.taskStates.find((ts: TaskState) => ts.id === props.id),
       emit
     );
   };

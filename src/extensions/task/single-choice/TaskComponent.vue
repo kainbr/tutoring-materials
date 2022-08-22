@@ -1,6 +1,8 @@
 <template>
   <TaskScaffold :is-editor="editor.isEditable" contenteditable="false" @submit="$emit('submit')">
-    <!-- Render -->
+    <!--
+    Render
+    -->
     <template #render>
       <div
         v-for="index in state?.order"
@@ -26,7 +28,9 @@
       </div>
     </template>
 
-    <!-- Content -->
+    <!--
+    Content
+    -->
     <template #content>
       <div
         v-for="(option, index) in content"
@@ -65,7 +69,16 @@
           >
             <IconArrowDown />
           </EditorMenuButton>
-          <ConfigurationButton :editor="editor" :parent="id" :reference="option.id" />
+          <ConfigurationButton
+            :editor="editor"
+            :parent="id"
+            :reference="option.id"
+            :create-feedback="(feedback) => createFeedback(feedback)"
+            :update-feedback="(attributes) => updateFeedback(feedbacks.find((f: Feedback) =>
+                  f.type === 'feedback-hint' && f.config.reference === option.id), attributes)"
+            :remove-feedback="() => removeFeedback(feedbacks.find((f: Feedback) =>
+                  f.type === 'feedback-hint' && f.config.reference === option.id))"
+          />
           <EditorMenuButton
             :disabled="content.length <= 1"
             tabindex="-1"
@@ -110,9 +123,13 @@
 
     <!-- Feedbacks -->
     <template #feedbacks>
-      <FeedbackListComponent :editor="editor" :feedbacks="feedbacks" />
-
-      {{ feedbacks }}
+      <FeedbackListComponent
+        :editor="editor"
+        :feedbacks="feedbacks"
+        :create-feedback="(feedback) => createFeedback(feedback)"
+        :update-feedback="(feedback, attributes) => updateFeedback(feedback, attributes)"
+        :remove-feedback="(feedback) => removeFeedback(feedback)"
+      />
     </template>
 
     <!-- Options -->
@@ -152,15 +169,18 @@ import FeedbackListComponent from "@/extensions/feedback/FeedbackListComponent.v
 import { v4 as uuid } from "uuid";
 
 import { useTask } from "@/extensions/task/helpers";
-import { formatOptions } from "@/extensions/task/single-choice/options";
-import { formatContent } from "@/extensions/task/single-choice/content";
-import { formatTaskState } from "@/extensions/task/single-choice/state";
-import { formatFeedbacks } from "@/extensions/task/single-choice/feedbacks";
-import { formatEvaluation, evaluationOptions } from "@/extensions/task/single-choice/evaluation";
+import { formatOptions } from "@/extensions/task/single-choice/format/options";
+import { formatContent } from "@/extensions/task/single-choice/format/content";
+import { formatTaskState } from "@/extensions/task/single-choice/format/state";
+import { formatFeedbacks } from "@/extensions/task/single-choice/format/feedbacks";
+import {
+  formatEvaluation,
+  evaluationOptions,
+} from "@/extensions/task/single-choice/format/evaluation";
 import OptionsDefaults from "@/helpers/tasks/OptionsDefaults.vue";
 import OptionsFormEnum from "@/helpers/tasks/OptionsFormEnum.vue";
 import { calculateHexIcon } from "@/helpers/util";
-import { onBeforeUnmount, onMounted, watch } from "vue";
+import { onBeforeUnmount, onMounted } from "vue";
 
 // Types
 import type { Editor, JSONContent } from "@tiptap/vue-3";
@@ -168,7 +188,6 @@ import type { TaskEmits, TaskProps } from "@/extensions/task/types";
 import type {
   SCOption,
   SCEvaluation,
-  SCFeedback,
   SCOptions,
   SCState,
 } from "@/extensions/task/single-choice/types";
@@ -179,15 +198,14 @@ import type {
   StoredFeedback,
 } from "@/extensions/feedback/types";
 import ConfigurationButton from "@/extensions/feedback/hint/ConfigurationButton.vue";
-import { Feedback } from "@/extensions/feedback/types";
-import { HintFeedback } from "@/extensions/feedback/hint/types";
+import { isEqual } from "lodash-es";
 
 interface SCProps extends TaskProps {
   id: string;
   editor: Editor;
   content?: SCOption[];
   evaluation?: SCEvaluation;
-  feedbacks?: SCFeedback[];
+  feedbacks?: StoredFeedback[];
   options?: SCOptions;
   state?: SCState;
 }
@@ -195,9 +213,10 @@ interface SCProps extends TaskProps {
 interface SCEmits extends TaskEmits {
   (e: "update:content", content: SCOption[]): void;
   (e: "update:evaluation", evaluation: SCEvaluation): void;
-  (e: "update:feedbacks", feedbacks: SCFeedback): void;
+  (e: "update:feedbacks", feedbacks: StoredFeedback): void;
   (e: "update:options", options: SCOptions): void;
   (e: "update:state", options: SCState): void;
+  (e: "update", task: SCState): void;
   (e: "submit"): void;
 }
 
@@ -210,7 +229,7 @@ const { updateContent, updateEvaluation, updateFeedbacks, updateOptions, updateS
   SCEmits,
   SCOption[],
   SCEvaluation,
-  SCFeedback[],
+  StoredFeedback[],
   SCOptions,
   SCState
 >(props, emit, formatOptions, formatContent, formatTaskState, formatEvaluation, formatFeedbacks);
@@ -287,7 +306,7 @@ const changeAnswerOptionValue = (option: SCOption) => {
       };
     });
 
-    if (JSON.stringify(oldAnswer) !== JSON.stringify(newAnswer)) {
+    if (!isEqual(oldAnswer, newAnswer)) {
       updateState({
         ...props.state,
         answer: newAnswer,
@@ -392,17 +411,25 @@ onBeforeUnmount(() => {
   // props.editor.commands.removeEventOption(eventOption);
 });
 
-watch(
-  [() => props.content, () => props.options, () => props.evaluation],
-  ([newContent]) => {
-    // console.log("Watch in SC TaskComponent triggered");
+const createFeedback = (feedback: StoredFeedback) => {
+  updateFeedbacks([...(!!props.feedbacks ? props.feedbacks : []), feedback]);
+};
 
-    props.editor.commands.updateEventOption(eventOption, {
-      conditions: getEventOptionConditions(newContent),
-    });
-  },
-  { deep: true }
-);
+const updateFeedback = (feedback: StoredFeedback, attributes: Partial<StoredFeedback>) => {
+  if (!!props.feedbacks) {
+    updateFeedbacks(
+      props.feedbacks.map((f: StoredFeedback) =>
+        f.id === feedback.id ? { ...f, ...attributes } : f
+      )
+    );
+  }
+};
+
+const removeFeedback = (feedback: StoredFeedback) => {
+  if (!!props.feedbacks) {
+    updateFeedbacks(props.feedbacks.filter((f: StoredFeedback) => f.id !== feedback.id));
+  }
+};
 
 defineExpose({
   updateContent,
@@ -418,5 +445,8 @@ defineExpose({
   updateAnswerOptionContent,
   changeAnswerOptionValue,
   evaluationOptions,
+  createFeedback,
+  updateFeedback,
+  removeFeedback,
 });
 </script>

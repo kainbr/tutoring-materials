@@ -87,7 +87,7 @@ export const FeedbackMark = Mark.create({
 
   onBeforeCreate() {
     this.storage.getStyleVariables = () => {
-      return this.editor.storage.feedback.activeFeedbacks
+      return this.editor.storage.feedbacks.activeFeedbacks
         .map((s: Feedback) => {
           const styles: string[] = [];
 

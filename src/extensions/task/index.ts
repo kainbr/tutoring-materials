@@ -32,7 +32,7 @@ export interface TaskExtensionStorage {
 }
 
 export const Task = Extension.create<unknown, TaskExtensionStorage>({
-  name: "task",
+  name: "tasks",
 
   addStorage() {
     return {
@@ -98,7 +98,7 @@ export const Task = Extension.create<unknown, TaskExtensionStorage>({
           const tr = newState.tr;
 
           newState.doc.descendants((node, pos) => {
-            if (node.isBlock && node.type.name.startsWith("task-") && !node.attrs.id) {
+            if (node.isBlock && node.type.name === "task" && !node.attrs.id) {
               tr.setNodeMarkup(pos, undefined, {
                 ...node.attrs,
                 id: uuid(),

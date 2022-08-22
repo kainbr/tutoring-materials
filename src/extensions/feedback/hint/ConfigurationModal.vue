@@ -72,6 +72,9 @@ import type { Editor, JSONContent } from "@tiptap/vue-3";
 import type { Feedback } from "@/extensions/feedback/types";
 import { v4 as uuid } from "uuid";
 import type { HintFeedback } from "@/extensions/feedback/hint/types";
+import type { NodeWithPos } from "@tiptap/vue-3";
+import { findChildren } from "@tiptap/core";
+import { calculateHexIcon } from "@/helpers/util";
 
 export default defineComponent({
   name: "ConfigurationModal",
@@ -100,29 +103,34 @@ export default defineComponent({
       required: true,
     },
     reference: {
-      type: String,
-      required: true,
+      type: String as PropType<string | undefined>,
+      default: undefined,
     },
   },
 
-  emits: ["update:open"],
+  emits: ["update:open", "create:feedback", "update:feedback", "remove:feedback"],
 
   data() {
     return {
-      contentCandidate: null as JSONContent | null,
+      contentCandidate: undefined as JSONContent | undefined,
     };
   },
 
   computed: {
     feedback() {
-      return this.editor
-        .getAttributes("document")
-        .feedbacks.find(
+      const task: NodeWithPos = findChildren(
+        this.editor.state.doc,
+        (node) => node.type.name === "task" && node.attrs.id === this.parent
+      )[0];
+
+      if (!!task) {
+        return task.node.attrs.feedbacks.find(
           (f: Feedback) =>
-            f.type === "feedback-hint" &&
-            f.parent === this.parent &&
-            (f as HintFeedback).config.reference === this.reference
+            f.type === "feedback-hint" && (f as HintFeedback).config.reference === this.reference
         );
+      } else {
+        return undefined;
+      }
     },
   },
 
@@ -136,9 +144,24 @@ export default defineComponent({
     },
     updateFeedback() {
       if (!this.feedback) {
+        const uid = uuid();
+        // this.editor.commands.addFeedbackHint();
+        this.$emit("create:feedback", {
+          id: uid,
+          type: "feedback-hint",
+          parent: this.parent,
+          config: {
+            reference: this.reference,
+            content: this.contentCandidate,
+          },
+          label: {
+            message: "global.feedback.type-feedback-hint",
+            hexIcon: calculateHexIcon(uid),
+          },
+        });
         this.$emit("update:open", false);
-        const id = uuid();
-        this.editor.commands.addFeedbackHint({
+        /*
+          , {
           id,
           parent: this.parent,
           config: {
@@ -146,7 +169,6 @@ export default defineComponent({
             content: this.contentCandidate as JSONContent,
           },
         });
-        /*
         this.editor
           .chain()
           .addFeedbackHint({
@@ -167,19 +189,26 @@ export default defineComponent({
           .run();
          */
       } else {
-        this.editor.commands.updateFeedback(this.feedback, {
+        // this.editor.commands.updateFeedback(this.feedback, );
+
+        this.$emit("update:feedback", {
           config: { ...this.feedback.config, content: this.contentCandidate },
         });
         this.$emit("update:open", false);
       }
     },
     removeFeedback() {
+      this.$emit("remove:feedback");
+      this.$emit("update:open", false);
+
+      /*
       if (!this.feedback) {
-        this.$emit("update:open", false);
       } else {
         this.editor.commands.removeFeedback(this.feedback, true);
         this.$emit("update:open", false);
       }
+      
+       */
     },
   },
 });

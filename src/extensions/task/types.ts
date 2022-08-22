@@ -1,13 +1,14 @@
 import type { Editor } from "@tiptap/vue-3";
+import type { StoredFeedback } from "@/extensions/feedback/types";
 
 export interface TaskProps {
   id: string;
   editor: Editor;
-  content?: unknown;
-  evaluation?: unknown;
-  feedbacks?: unknown;
-  options?: unknown;
-  state?: unknown;
+  content?: TaskContent;
+  evaluation?: TaskEvaluation;
+  feedbacks?: StoredFeedback;
+  options?: TaskOptions;
+  state?: TaskState;
 }
 
 export interface TaskEmits {
@@ -16,6 +17,7 @@ export interface TaskEmits {
   (e: "update:feedbacks", feedbacks: unknown): void;
   (e: "update:options", options: unknown): void;
   (e: "update:state", options: unknown): void;
+  (e: "update", task: unknown): void;
   (e: "submit"): void;
 }
 
@@ -60,15 +62,15 @@ export interface TaskState {
 export interface formatFunction<C, E, F, O, S, T> {
   (data: {
     id: string;
-    newContent: C | null;
-    newEvaluation: E | null;
-    newFeedbacks: F | null;
-    newOptions: O | null;
-    newState: S | null;
-    oldContent: C | null;
-    oldEvaluation: E | null;
-    oldFeedbacks: F | null;
-    oldOptions: O | null;
-    oldState: S | null;
+    newContent?: C;
+    newEvaluation?: E;
+    newFeedbacks?: F;
+    newOptions?: O;
+    newState?: S;
+    oldContent?: C;
+    oldEvaluation?: E;
+    oldFeedbacks?: F;
+    oldOptions?: O;
+    oldState?: S;
   }): T;
 }

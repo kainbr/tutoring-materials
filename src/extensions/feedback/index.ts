@@ -1,6 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
-import { Extension, findChildren } from "@tiptap/core";
+import { Extension } from "@tiptap/core";
 import type {
   Feedback,
   EventTrigger,
@@ -10,10 +10,6 @@ import type {
 import type { MarkFeedback } from "@/extensions/feedback/mark/types";
 import type { Event } from "@/extensions/document/types";
 import { isEqual } from "lodash-es";
-import type { NodeWithPos } from "@tiptap/vue-3";
-import { Plugin, PluginKey } from "prosemirror-state";
-import { v4 as uuid } from "uuid";
-import { getAttributes } from "@tiptap/vue-3";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -76,7 +72,7 @@ export interface FeedbackExtensionStorage {
 }
 
 export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStorage>({
-  name: "feedback",
+  name: "feedbacks",
 
   addStorage() {
     return {
@@ -130,83 +126,6 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
       });
     });
   },
-
-  /*
-  onCreate() {
-    this.editor.on("update", ({ editor }) => {
-      const tasksInContent = findChildren(editor.state.doc, (node) =>
-        node.type.name.startsWith("task-")
-      ).map((n: NodeWithPos) => n.node.attrs.id);
-      const feedbacks = editor.getAttributes("document").feedbacks;
-      const triggers = editor.getAttributes("document").triggers;
-
-      const tasksInFeedbacksAndNotInContent = feedbacks
-        .map((f: StoredFeedback) => f.parent)
-        .filter((x: StoredFeedback) => !tasksInContent.includes(x));
-      const tasksInTriggersAndNotInContent = triggers
-        .map((t: EventTrigger) => t.parent)
-        .filter((x: EventTrigger) => !tasksInContent.includes(x));
-
-      if (tasksInFeedbacksAndNotInContent.length > 0 || tasksInTriggersAndNotInContent.length > 0) {
-        editor.commands.updateAttributes("document", {
-          feedbacks: feedbacks.filter(
-            (f: StoredFeedback) => !tasksInFeedbacksAndNotInContent.includes(f.parent)
-          ),
-          triggers: triggers.filter(
-            (t: EventTrigger) => !tasksInTriggersAndNotInContent.includes(t.parent)
-          ),
-        });
-      }
-    });
-  },
-   */
-
-  /*
-  addProseMirrorPlugins() {
-    return [
-      new Plugin({
-        key: new PluginKey("feedback"),
-        appendTransaction: (transaction, oldState, newState) => {
-          // Nothing has changed. Ignore it.
-          if (newState.doc === oldState.doc) {
-            return;
-          }
-
-          const tr = newState.tr;
-
-          console.log("newState", newState);
-          const tasksInContent = findChildren(newState.doc, (node) =>
-            node.type.name.startsWith("task-")
-          ).map((n: NodeWithPos) => n.node.attrs.id);
-          const feedbacks = getAttributes(newState, "document").feedbacks;
-          const triggers = getAttributes(newState, "document").triggers;
-
-          const tasksInFeedbacksAndNotInContent = feedbacks
-            .map((f: StoredFeedback) => f.parent)
-            .filter((x: StoredFeedback) => !tasksInContent.includes(x));
-          const tasksInTriggersAndNotInContent = triggers
-            .map((t: EventTrigger) => t.parent)
-            .filter((x: EventTrigger) => !tasksInContent.includes(x));
-
-          console.log("final", tasksInFeedbacksAndNotInContent, tasksInTriggersAndNotInContent);
-
-           */
-  /*
-          newState.doc.descendants((node, pos) => {
-            if (node.isBlock && node.type.name.startsWith("task-") && !node.attrs.id) {
-              tr.setNodeMarkup(pos, undefined, {
-                ...node.attrs,
-                id: uuid(),
-              });
-            }
-          });
-
-          return tr;
-        },
-      }),
-    ];
-  },
-           */
 
   addCommands() {
     return {

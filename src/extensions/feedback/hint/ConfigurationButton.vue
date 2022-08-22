@@ -6,6 +6,9 @@
       :editor="editor"
       :parent="parent"
       :reference="reference"
+      @create:feedback="createFeedback($event)"
+      @update:feedback="updateFeedback($event)"
+      @remove:feedback="removeFeedback()"
     ></ConfigurationModal>
   </EditorMenuButton>
 </template>
@@ -16,10 +19,11 @@ import ConfigurationModal from "@/extensions/feedback/hint/ConfigurationModal.vu
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import IconFeedback from "@/helpers/icons/IconFeedback.vue";
 
-import type { Editor } from "@tiptap/vue-3";
+import type { Editor, NodeWithPos } from "@tiptap/vue-3";
 import type { PropType } from "vue";
 import type { HintFeedback } from "@/extensions/feedback/hint/types";
-import type { StoredFeedback } from "@/extensions/feedback/types";
+import type { Feedback } from "@/extensions/feedback/types";
+import { findChildren } from "@tiptap/core";
 
 export default defineComponent({
   name: "ConfigurationButton",
@@ -43,7 +47,21 @@ export default defineComponent({
       type: String as PropType<string | undefined>,
       default: undefined,
     },
+    createFeedback: {
+      type: Function,
+      required: true,
+    },
+    updateFeedback: {
+      type: Function,
+      required: true,
+    },
+    removeFeedback: {
+      type: Function,
+      required: true,
+    },
   },
+
+  emits: ["update:open", "create:feedback", "update:feedback", "remove:feedback"],
 
   data() {
     return {
@@ -53,14 +71,19 @@ export default defineComponent({
 
   computed: {
     feedback() {
-      return this.editor
-        .getAttributes("document")
-        .feedbacks.find(
-          (f: StoredFeedback) =>
-            f.type === "feedback-hint" &&
-            f.parent === this.parent &&
-            (f as HintFeedback).config.reference === this.reference
+      const task: NodeWithPos = findChildren(
+        this.editor.state.doc,
+        (node) => node.type.name === "task" && node.attrs.id === this.parent
+      )[0];
+
+      if (!!task) {
+        return task.node.attrs.feedbacks.find(
+          (f: Feedback) =>
+            f.type === "feedback-hint" && (f as HintFeedback).config.reference === this.reference
         );
+      } else {
+        return undefined;
+      }
     },
   },
 });

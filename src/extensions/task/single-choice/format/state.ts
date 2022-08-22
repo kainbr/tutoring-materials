@@ -15,13 +15,14 @@ export const formatTaskState: SCFormatFunction<SCState> = function ({
   oldOptions,
   oldState,
 }) {
+  console.log("Format task state", newState);
   const state: Partial<SCState> = !newState ? <Partial<SCState>>getDefaultTaskState(id) : newState;
 
   state.type = "single-choice";
   state.answer = formatAnswer(newState, newContent);
   state.order = formatOrder(newContent, newOptions, oldOptions, oldState);
   state.empty = state.answer.every((a) => !a.value);
-  state.answer = formatAnswer(newState, newContent);
+  // state.answer = formatAnswer(newState, newContent);
 
   return <SCState>state;
 };

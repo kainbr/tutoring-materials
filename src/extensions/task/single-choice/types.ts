@@ -29,9 +29,6 @@ export interface SCOptions extends TaskOptions {
   shuffle: boolean;
 }
 
-// Feedbacks
-export type SCFeedback = Feedback;
-
 // State
 export interface SCState extends TaskState {
   answer: SCOptionAnswer[];
@@ -46,7 +43,7 @@ export interface SCOptionAnswer {
 export type SCFormatFunction<T> = formatFunction<
   SCOption[],
   SCEvaluation,
-  SCFeedback[],
+  Feedback[],
   SCOptions,
   SCState,
   T

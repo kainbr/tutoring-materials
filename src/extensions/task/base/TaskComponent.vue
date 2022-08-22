@@ -19,7 +19,7 @@
           <!-- eslint-disable vue/no-v-html -->
           <span class="pl-2 pr-3" v-html="calculateHexIcon(node.attrs.id)" />
           <div class="flex w-full justify-center">
-            <span>{{ $t("editor.task.type-" + node.attrs.type.substring(5)) }}</span>
+            <span>{{ $t("editor.task.type-" + node.attrs.type) }}</span>
           </div>
           <IconClose
             @click="
@@ -37,32 +37,31 @@
 
       <!-- Task -->
       <component
-        :is="node.attrs.type.substring(5)"
+        :is="node.attrs.type"
         :id="node.attrs.id"
         :editor="editor"
         :content="node.attrs.content"
         :evaluation="node.attrs.evaluation"
-        :feedbacks="[
-          ...editor.getAttributes('document').feedbacks.filter((s) => s.parent === node.attrs.id),
-        ]"
+        :feedbacks="node.attrs.feedbacks"
         :options="node.attrs.options"
         :state="state"
         :active-feedbacks="activeFeedbacks"
-        @update:content="updateAttributes({ content: $event })"
-        @update:evaluation="updateAttributes({ evaluation: $event })"
-        @update:feedbacks="updateFeedbacks"
-        @update:options="updateAttributes({ options: $event })"
-        @update:state="updateState"
+        @update="update"
       />
 
       <div v-if="!editor.isEditable && !!state" class="my-1 w-full">
         <SubmitButton
           :id="node.attrs.id"
-          :editor="editor"
-          :type="node.attrs.type.substring(5)"
+          :type="node.attrs.type"
           :options="node.attrs.options"
           :evaluation="node.attrs.evaluation"
           :state="state"
+          :editor="editor"
+          @update:content="updateContent"
+          @update:evaluation="updateEvaluation"
+          @update:feedbacks="updateFeedbacks"
+          @update:options="updateOptions"
+          @update:state="updateState"
         >
         </SubmitButton>
       </div>
@@ -71,7 +70,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import { NodeViewContent, NodeViewWrapper } from "@tiptap/vue-3";
 import { calculateHexIcon } from "@/helpers/util";
 import IconClose from "@/helpers/icons/IconClose.vue";
@@ -83,7 +82,7 @@ import type { Ref } from "vue";
 import type { Feedback } from "@/extensions/feedback/types";
 import type { NodeViewProps } from "@tiptap/core";
 import type { PropType } from "vue";
-import type { TaskState } from "@/extensions/task/types";
+import type { TaskContent, TaskEvaluation, TaskOptions, TaskState } from "@/extensions/task/types";
 
 export default defineComponent({
   components: {
@@ -131,7 +130,7 @@ export default defineComponent({
 
   setup: function (props) {
     const state: Ref<TaskState> = computed(() => {
-      return props.editor.storage.task.taskStates.find(
+      return props.editor.storage.tasks.taskStates.find(
         (taskState: TaskState) => taskState.id === props.node.attrs.id
       );
     });
@@ -144,17 +143,76 @@ export default defineComponent({
         : [];
     });
 
-    const updateFeedbacks = ($event) => {
-      console.log("Update Feedbacks", $event);
+    const update = (newValues: {
+      content: TaskContent;
+      evaluation: TaskEvaluation;
+      feedbacks: Feedback[];
+      options: TaskOptions;
+      state: TaskState;
+    }) => {
+      props.updateAttributes({
+        content: newValues.content,
+        evaluation: newValues.evaluation,
+        feedbacks: newValues.feedbacks,
+        options: newValues.options,
+      });
+      updateFeedbacks(newValues.feedbacks);
+      updateState(newValues.state);
     };
 
-    const updateState = ($event) => {
-      !state.value
-        ? props.editor.commands.addTaskState($event)
-        : props.editor.commands.updateTaskState(state.value, $event);
+    const updateContent = (newContent: TaskContent) => {
+      props.updateAttributes({ content: newContent });
     };
 
-    return { state, activeFeedbacks, calculateHexIcon, updateFeedbacks, updateState };
+    const updateEvaluation = (newEvaluation: TaskEvaluation) => {
+      props.updateAttributes({ evaluation: newEvaluation });
+    };
+
+    const updateFeedbacks = (newFeedbacks: Feedback[]) => {
+      props.updateAttributes({ feedbacks: newFeedbacks });
+    };
+
+    const updateOptions = (newOptions: TaskOptions) => {
+      props.updateAttributes({ options: newOptions });
+    };
+
+    const updateState = (newState: TaskState) => {
+      if (!state.value) {
+        props.editor.commands.addTaskState(newState);
+      } else {
+        props.editor.commands.updateTaskState(state.value, newState);
+      }
+    };
+
+    onMounted(() => {
+      props.editor.storage.document.eventBus().emit("task-created", {
+        parent: props.node.attrs.id,
+        label: {
+          message: "global.event.type-task-created",
+          hexIcon: calculateHexIcon(props.node.attrs.id),
+        },
+        data: {
+          id: props.node.attrs.id,
+          content: props.node.attrs.content,
+          evaluation: props.node.attrs.evaluation,
+          feedbacks: props.node.attrs.feedbacks,
+          options: props.node.attrs.options,
+          state: props.node.attrs.state,
+        },
+      });
+    });
+
+    return {
+      state,
+      activeFeedbacks,
+      calculateHexIcon,
+      update,
+      updateContent,
+      updateEvaluation,
+      updateFeedbacks,
+      updateOptions,
+      updateState,
+    };
   },
 });
 </script>

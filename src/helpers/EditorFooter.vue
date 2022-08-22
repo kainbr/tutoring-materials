@@ -12,14 +12,6 @@
             }}</span>
           </DisclosureButton>
 
-          <!-- Test -->
-          <EditorMenuButton
-            v-tippy="$t('editor.menu.feedback-notification-add-tooltip')"
-            :on-inactive-click="() => editor.commands.addFeedbackHint({})"
-          >
-            <IconNotification />
-          </EditorMenuButton>
-
           <!-- Notification -->
           <EditorMenuButton
             v-tippy="$t('editor.menu.feedback-notification-add-tooltip')"
@@ -42,11 +34,12 @@
           <DisclosurePanel class="basis-full text-sm text-gray-500">
             <div class="flex flex-col w-full max-h-44 overflow-auto">
               <FeedbackListComponent
-                :editor="editor"
-                :feedbacks="[
-                  ...editor.getAttributes('document').feedbacks.filter((s) => s.parent === null),
-                ]"
                 class="p-2"
+                :editor="editor"
+                :feedbacks="editor.getAttributes('document').feedbacks"
+                :create-feedback="editor.commands.addFeedback"
+                :update-feedback="editor.commands.updateFeedback"
+                :remove-feedback="editor.commands.removeFeedback"
               />
             </div>
           </DisclosurePanel>
@@ -123,7 +116,7 @@ export default defineComponent({
     const addEventTrigger = () => {
       props.editor.commands.addEventTrigger({
         id: uuid(),
-        event: null,
+        event: undefined,
         conditions: [],
         feedbacks: [],
       });

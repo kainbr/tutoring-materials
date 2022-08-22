@@ -257,11 +257,13 @@ export default defineComponent({
     watch(
       () => props.state,
       (newState) => {
-        if (!isEqual(newState?.tasks, editor.storage.task.taskStates)) {
-          editor.storage.task.taskStates = !!newState?.tasks ? newState?.tasks : [];
+        if (!isEqual(newState?.tasks, editor.storage.tasks.taskStates)) {
+          editor.storage.tasks.taskStates = !!newState?.tasks ? newState?.tasks : [];
         }
-        if (!isEqual(newState?.feedbacks, editor.storage.feedback.activeFeedbacks)) {
-          editor.storage.feedback.activeFeedbacks = !!newState?.feedbacks ? newState.feedbacks : [];
+        if (!isEqual(newState?.feedbacks, editor.storage.feedbacks.activeFeedbacks)) {
+          editor.storage.feedbacks.activeFeedbacks = !!newState?.feedbacks
+            ? newState.feedbacks
+            : [];
         }
       },
       { deep: true }
@@ -272,7 +274,7 @@ export default defineComponent({
     });
 
     watch(
-      [() => editor.storage.task.taskStates, () => editor.storage.feedback.activeFeedbacks],
+      [() => editor.storage.tasks.taskStates, () => editor.storage.feedbacks.activeFeedbacks],
       ([newStates, newFeedbacks], [oldStates, oldFeedbacks]) => {
         if (!isEqual(newStates, oldStates) || !isEqual(newFeedbacks, oldFeedbacks)) {
           context.emit("update:state", {
