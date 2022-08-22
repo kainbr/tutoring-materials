@@ -23,7 +23,7 @@ export function getDefaultTaskState(id: string): TaskState {
     state: "init",
     attempt: 1,
     answer: undefined,
-    isEmptyAnswer: true,
+    empty: true,
     type: "",
   };
 }
@@ -93,13 +93,13 @@ export function useTask<P extends TaskProps, A extends TaskEmits, C, E, F, O, S>
   updateOptions: (newOptions: O) => void;
   updateState: (newState: S) => void;
 } {
-  console.log("useTask called");
-
   // Prevent that formatting is performed twice after the onMounted hook
   let justInitialized = true;
 
   // Format content on initial load
   onMounted(() => {
+    console.log("onMounted");
+
     formatTask<C, E, F, O, S, A>(
       {
         id: props.id,
@@ -138,6 +138,8 @@ export function useTask<P extends TaskProps, A extends TaskEmits, C, E, F, O, S>
       [newContent, newEvaluation, newFeedbacks, newOptions, newState, newStateStore],
       [oldContent, oldEvaluation, oldFeedbacks, oldOptions, oldState, oldStateStore]
     ) => {
+      // console.log("watch formatTask", props.feedbacks, newFeedbacks, oldFeedbacks);
+
       if (justInitialized) {
         props.editor.storage.document.eventBus().emit("task-created", {
           parent: props.id,
@@ -156,14 +158,26 @@ export function useTask<P extends TaskProps, A extends TaskEmits, C, E, F, O, S>
         });
       }
 
+      console.log(
+        "watch formatTask",
+        !justInitialized,
+        !isEqual(newContent, oldContent),
+        !isEqual(newEvaluation, oldEvaluation),
+        "!",
+        !isEqual(newFeedbacks, oldFeedbacks),
+        !isEqual(newOptions, oldOptions),
+        !isEqual(newState, oldState),
+        !isEqual(newStateStore, oldStateStore)
+      );
+
       if (
-        !justInitialized &&
-        (!isEqual(newContent, oldContent) ||
-          !isEqual(newEvaluation, oldEvaluation) ||
-          !isEqual(newFeedbacks, oldFeedbacks) ||
-          !isEqual(newOptions, oldOptions) ||
-          !isEqual(newState, oldState) ||
-          !isEqual(newStateStore, oldStateStore))
+        // !justInitialized &&
+        !isEqual(newContent, oldContent) ||
+        !isEqual(newEvaluation, oldEvaluation) ||
+        !isEqual(newFeedbacks, oldFeedbacks) ||
+        !isEqual(newOptions, oldOptions) ||
+        !isEqual(newState, oldState) ||
+        !isEqual(newStateStore, oldStateStore)
       ) {
         formatTask<C, E, F, O, S, A>(
           {

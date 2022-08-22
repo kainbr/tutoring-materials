@@ -8,6 +8,7 @@ export interface Feedback {
   type: string;
   parent: string | null;
   config: object;
+  ref?: string;
 }
 
 export interface StoredFeedback extends Feedback {
@@ -21,10 +22,10 @@ export interface StoredFeedback extends Feedback {
 
 export type EventTrigger = {
   id: string;
-  event: string | null;
+  event: string;
   conditions: EventCondition[];
   feedbacks: string[];
-  parent?: string;
+  parent: string | null;
 };
 
 export type EventCondition = {

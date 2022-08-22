@@ -10,21 +10,21 @@
 
     <div v-if="isEditor" class="my-1 w-full">
       <details>
-        <summary>{{ $t("editor.task.title-evaluation") }}</summary>
+        <summary class="cursor-pointer">{{ $t("editor.task.title-evaluation") }}</summary>
         <slot name="evaluation" />
       </details>
     </div>
 
     <div v-if="isEditor" class="my-1 w-full">
       <details>
-        <summary>{{ $t("editor.task.title-feedbacks") }}</summary>
+        <summary class="cursor-pointer">{{ $t("editor.task.title-feedbacks") }}</summary>
         <slot name="feedbacks" />
       </details>
     </div>
 
     <div v-if="isEditor" class="my-1 w-full">
       <details>
-        <summary>{{ $t("editor.task.title-options") }}</summary>
+        <summary class="cursor-pointer">{{ $t("editor.task.title-options") }}</summary>
         <slot name="options" />
       </details>
     </div>
@@ -42,7 +42,5 @@ export default defineComponent({
       default: true,
     },
   },
-
-  emits: ["submit"],
 });
 </script>

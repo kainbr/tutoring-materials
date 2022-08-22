@@ -56,21 +56,22 @@
             tabindex="-1"
             @click="moveUpOption(index, option)"
           >
-            <IconArrowUp></IconArrowUp>
+            <IconArrowUp />
           </EditorMenuButton>
           <EditorMenuButton
             :disabled="index === content.length - 1"
             tabindex="-1"
             @click="moveDownOption(index, option)"
           >
-            <IconArrowDown></IconArrowDown>
+            <IconArrowDown />
           </EditorMenuButton>
+          <ConfigurationButton :editor="editor" :parent="id" :reference="option.id" />
           <EditorMenuButton
             :disabled="content.length <= 1"
             tabindex="-1"
             @click="removeOption(index)"
           >
-            <IconTrash></IconTrash>
+            <IconTrash />
           </EditorMenuButton>
         </div>
       </div>
@@ -84,10 +85,10 @@
               :on-active-click="() => updateOptions({ ...options, shuffle: false })"
               :on-inactive-click="() => updateOptions({ ...options, shuffle: true })"
             >
-              <IconShuffle></IconShuffle>
+              <IconShuffle />
             </EditorMenuButton>
             <EditorMenuButton @click="addOption">
-              <IconAdd></IconAdd>
+              <IconAdd />
             </EditorMenuButton>
           </div>
         </div>
@@ -109,6 +110,8 @@
 
     <!-- Feedbacks -->
     <template #feedbacks>
+      <FeedbackListComponent :editor="editor" :feedbacks="feedbacks" />
+
       {{ feedbacks }}
     </template>
 
@@ -145,7 +148,19 @@ import IconShuffle from "@/helpers/icons/IconShuffle.vue";
 import IconTrash from "@/helpers/icons/IconTrash.vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
 import TaskScaffold from "@/extensions/task/base/TaskScaffold.vue";
+import FeedbackListComponent from "@/extensions/feedback/FeedbackListComponent.vue";
 import { v4 as uuid } from "uuid";
+
+import { useTask } from "@/extensions/task/helpers";
+import { formatOptions } from "@/extensions/task/single-choice/options";
+import { formatContent } from "@/extensions/task/single-choice/content";
+import { formatTaskState } from "@/extensions/task/single-choice/state";
+import { formatFeedbacks } from "@/extensions/task/single-choice/feedbacks";
+import { formatEvaluation, evaluationOptions } from "@/extensions/task/single-choice/evaluation";
+import OptionsDefaults from "@/helpers/tasks/OptionsDefaults.vue";
+import OptionsFormEnum from "@/helpers/tasks/OptionsFormEnum.vue";
+import { calculateHexIcon } from "@/helpers/util";
+import { onBeforeUnmount, onMounted, watch } from "vue";
 
 // Types
 import type { Editor, JSONContent } from "@tiptap/vue-3";
@@ -157,21 +172,15 @@ import type {
   SCOptions,
   SCState,
 } from "@/extensions/task/single-choice/types";
-import { useTask } from "@/extensions/task/helpers";
-import { formatOptions } from "@/extensions/task/single-choice/options";
-import { formatContent } from "@/extensions/task/single-choice/content";
-import { formatTaskState } from "@/extensions/task/single-choice/state";
-import { formatFeedbacks } from "@/extensions/task/single-choice/feedbacks";
-import { formatEvaluation, evaluationOptions } from "@/extensions/task/single-choice/evaluation";
-import OptionsDefaults from "@/helpers/tasks/OptionsDefaults.vue";
-import OptionsFormEnum from "@/helpers/tasks/OptionsFormEnum.vue";
-import { calculateHexIcon } from "@/helpers/util";
-import { onBeforeUnmount, onMounted, watch } from "vue";
 import type {
   EventOption,
   EventOptionCondition,
   EventOptionConditionBoolean,
+  StoredFeedback,
 } from "@/extensions/feedback/types";
+import ConfigurationButton from "@/extensions/feedback/hint/ConfigurationButton.vue";
+import { Feedback } from "@/extensions/feedback/types";
+import { HintFeedback } from "@/extensions/feedback/hint/types";
 
 interface SCProps extends TaskProps {
   id: string;

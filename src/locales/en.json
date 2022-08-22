@@ -1,6 +1,10 @@
 {
   "editor": {
     "feedback": {
+      "hint-modal-edit-button": "Edit content",
+      "hint-modal-edit-title": "Edit Hint",
+      "hint-modal-remove-button": "Remove hint",
+      "hint-modal-save-button": "Save",
       "notification-modal-description": "Notification",
       "notification-modal-edit-button": "Edit content",
       "notification-modal-edit-save-button": "Save",
@@ -95,6 +99,7 @@
       "type-task-created": "Task created"
     },
     "feedback": {
+      "type-feedback-hint": "Hint",
       "type-feedback-mark": "Change Text Style",
       "type-feedback-notification": "Show Notification"
     }
@@ -108,6 +113,7 @@
     "button-rotate-player": "Rotate screen"
   },
   "statistics": {
+    "tab-events-conditions": "Conditions",
     "tab-events-data": "Additional information",
     "tab-events-placeholder": "No event selected",
     "tab-events-timestamp": "Timestamp",

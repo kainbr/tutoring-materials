@@ -1,7 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
-import { Extension } from "@tiptap/core";
-import { v4 as uuid } from "uuid";
+import { Extension, findChildren } from "@tiptap/core";
 import type {
   Feedback,
   EventTrigger,
@@ -11,6 +10,10 @@ import type {
 import type { MarkFeedback } from "@/extensions/feedback/mark/types";
 import type { Event } from "@/extensions/document/types";
 import { isEqual } from "lodash-es";
+import type { NodeWithPos } from "@tiptap/vue-3";
+import { Plugin, PluginKey } from "prosemirror-state";
+import { v4 as uuid } from "uuid";
+import { getAttributes } from "@tiptap/vue-3";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -26,7 +29,7 @@ declare module "@tiptap/core" {
       /**
        * Removes a feedback from the permanent feedback store.
        */
-      removeFeedback: (feedback: StoredFeedback) => ReturnType;
+      removeFeedback: (feedback: StoredFeedback, removeEmptyTrigger?: boolean) => ReturnType;
       /**
        * Adds a feedback to the active state feedback store.
        */
@@ -99,42 +102,119 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
   },
 
   onBeforeCreate() {
-    if (!this.editor.isEditable) {
-      // Listen to all events that are emitted
-      this.editor.storage.document.eventBus().on("*", (type: string, event: Event) => {
-        const triggers: EventTrigger[] = this.editor.getAttributes("document").triggers;
-        const feedbacks: StoredFeedback[] = this.editor.getAttributes("document").feedbacks;
+    // Listen to all events that are emitted
+    this.editor.storage.document.eventBus().on("*", (type: string, event: Event) => {
+      const triggers: EventTrigger[] = this.editor.getAttributes("document").triggers;
+      const feedbacks: StoredFeedback[] = this.editor.getAttributes("document").feedbacks;
 
-        // Filter the stored triggers for events that match type and parent
-        const eventTriggerWithType = triggers.filter(
-          (trigger: EventTrigger) => trigger.event === type && trigger.parent === event.parent
-        );
+      // Filter the stored triggers for events that match type and parent
+      const eventTriggerWithType = triggers.filter(
+        (trigger: EventTrigger) => trigger.event === type && trigger.parent === event.parent
+      );
 
-        // console.log("eventTriggerWithType", eventTriggerWithType);
+      // console.log("eventTriggerWithType", eventTriggerWithType);
 
-        // For each event trigger in the filtered list, check if the conditions are fulfilled and if true
-        // add them to the state store of active feedbacks.
-        eventTriggerWithType.forEach((trigger: EventTrigger) => {
-          // Todo: Check conditions
-          console.log("Set conditions: ", trigger.conditions);
-          console.log("Available conditions: ", event.conditions);
+      // For each event trigger in the filtered list, check if the conditions are fulfilled and if true
+      // add them to the state store of active feedbacks.
+      eventTriggerWithType.forEach((trigger: EventTrigger) => {
+        // Todo: Check conditions
+        console.log("Set conditions: ", trigger.conditions);
+        console.log("Available conditions: ", event.conditions);
 
-          trigger.feedbacks.forEach((id: string) => {
-            const feedback = feedbacks.find((f: StoredFeedback) => f.id === id);
-            if (feedback) {
-              this.editor.commands.addActiveFeedback(feedback);
-            }
-          });
+        trigger.feedbacks.forEach((id: string) => {
+          const feedback = feedbacks.find((f: StoredFeedback) => f.id === id);
+          if (feedback) {
+            this.editor.commands.addActiveFeedback(feedback);
+          }
         });
       });
-    }
+    });
   },
+
+  /*
+  onCreate() {
+    this.editor.on("update", ({ editor }) => {
+      const tasksInContent = findChildren(editor.state.doc, (node) =>
+        node.type.name.startsWith("task-")
+      ).map((n: NodeWithPos) => n.node.attrs.id);
+      const feedbacks = editor.getAttributes("document").feedbacks;
+      const triggers = editor.getAttributes("document").triggers;
+
+      const tasksInFeedbacksAndNotInContent = feedbacks
+        .map((f: StoredFeedback) => f.parent)
+        .filter((x: StoredFeedback) => !tasksInContent.includes(x));
+      const tasksInTriggersAndNotInContent = triggers
+        .map((t: EventTrigger) => t.parent)
+        .filter((x: EventTrigger) => !tasksInContent.includes(x));
+
+      if (tasksInFeedbacksAndNotInContent.length > 0 || tasksInTriggersAndNotInContent.length > 0) {
+        editor.commands.updateAttributes("document", {
+          feedbacks: feedbacks.filter(
+            (f: StoredFeedback) => !tasksInFeedbacksAndNotInContent.includes(f.parent)
+          ),
+          triggers: triggers.filter(
+            (t: EventTrigger) => !tasksInTriggersAndNotInContent.includes(t.parent)
+          ),
+        });
+      }
+    });
+  },
+   */
+
+  /*
+  addProseMirrorPlugins() {
+    return [
+      new Plugin({
+        key: new PluginKey("feedback"),
+        appendTransaction: (transaction, oldState, newState) => {
+          // Nothing has changed. Ignore it.
+          if (newState.doc === oldState.doc) {
+            return;
+          }
+
+          const tr = newState.tr;
+
+          console.log("newState", newState);
+          const tasksInContent = findChildren(newState.doc, (node) =>
+            node.type.name.startsWith("task-")
+          ).map((n: NodeWithPos) => n.node.attrs.id);
+          const feedbacks = getAttributes(newState, "document").feedbacks;
+          const triggers = getAttributes(newState, "document").triggers;
+
+          const tasksInFeedbacksAndNotInContent = feedbacks
+            .map((f: StoredFeedback) => f.parent)
+            .filter((x: StoredFeedback) => !tasksInContent.includes(x));
+          const tasksInTriggersAndNotInContent = triggers
+            .map((t: EventTrigger) => t.parent)
+            .filter((x: EventTrigger) => !tasksInContent.includes(x));
+
+          console.log("final", tasksInFeedbacksAndNotInContent, tasksInTriggersAndNotInContent);
+
+           */
+  /*
+          newState.doc.descendants((node, pos) => {
+            if (node.isBlock && node.type.name.startsWith("task-") && !node.attrs.id) {
+              tr.setNodeMarkup(pos, undefined, {
+                ...node.attrs,
+                id: uuid(),
+              });
+            }
+          });
+
+          return tr;
+        },
+      }),
+    ];
+  },
+           */
 
   addCommands() {
     return {
       addFeedback:
         (feedback) =>
         ({ commands }) => {
+          console.log("addFeedback", this.editor.getAttributes("document").feedbacks, feedback);
+
           commands.updateAttributes("document", {
             feedbacks: [...this.editor.getAttributes("document").feedbacks, feedback],
           });
@@ -145,7 +225,6 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
       updateFeedback:
         (feedback, attributes) =>
         ({ commands }) => {
-          console.log("updateFeedback", feedback, attributes);
           const feedbacks = this.editor
             .getAttributes("document")
             .feedbacks.map((s: StoredFeedback) => {
@@ -165,7 +244,7 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
         },
 
       removeFeedback:
-        (feedback) =>
+        (feedback, removeEmptyTrigger = false) =>
         ({ commands }) => {
           if (!feedback.id) {
             return false;
@@ -187,12 +266,20 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
           // Remove feedback from stored feedbacks list and also from triggers using it
           commands.updateAttributes("document", {
             feedbacks: feedbacks.filter((s: StoredFeedback) => s.id !== feedback.id),
-            triggers: this.editor
-              .getAttributes("document")
-              .triggers.map((trigger: EventTrigger) => {
+            triggers: (() => {
+              let triggers = this.editor.getAttributes("document").triggers;
+
+              if (removeEmptyTrigger) {
+                triggers = triggers.filter(
+                  (trigger: EventTrigger) => !isEqual(trigger.feedbacks, [feedback.id])
+                );
+              }
+
+              return triggers.map((trigger: EventTrigger) => {
                 trigger.feedbacks = trigger.feedbacks.filter((id) => id !== feedback.id);
                 return trigger;
-              }),
+              });
+            })(),
           });
 
           this.storage.activeFeedbacks = this.storage.activeFeedbacks.filter(
@@ -290,10 +377,7 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
         (trigger) =>
         ({ commands }) => {
           commands.updateAttributes("document", {
-            triggers: [
-              ...this.editor.getAttributes("document").triggers,
-              { ...trigger, id: uuid() },
-            ],
+            triggers: [...this.editor.getAttributes("document").triggers, trigger],
           });
 
           return true;

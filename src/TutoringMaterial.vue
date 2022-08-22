@@ -37,6 +37,7 @@
 // Vue imports
 import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { isEqual } from "lodash-es";
 import EditorMenu from "@/helpers/EditorMenu.vue";
 
 // Editor imports
@@ -59,16 +60,18 @@ import { Infobox } from "@/extensions/infobox";
 import { CustomImage } from "@/extensions/image";
 import EditorFooter from "@/helpers/EditorFooter.vue";
 import NotificationContainerComponent from "@/extensions/feedback/notification/NotificationContainerComponent.vue";
-import { FeedbackNotification } from "@/extensions/feedback/notification";
-import { FeedbackMark } from "@/extensions/feedback/mark";
 
-import { SingleChoiceTask } from "@/extensions/task/single-choice";
 import { Task } from "@/extensions/task";
+import { SingleChoiceTask } from "@/extensions/task/single-choice";
+
 import { FeedbackExtension } from "@/extensions/feedback";
+import { FeedbackHint } from "@/extensions/feedback/hint";
+import { FeedbackMark } from "@/extensions/feedback/mark";
+import { FeedbackNotification } from "@/extensions/feedback/notification";
+
 import type { PropType } from "vue";
 import type { JSONContent } from "@tiptap/vue-3";
 import type { DocumentState, EmittedEvent, Event } from "@/extensions/document/types";
-import { isEqual } from "lodash-es";
 
 export default defineComponent({
   components: {
@@ -187,6 +190,7 @@ export default defineComponent({
         CustomImage,
         Infobox,
         FeedbackExtension,
+        FeedbackHint,
         FeedbackNotification,
         FeedbackMark.configure({ showOutline: props.isEditor }),
         Task,
@@ -217,14 +221,11 @@ export default defineComponent({
     // Register event bus
     editor.storage.document.eventBus().on("*", (type: string, e: Event) => {
       context.emit("event", {
-        ts: Date.now(),
         type: type,
-        label: {
-          message: !!e.label?.message ? e.label.message : type,
-          data: e.label?.data,
-          hexIcon: e.label?.hexIcon,
-        },
+        ts: Date.now(),
+        conditions: e.conditions,
         data: e.data,
+        label: e.label,
       } as EmittedEvent);
     });
 

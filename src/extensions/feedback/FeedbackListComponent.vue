@@ -6,8 +6,8 @@
     </span>
 
     <!-- Loop over all list entries -->
-    <ul v-else class="divide-y divide-gray-200" role="list">
-      <li v-for="feedback in feedbacks" :key="feedback.id" class="py-1">
+    <ul v-else class="p-0 m-0 divide-y divide-gray-200 list-none" role="list">
+      <li v-for="feedback in feedbacks" :key="feedback.id" class="py-1 m-0">
         <component
           :is="feedback.type"
           :key="feedback.config"
@@ -21,6 +21,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import FeedbackHint from "@/extensions/feedback/hint/ConfigurationComponent.vue";
 import FeedbackMark from "@/extensions/feedback/mark/ConfigurationComponent.vue";
 import FeedbackNotification from "@/extensions/feedback/notification/ConfigurationComponent.vue";
 
@@ -32,6 +33,7 @@ export default defineComponent({
   name: "FeedbackListComponent",
 
   components: {
+    "feedback-hint": FeedbackHint,
     "feedback-mark": FeedbackMark,
     "feedback-notification": FeedbackNotification,
   },

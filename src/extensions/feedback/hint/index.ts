@@ -5,25 +5,25 @@ import { calculateHexIcon } from "@/helpers/util";
 import { v4 as uuid } from "uuid";
 
 import type { StoredFeedback } from "@/extensions/feedback/types";
-import type { NotificationFeedback } from "@/extensions/feedback/notification/types";
+import type { HintFeedback } from "@/extensions/feedback/hint/types";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    feedbackNotification: {
+    feedbackHint: {
       /**
-       * Add a default notification feedback to permanent feedback store.
+       * Add a default hint feedback to permanent feedback store.
        */
-      addFeedbackNotification: (attributes: Partial<NotificationFeedback>) => ReturnType;
+      addFeedbackHint: (attributes: Partial<HintFeedback>) => ReturnType;
     };
   }
 }
 
-export const FeedbackNotification = Extension.create({
-  name: "feedback-notification",
+export const FeedbackHint = Extension.create({
+  name: "feedback-hint",
 
   addCommands() {
     return {
-      addFeedbackNotification:
+      addFeedbackHint:
         (attributes) =>
         ({ commands }) => {
           const defaultConfig = {
@@ -48,7 +48,7 @@ export const FeedbackNotification = Extension.create({
             id: uid,
             type: this.name,
             label: {
-              message: "global.feedback.type-feedback-notification",
+              message: "global.feedback.type-feedback-hint",
               hexIcon: calculateHexIcon(uid),
             },
             parent: null,

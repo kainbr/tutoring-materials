@@ -42,19 +42,22 @@
         :editor="editor"
         :content="node.attrs.content"
         :evaluation="node.attrs.evaluation"
-        :feedbacks="node.attrs.feedbacks"
+        :feedbacks="[
+          ...editor.getAttributes('document').feedbacks.filter((s) => s.parent === node.attrs.id),
+        ]"
         :options="node.attrs.options"
         :state="state"
         :active-feedbacks="activeFeedbacks"
         @update:content="updateAttributes({ content: $event })"
         @update:evaluation="updateAttributes({ evaluation: $event })"
-        @update:feedbacks="updateAttributes({ feedbacks: $event })"
+        @update:feedbacks="updateFeedbacks"
         @update:options="updateAttributes({ options: $event })"
         @update:state="updateState"
       />
 
       <div v-if="!editor.isEditable && !!state" class="my-1 w-full">
         <SubmitButton
+          :id="node.attrs.id"
           :editor="editor"
           :type="node.attrs.type.substring(5)"
           :options="node.attrs.options"
@@ -141,13 +144,17 @@ export default defineComponent({
         : [];
     });
 
+    const updateFeedbacks = ($event) => {
+      console.log("Update Feedbacks", $event);
+    };
+
     const updateState = ($event) => {
       !state.value
         ? props.editor.commands.addTaskState($event)
         : props.editor.commands.updateTaskState(state.value, $event);
     };
 
-    return { state, activeFeedbacks, calculateHexIcon, updateState };
+    return { state, activeFeedbacks, calculateHexIcon, updateFeedbacks, updateState };
   },
 });
 </script>

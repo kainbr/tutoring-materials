@@ -69,18 +69,13 @@ export default defineComponent({
 
   props: {
     content: {
-      type: Object as PropType<JSONContent>,
+      type: Object as PropType<JSONContent | undefined>,
       default() {
         return {
           type: "doc",
           content: [
             {
               type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                },
-              ],
             },
           ],
         };

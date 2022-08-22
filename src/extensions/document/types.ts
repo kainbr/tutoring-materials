@@ -22,8 +22,9 @@ export type Event = {
 export type EmittedEvent = {
   type: string;
   ts: number;
-  label: Label;
+  conditions: object;
   data: object;
+  label: Label;
 };
 
 /**

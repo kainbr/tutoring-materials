@@ -1,6 +1,10 @@
 {
   "editor": {
     "feedback": {
+      "hint-modal-edit-button": "Inhalt bearbeiten",
+      "hint-modal-edit-title": "Tipp bearbeiten",
+      "hint-modal-remove-button": "Tipp entfernen",
+      "hint-modal-save-button": "Speichern",
       "notification-modal-description": "Benachrichtigung",
       "notification-modal-edit-button": "Inhalt bearbeiten",
       "notification-modal-edit-save-button": "Speichern",
@@ -95,6 +99,7 @@
       "type-task-created": "Aufgabe erstellt"
     },
     "feedback": {
+      "type-feedback-hint": "Tipp",
       "type-feedback-mark": "Textformatierung ändern",
       "type-feedback-notification": "Zeige Benachrichtigung"
     }
@@ -108,6 +113,7 @@
     "button-rotate-player": "Ansicht drehen"
   },
   "statistics": {
+    "tab-events-conditions": "Auswertbare Bedingungen",
     "tab-events-data": "Zusätzliche Informationen",
     "tab-events-placeholder": "Kein Ereignis ausgewählt",
     "tab-events-timestamp": "Zeitstempel",

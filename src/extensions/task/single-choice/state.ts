@@ -20,7 +20,7 @@ export const formatTaskState: SCFormatFunction<SCState> = function ({
   state.type = "single-choice";
   state.answer = formatAnswer(newState, newContent);
   state.order = formatOrder(newContent, newOptions, oldOptions, oldState);
-  state.isEmptyAnswer = state.answer.every((a) => !a.value);
+  state.empty = state.answer.every((a) => !a.value);
   state.answer = formatAnswer(newState, newContent);
 
   return <SCState>state;

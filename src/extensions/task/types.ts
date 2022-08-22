@@ -54,7 +54,7 @@ export interface TaskState {
   attempt: number;
   type: string;
   answer: unknown;
-  isEmptyAnswer: boolean;
+  empty: boolean;
 }
 
 export interface formatFunction<C, E, F, O, S, T> {

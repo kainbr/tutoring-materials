@@ -12,6 +12,14 @@
             }}</span>
           </DisclosureButton>
 
+          <!-- Test -->
+          <EditorMenuButton
+            v-tippy="$t('editor.menu.feedback-notification-add-tooltip')"
+            :on-inactive-click="() => editor.commands.addFeedbackHint({})"
+          >
+            <IconNotification />
+          </EditorMenuButton>
+
           <!-- Notification -->
           <EditorMenuButton
             v-tippy="$t('editor.menu.feedback-notification-add-tooltip')"

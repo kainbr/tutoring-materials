@@ -105,6 +105,19 @@
           </dl>
           <dl class="mt-2">
             <dt class="text-sm font-medium text-gray-500">
+              {{ $t("statistics.tab-events-conditions") }}
+            </dt>
+            <dd v-if="!selectedEvent?.conditions" class="mt-1 text-sm text-gray-900">
+              No conditions provided
+            </dd>
+          </dl>
+          <div>
+            <pre v-if="!!selectedEvent?.conditions" class="mt-1 text-xs text-gray-900">{{
+              selectedEvent?.conditions
+            }}</pre>
+          </div>
+          <dl class="mt-2">
+            <dt class="text-sm font-medium text-gray-500">
               {{ $t("statistics.tab-events-data") }}
             </dt>
             <dd v-if="!selectedEvent?.data" class="mt-1 text-sm text-gray-900">No data provided</dd>

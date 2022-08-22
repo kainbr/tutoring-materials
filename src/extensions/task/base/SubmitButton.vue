@@ -15,12 +15,19 @@
       </div>
     </div>
 
+    <!-- Hint -->
+    <div v-if="['incorrect'].includes(state.state)">
+      <span v-for="hint in hints" :key="hint" class="" :class="fontColor">
+        <InlineEditor :content="hint.config.content"></InlineEditor>
+      </span>
+    </div>
+
     <!-- Button -->
     <button
       v-if="['init', 'incorrect'].includes(state.state)"
-      class="mt-3 inline-flex items-center px-3 py-2 w-full justify-center border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      class="inline-flex items-center mt-2 px-3 py-2 w-full justify-center border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
       type="button"
-      :disabled="!options.allowEmptyAnswerSubmission && state.isEmptyAnswer"
+      :disabled="!options.allowEmptyAnswerSubmission && state.empty"
       @click="submit"
     >
       {{ options.textSubmitButton }}
@@ -31,18 +38,24 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { evaluate } from "@/extensions/task/evaluate";
+import { calculateHexIcon } from "@/helpers/util";
 
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
 import type { TaskEvaluation, TaskOptions, TaskState } from "@/extensions/task/types";
-import { calculateHexIcon } from "@/helpers/util";
+import type { Feedback } from "@/extensions/feedback/types";
+import InlineEditor from "@/helpers/InlineEditor.vue";
 
 export default defineComponent({
   name: "SubmitButton",
-
+  components: { InlineEditor },
   props: {
     editor: {
       type: Object as PropType<Editor>,
+      required: true,
+    },
+    id: {
+      type: String,
       required: true,
     },
     type: {
@@ -64,6 +77,13 @@ export default defineComponent({
   },
 
   computed: {
+    hints() {
+      return (
+        this.editor.storage.feedback?.activeFeedbacks.filter(
+          (s: Feedback) => s.type === "feedback-hint" && s.parent === this.id
+        ) || []
+      );
+    },
     backgroundColor() {
       return {
         "p-3": this.state.state !== "init",
@@ -119,18 +139,25 @@ export default defineComponent({
      */
     async submit() {
       // Evaluate answer
-      const response = await evaluate(this.type, this.evaluation, this.state);
+      const { response, conditions } = await evaluate(this.type, this.evaluation, this.state);
 
       // Emit event
       this.editor.storage.document.eventBus().emit("answer-submitted", {
+        type: this.type,
         parent: this.state.id,
-        label: {
-          message: "global.event.type-answer-submitted",
-          hexIcon: calculateHexIcon(this.state.id),
+        conditions: {
+          attempt: this.state.attempt,
+          empty: this.state.empty,
+          response,
+          ...conditions,
         },
         data: {
           ...this.state,
           response,
+        },
+        label: {
+          message: "global.event.type-answer-submitted",
+          hexIcon: calculateHexIcon(this.state.id),
         },
       });
 
