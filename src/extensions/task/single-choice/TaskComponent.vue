@@ -245,16 +245,14 @@ const {
   //createFeedback,
   //updateFeedback,
   //removeFeedback,
-} = useTask<SCProps, SCEmits, SCOptions, SCOption[], SCEvaluation, SCState>(
-  props,
-  emit,
+} = useTask<SCProps, SCEmits, SCOptions, SCOption[], SCEvaluation, SCState>(props, emit, [
   formatOptions,
   formatContent,
   formatEvaluation,
   formatState,
   formatFeedbacks,
-  formatTriggers
-);
+  formatTriggers,
+]);
 
 /**
  * Task specific functions

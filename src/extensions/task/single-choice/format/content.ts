@@ -1,15 +1,13 @@
 import { v4 as uuid } from "uuid";
 import type { SCFormatFunction, SCOption } from "@/extensions/task/single-choice/types";
 
-export const formatContent: SCFormatFunction<SCOption[]> = function ({ newContent }) {
-  let content: SCOption[];
-
-  if (!newContent || !Array.isArray(newContent)) {
+export const formatContent: SCFormatFunction = function (data) {
+  if (!data.newContent || !Array.isArray(data.newContent)) {
     // Set content to default if the input is no array
-    content = defaultContent;
+    data.newContent = defaultContent;
   } else {
     // Add necessary attributes to each answer option
-    content = newContent.map((option) => {
+    data.newContent = data.newContent.map((option) => {
       const defaultOption = {
         id: uuid(),
         content: {
@@ -21,7 +19,7 @@ export const formatContent: SCFormatFunction<SCOption[]> = function ({ newConten
     });
   }
 
-  return content;
+  return data;
 };
 
 export const defaultContent: SCOption[] = [

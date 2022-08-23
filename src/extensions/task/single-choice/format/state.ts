@@ -7,23 +7,20 @@ import type {
 } from "@/extensions/task/single-choice/types";
 import { getDefaultTaskState } from "@/extensions/task/defaults";
 
-export const formatState: SCFormatFunction<SCState> = function ({
-  id,
-  newContent,
-  newState,
-  newOptions,
-  oldOptions,
-  oldState,
-}) {
-  const state: Partial<SCState> = !newState ? <Partial<SCState>>getDefaultTaskState(id) : newState;
+export const formatState: SCFormatFunction = function (data) {
+  const newState: Partial<SCState> = <Partial<SCState>>{
+    ...getDefaultTaskState(data.id),
+    ...data.newState,
+  };
 
-  state.type = "single-choice";
-  state.answer = formatAnswer(newState, newContent);
-  state.order = formatOrder(newContent, newOptions, oldOptions, oldState);
-  state.empty = state.answer.every((a) => !a.value);
-  // state.answer = formatAnswer(newState, newContent);
+  newState.type = "single-choice";
+  newState.answer = formatAnswer(data.newState, data.newContent);
+  newState.order = formatOrder(data.newContent, data.newOptions, data.oldOptions, data.oldState);
+  newState.empty = newState.answer.every((a) => !a.value);
 
-  return <SCState>state;
+  data.newState = <SCState>newState;
+
+  return data;
 };
 
 function formatAnswer(

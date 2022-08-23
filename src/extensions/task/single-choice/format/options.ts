@@ -1,12 +1,14 @@
 import { defaultTaskOptions } from "@/extensions/task/defaults";
-import type { SCFormatFunction, SCOptions } from "@/extensions/task/single-choice/types";
+import type { SCFormatFunction } from "@/extensions/task/single-choice/types";
 
-export const formatOptions: SCFormatFunction<SCOptions> = function ({ newOptions }) {
-  return {
+export const formatOptions: SCFormatFunction = function (data) {
+  data.newOptions = {
     ...defaultTaskOptions,
     ...defaultSingleChoiceOptions,
-    ...(!!newOptions ? newOptions : {}),
+    ...(!!data.newOptions ? data.newOptions : {}),
   };
+
+  return data;
 };
 
 export const defaultSingleChoiceOptions = {

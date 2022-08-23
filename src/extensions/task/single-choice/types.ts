@@ -41,6 +41,6 @@ export interface SCOptionAnswer {
   value: boolean;
 }
 
-export type SCFormatFunction<T> = (
+export type SCFormatFunction = (
   data: propsInterface<SCOptions, SCOption[], SCEvaluation, SCState>
-) => T;
+) => propsInterface<SCOptions, SCOption[], SCEvaluation, SCState>;
