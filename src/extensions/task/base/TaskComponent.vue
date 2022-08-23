@@ -179,28 +179,28 @@ export default defineComponent({
     };
 
     /*
-    const updateOptions = (newOptions: TaskOptions) => {
-      props.updateAttributes({ options: newOptions });
+    const updateOptions = (options: TaskOptions) => {
+      props.updateAttributes({ options: options });
     };
 
-    const updateContent = (newContent: TaskContent) => {
-      props.updateAttributes({ content: newContent });
+    const updateContent = (content: TaskContent) => {
+      props.updateAttributes({ content: content });
     };
 
-    const updateEvaluation = (newEvaluation: TaskEvaluation) => {
-      props.updateAttributes({ evaluation: newEvaluation });
+    const updateEvaluation = (evaluation: TaskEvaluation) => {
+      props.updateAttributes({ evaluation: evaluation });
     };
 
-    const updateState = (newState: TaskState) => {
+    const updateState = (state: TaskState) => {
       
     };
 
-    const updateFeedbacks = (newFeedbacks: Feedback[]) => {
-      props.updateAttributes({ feedbacks: newFeedbacks });
+    const updateFeedbacks = (feedbacks: Feedback[]) => {
+      props.updateAttributes({ feedbacks: feedbacks });
     };
 
-    const updateTriggers = (newTriggers: EventTrigger[]) => {
-      props.updateAttributes({ triggers: newTriggers });
+    const updateTriggers = (triggers: EventTrigger[]) => {
+      props.updateAttributes({ triggers: triggers });
     };
      */
 

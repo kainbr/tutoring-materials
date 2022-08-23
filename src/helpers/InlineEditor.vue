@@ -131,9 +131,9 @@ export default defineComponent({
 
     watch(
       () => props.content,
-      (newContent: JSONContent) => {
-        if (JSON.stringify(editor.getJSON()) !== JSON.stringify(newContent)) {
-          editor.commands.setContent(newContent, true);
+      (content: JSONContent) => {
+        if (JSON.stringify(editor.getJSON()) !== JSON.stringify(content)) {
+          editor.commands.setContent(content, true);
         }
       },
       { deep: true }

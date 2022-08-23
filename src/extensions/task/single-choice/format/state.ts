@@ -8,30 +8,30 @@ import type {
 import { getDefaultTaskState } from "@/extensions/task/defaults";
 
 export const formatState: SCFormatFunction = function (data) {
-  const newState: Partial<SCState> = <Partial<SCState>>{
+  const state: Partial<SCState> = <Partial<SCState>>{
     ...getDefaultTaskState(data.id),
-    ...data.newState,
+    ...data.state,
   };
 
-  newState.type = "single-choice";
-  newState.answer = formatAnswer(data.newState, data.newContent);
-  newState.order = formatOrder(data.newContent, data.newOptions, data.oldOptions, data.oldState);
-  newState.empty = newState.answer.every((a) => !a.value);
+  state.type = "single-choice";
+  state.answer = formatAnswer(data.state, data.content);
+  state.order = formatOrder(data.content, data.options, data.oldOptions, data.oldState);
+  state.empty = state.answer.every((a) => !a.value);
 
-  data.newState = <SCState>newState;
+  data.state = <SCState>state;
 
   return data;
 };
 
 function formatAnswer(
-  newState: SCState | undefined,
-  newContent: SCOption[] | undefined
+  state: SCState | undefined,
+  content: SCOption[] | undefined
 ): SCOptionAnswer[] {
-  if (!!newContent && Array.isArray(newContent)) {
-    return newContent.map((option: SCOption) => {
+  if (!!content && Array.isArray(content)) {
+    return content.map((option: SCOption) => {
       return {
         id: option.id,
-        value: !!newState?.answer?.find((o) => o.id === option.id)?.value,
+        value: !!state?.answer?.find((o) => o.id === option.id)?.value,
       };
     });
   } else {
@@ -40,29 +40,29 @@ function formatAnswer(
 }
 
 function formatOrder(
-  newContent: SCOption[] | undefined,
-  newOptions: SCOptions | undefined,
+  content: SCOption[] | undefined,
+  options: SCOptions | undefined,
   oldOptions: SCOptions | undefined,
   oldState: SCState | undefined
 ): number[] {
   // If no content is given we cannot determine how long the order has to be
-  if (!newContent) {
+  if (!content) {
     return [];
   }
 
   if (
-    !!newOptions &&
+    !!options &&
     !!oldOptions &&
-    newOptions.shuffle === oldOptions.shuffle &&
+    options.shuffle === oldOptions.shuffle &&
     !!oldState &&
-    newContent.length === oldState.order.length
+    content.length === oldState.order.length
   ) {
     return oldState.order;
   } else {
-    if (newOptions?.shuffle) {
-      return shuffleArray(Array.from([...Array(newContent?.length).keys()]));
+    if (options?.shuffle) {
+      return shuffleArray(Array.from([...Array(content?.length).keys()]));
     } else {
-      return Array.from([...Array(newContent.length).keys()]);
+      return Array.from([...Array(content.length).keys()]);
     }
   }
 }

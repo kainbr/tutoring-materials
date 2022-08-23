@@ -1,24 +1,24 @@
-import type { SCFormatFunction, SCEvaluation } from "@/extensions/task/single-choice/types";
+import type { SCFormatFunction } from "@/extensions/task/single-choice/types";
 import type { SCEvaluationOption } from "@/extensions/task/single-choice/types";
 
 export const formatEvaluation: SCFormatFunction = function (data) {
-  switch (data.newEvaluation?.name) {
+  switch (data.evaluation?.name) {
     case "all-match":
     default:
-      data.newEvaluation = {
+      data.evaluation = {
         ...{
           name: "all-match",
           solution: [],
         },
-        ...data.newEvaluation,
+        ...data.evaluation,
       };
       break;
   }
 
   // Check if true values are supplied
-  if (!!data.newContent && Array.isArray(data.newContent)) {
-    data.newEvaluation.solution = data.newContent.map((option) => {
-      const oldValue = data.newEvaluation?.solution.find((s) => s.id === option.id)?.value;
+  if (!!data.content && Array.isArray(data.content)) {
+    data.evaluation.solution = data.content.map((option) => {
+      const oldValue = data.evaluation?.solution.find((s) => s.id === option.id)?.value;
       return {
         id: option.id,
         value: oldValue ? oldValue : false,
@@ -28,10 +28,10 @@ export const formatEvaluation: SCFormatFunction = function (data) {
 
   // Make sure that one option is always correct
   if (
-    data.newEvaluation.solution.length > 0 &&
-    data.newEvaluation.solution.every((option) => !option.value)
+    data.evaluation.solution.length > 0 &&
+    data.evaluation.solution.every((option) => !option.value)
   ) {
-    data.newEvaluation.solution[0].value = true;
+    data.evaluation.solution[0].value = true;
   }
 
   return data;

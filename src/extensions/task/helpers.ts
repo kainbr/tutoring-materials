@@ -12,12 +12,12 @@ import type { EventTrigger, StoredFeedback } from "@/extensions/feedback/types";
 
 export type propsInterface<O, C, E, S> = {
   id: string;
-  newOptions?: O;
-  newContent?: C;
-  newEvaluation?: E;
-  newState?: S;
-  newFeedbacks?: StoredFeedback[];
-  newTriggers?: EventTrigger[];
+  options?: O;
+  content?: C;
+  evaluation?: E;
+  state?: S;
+  feedbacks?: StoredFeedback[];
+  triggers?: EventTrigger[];
   oldOptions?: O;
   oldContent?: C;
   oldEvaluation?: E;
@@ -51,24 +51,24 @@ export function useTask<
   formatFunctions: ((data: propsInterface<O, C, E, S>) => propsInterface<O, C, E, S>)[]
 ): {
   update: (attributes: Partial<propsInterface<O, C, E, S>>) => void;
-  updateOptions: (newOptions: O) => void;
-  updateContent: (newContent: C) => void;
-  updateEvaluation: (newEvaluation: E) => void;
-  updateState: (newState: S) => void;
-  updateFeedbacks: (newFeedbacks: StoredFeedback[]) => void;
-  updateTriggers: (newTriggers: EventTrigger[]) => void;
+  updateOptions: (options: O) => void;
+  updateContent: (content: C) => void;
+  updateEvaluation: (evaluation: E) => void;
+  updateState: (state: S) => void;
+  updateFeedbacks: (feedbacks: StoredFeedback[]) => void;
+  updateTriggers: (triggers: EventTrigger[]) => void;
   createFeedback: (feedback: StoredFeedback) => void;
   updateFeedback: (feedback: StoredFeedback, attributes: Partial<StoredFeedback>) => void;
   removeFeedback: (feedback: StoredFeedback) => void;
 } {
   const data: propsInterface<O, C, E, S> = {
     id: props.id,
-    newOptions: props.options,
-    newContent: props.content,
-    newEvaluation: props.evaluation,
-    newState: props.state,
-    newFeedbacks: props.feedbacks,
-    newTriggers: props.triggers,
+    options: props.options,
+    content: props.content,
+    evaluation: props.evaluation,
+    state: props.state,
+    feedbacks: props.feedbacks,
+    triggers: props.triggers,
     oldOptions: props.options,
     oldContent: props.content,
     oldEvaluation: props.evaluation,
@@ -91,12 +91,12 @@ export function useTask<
       formatFunctions
     );
     emit("update", {
-      options: newData.newOptions,
-      content: newData.newContent,
-      evaluation: newData.newEvaluation,
-      state: newData.newState,
-      feedbacks: newData.newFeedbacks,
-      triggers: newData.newTriggers,
+      options: newData.options,
+      content: newData.content,
+      evaluation: newData.evaluation,
+      state: newData.state,
+      feedbacks: newData.feedbacks,
+      triggers: newData.triggers,
     });
   });
 
@@ -111,26 +111,26 @@ export function useTask<
       () => props.triggers,
     ],
     (
-      [newOptions, newContent, newEvaluation, newState, newFeedbacks, newTriggers],
+      [options, content, evaluation, state, feedbacks, triggers],
       [oldOptions, oldContent, oldEvaluation, oldState, oldFeedbacks, oldTriggers]
     ) => {
       if (
-        !isEqual(newOptions, oldOptions) ||
-        !isEqual(newContent, oldContent) ||
-        !isEqual(newEvaluation, oldEvaluation) ||
-        !isEqual(newState, oldState) ||
-        !isEqual(newFeedbacks, oldFeedbacks) ||
-        !isEqual(newTriggers, oldTriggers)
+        !isEqual(options, oldOptions) ||
+        !isEqual(content, oldContent) ||
+        !isEqual(evaluation, oldEvaluation) ||
+        !isEqual(state, oldState) ||
+        !isEqual(feedbacks, oldFeedbacks) ||
+        !isEqual(triggers, oldTriggers)
       ) {
         const newData = formatTask<O, C, E, S>(
           <propsInterface<O, C, E, S>>{
             id: props.id,
-            newOptions,
-            newContent,
-            newEvaluation,
-            newFeedbacks,
-            newState,
-            newTriggers,
+            options,
+            content,
+            evaluation,
+            feedbacks,
+            state,
+            triggers,
             oldOptions,
             oldContent,
             oldEvaluation,
@@ -141,12 +141,12 @@ export function useTask<
           formatFunctions
         );
         emit("update", {
-          options: newData.newOptions,
-          content: newData.newContent,
-          evaluation: newData.newEvaluation,
-          state: newData.newState,
-          feedbacks: newData.newFeedbacks,
-          triggers: newData.newTriggers,
+          options: newData.options,
+          content: newData.content,
+          evaluation: newData.evaluation,
+          state: newData.state,
+          feedbacks: newData.feedbacks,
+          triggers: newData.triggers,
         });
       }
     },
@@ -160,12 +160,12 @@ export function useTask<
     const newData = formatTask<O, C, E, S>(
       {
         id: props.id,
-        newOptions: props.options,
-        newContent: props.content,
-        newEvaluation: props.evaluation,
-        newState: props.state,
-        newFeedbacks: props.feedbacks,
-        newTriggers: props.triggers,
+        options: props.options,
+        content: props.content,
+        evaluation: props.evaluation,
+        state: props.state,
+        feedbacks: props.feedbacks,
+        triggers: props.triggers,
         oldOptions: props.options,
         oldContent: props.content,
         oldEvaluation: props.evaluation,
@@ -177,26 +177,26 @@ export function useTask<
       formatFunctions
     );
     emit("update", {
-      options: newData.newOptions,
-      content: newData.newContent,
-      evaluation: newData.newEvaluation,
-      state: newData.newState,
-      feedbacks: newData.newFeedbacks,
-      triggers: newData.newTriggers,
+      options: newData.options,
+      content: newData.content,
+      evaluation: newData.evaluation,
+      state: newData.state,
+      feedbacks: newData.feedbacks,
+      triggers: newData.triggers,
     });
   };
 
   // Format on internal changes
-  const updateOptions = (newOptions: O): void => {
+  const updateOptions = (options: O): void => {
     const newData = formatTask<O, C, E, S>(
       {
         id: props.id,
-        newOptions: newOptions,
-        newContent: props.content,
-        newEvaluation: props.evaluation,
-        newState: props.state,
-        newFeedbacks: props.feedbacks,
-        newTriggers: props.triggers,
+        options: options,
+        content: props.content,
+        evaluation: props.evaluation,
+        state: props.state,
+        feedbacks: props.feedbacks,
+        triggers: props.triggers,
         oldOptions: props.options,
         oldContent: props.content,
         oldEvaluation: props.evaluation,
@@ -207,25 +207,25 @@ export function useTask<
       formatFunctions
     );
     emit("update", {
-      options: newData.newOptions,
-      content: newData.newContent,
-      evaluation: newData.newEvaluation,
-      state: newData.newState,
-      feedbacks: newData.newFeedbacks,
-      triggers: newData.newTriggers,
+      options: newData.options,
+      content: newData.content,
+      evaluation: newData.evaluation,
+      state: newData.state,
+      feedbacks: newData.feedbacks,
+      triggers: newData.triggers,
     });
   };
 
-  const updateContent = (newContent: C): void => {
+  const updateContent = (content: C): void => {
     const newData = formatTask<O, C, E, S>(
       {
         id: props.id,
-        newOptions: props.options,
-        newContent: newContent,
-        newEvaluation: props.evaluation,
-        newState: props.state,
-        newFeedbacks: props.feedbacks,
-        newTriggers: props.triggers,
+        options: props.options,
+        content: content,
+        evaluation: props.evaluation,
+        state: props.state,
+        feedbacks: props.feedbacks,
+        triggers: props.triggers,
         oldOptions: props.options,
         oldContent: props.content,
         oldEvaluation: props.evaluation,
@@ -236,25 +236,25 @@ export function useTask<
       formatFunctions
     );
     emit("update", {
-      options: newData.newOptions,
-      content: newData.newContent,
-      evaluation: newData.newEvaluation,
-      state: newData.newState,
-      feedbacks: newData.newFeedbacks,
-      triggers: newData.newTriggers,
+      options: newData.options,
+      content: newData.content,
+      evaluation: newData.evaluation,
+      state: newData.state,
+      feedbacks: newData.feedbacks,
+      triggers: newData.triggers,
     });
   };
 
-  const updateEvaluation = (newEvaluation: E): void => {
+  const updateEvaluation = (evaluation: E): void => {
     const newData = formatTask<O, C, E, S>(
       {
         id: props.id,
-        newOptions: props.options,
-        newContent: props.content,
-        newEvaluation: newEvaluation,
-        newState: props.state,
-        newFeedbacks: props.feedbacks,
-        newTriggers: props.triggers,
+        options: props.options,
+        content: props.content,
+        evaluation: evaluation,
+        state: props.state,
+        feedbacks: props.feedbacks,
+        triggers: props.triggers,
         oldOptions: props.options,
         oldContent: props.content,
         oldEvaluation: props.evaluation,
@@ -265,25 +265,25 @@ export function useTask<
       formatFunctions
     );
     emit("update", {
-      options: newData.newOptions,
-      content: newData.newContent,
-      evaluation: newData.newEvaluation,
-      state: newData.newState,
-      feedbacks: newData.newFeedbacks,
-      triggers: newData.newTriggers,
+      options: newData.options,
+      content: newData.content,
+      evaluation: newData.evaluation,
+      state: newData.state,
+      feedbacks: newData.feedbacks,
+      triggers: newData.triggers,
     });
   };
 
-  const updateState = (newState: S): void => {
+  const updateState = (state: S): void => {
     const newData = formatTask<O, C, E, S>(
       {
         id: props.id,
-        newOptions: props.options,
-        newContent: props.content,
-        newEvaluation: props.evaluation,
-        newState: newState,
-        newFeedbacks: props.feedbacks,
-        newTriggers: props.triggers,
+        options: props.options,
+        content: props.content,
+        evaluation: props.evaluation,
+        state: state,
+        feedbacks: props.feedbacks,
+        triggers: props.triggers,
         oldOptions: props.options,
         oldContent: props.content,
         oldEvaluation: props.evaluation,
@@ -294,25 +294,25 @@ export function useTask<
       formatFunctions
     );
     emit("update", {
-      options: newData.newOptions,
-      content: newData.newContent,
-      evaluation: newData.newEvaluation,
-      state: newData.newState,
-      feedbacks: newData.newFeedbacks,
-      triggers: newData.newTriggers,
+      options: newData.options,
+      content: newData.content,
+      evaluation: newData.evaluation,
+      state: newData.state,
+      feedbacks: newData.feedbacks,
+      triggers: newData.triggers,
     });
   };
 
-  const updateFeedbacks = (newFeedbacks: StoredFeedback[]): void => {
+  const updateFeedbacks = (feedbacks: StoredFeedback[]): void => {
     const newData = formatTask<O, C, E, S>(
       {
         id: props.id,
-        newOptions: props.options,
-        newContent: props.content,
-        newEvaluation: props.evaluation,
-        newState: props.state,
-        newFeedbacks: newFeedbacks,
-        newTriggers: props.triggers,
+        options: props.options,
+        content: props.content,
+        evaluation: props.evaluation,
+        state: props.state,
+        feedbacks: feedbacks,
+        triggers: props.triggers,
         oldOptions: props.options,
         oldContent: props.content,
         oldEvaluation: props.evaluation,
@@ -323,25 +323,25 @@ export function useTask<
       formatFunctions
     );
     emit("update", {
-      options: newData.newOptions,
-      content: newData.newContent,
-      evaluation: newData.newEvaluation,
-      state: newData.newState,
-      feedbacks: newData.newFeedbacks,
-      triggers: newData.newTriggers,
+      options: newData.options,
+      content: newData.content,
+      evaluation: newData.evaluation,
+      state: newData.state,
+      feedbacks: newData.feedbacks,
+      triggers: newData.triggers,
     });
   };
 
-  const updateTriggers = (newTriggers: EventTrigger[]): void => {
+  const updateTriggers = (triggers: EventTrigger[]): void => {
     const newData = formatTask<O, C, E, S>(
       {
         id: props.id,
-        newOptions: props.options,
-        newContent: props.content,
-        newEvaluation: props.evaluation,
-        newState: props.state,
-        newFeedbacks: props.feedbacks,
-        newTriggers: newTriggers,
+        options: props.options,
+        content: props.content,
+        evaluation: props.evaluation,
+        state: props.state,
+        feedbacks: props.feedbacks,
+        triggers: triggers,
         oldOptions: props.options,
         oldContent: props.content,
         oldEvaluation: props.evaluation,
@@ -352,12 +352,12 @@ export function useTask<
       formatFunctions
     );
     emit("update", {
-      options: newData.newOptions,
-      content: newData.newContent,
-      evaluation: newData.newEvaluation,
-      state: newData.newState,
-      feedbacks: newData.newFeedbacks,
-      triggers: newData.newTriggers,
+      options: newData.options,
+      content: newData.content,
+      evaluation: newData.evaluation,
+      state: newData.state,
+      feedbacks: newData.feedbacks,
+      triggers: newData.triggers,
     });
   };
 

@@ -3,11 +3,11 @@ import type { Feedback } from "@/extensions/feedback/types";
 import type { HintFeedback } from "@/extensions/feedback/hint/types";
 
 export const formatFeedbacks: SCFormatFunction = function (data) {
-  if (!Array.isArray(data.newFeedbacks) || !Array.isArray(data.newContent)) {
-    data.newFeedbacks = [];
+  if (!Array.isArray(data.feedbacks) || !Array.isArray(data.content)) {
+    data.feedbacks = [];
   } else {
-    const answerOptions = data.newContent.map((option: SCOption) => option.id);
-    data.newFeedbacks = data.newFeedbacks.filter((f: Feedback) => {
+    const answerOptions = data.content.map((option: SCOption) => option.id);
+    data.feedbacks = data.feedbacks.filter((f: Feedback) => {
       return (
         f.type !== "feedback-hint" ||
         (!!(f as HintFeedback).config?.reference &&

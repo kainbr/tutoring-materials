@@ -484,8 +484,8 @@ const addFeedbackHint = (reference: string) => {
   };
 
   update({
-    newFeedbacks: [...(!!props.feedbacks ? props.feedbacks : []), hintFeedback],
-    newTriggers: [...(!!props.triggers ? props.triggers : []), trigger],
+    feedbacks: [...(!!props.feedbacks ? props.feedbacks : []), hintFeedback],
+    triggers: [...(!!props.triggers ? props.triggers : []), trigger],
   });
 };
 

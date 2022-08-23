@@ -5,12 +5,12 @@ import { isEqual, pick } from "lodash-es";
 import { v4 as uuid } from "uuid";
 
 export const formatTriggers: SCFormatFunction = function (data) {
-  if (!data.newTriggers || !Array.isArray(data.newTriggers)) {
-    data.newTriggers = <EventTrigger[]>[];
+  if (!data.triggers || !Array.isArray(data.triggers)) {
+    data.triggers = <EventTrigger[]>[];
   }
 
   // Add event triggers for feedback hints
-  data.newFeedbacks?.forEach((f: StoredFeedback) => {
+  data.feedbacks?.forEach((f: StoredFeedback) => {
     if (f.type === "feedback-hint") {
       const trigger: EventTrigger = {
         id: uuid(),
@@ -26,7 +26,7 @@ export const formatTriggers: SCFormatFunction = function (data) {
         feedbacks: [f.id],
       };
 
-      const eventTrigger = (data.newTriggers as EventTrigger[]).find((t: EventTrigger) =>
+      const eventTrigger = (data.triggers as EventTrigger[]).find((t: EventTrigger) =>
         isEqual(
           pick(t, ["event", "parent", "conditions", "feedbacks"]),
           pick(trigger, ["event", "parent", "conditions", "feedbacks"])
@@ -34,18 +34,18 @@ export const formatTriggers: SCFormatFunction = function (data) {
       );
 
       if (!eventTrigger) {
-        data.newTriggers = [...(<EventTrigger[]>data.newTriggers), trigger];
+        data.triggers = [...(<EventTrigger[]>data.triggers), trigger];
       }
     }
   });
 
   // Filter out event triggers for feedback hints that do not have a corresponding option anymore
-  data.newTriggers = [
-    ...data.newTriggers.map((t: EventTrigger) => {
+  data.triggers = [
+    ...data.triggers.map((t: EventTrigger) => {
       return {
         ...t,
         feedbacks: t.feedbacks.filter((id) => {
-          return data.newFeedbacks?.find((feedback: StoredFeedback) => feedback.id === id);
+          return data.feedbacks?.find((feedback: StoredFeedback) => feedback.id === id);
         }),
       };
     }),

@@ -89,15 +89,15 @@ export const Task = Extension.create<unknown, TaskExtensionStorage>({
     return [
       new Plugin({
         key: new PluginKey("task-id"),
-        appendTransaction: (transaction, oldState, newState) => {
+        appendTransaction: (transaction, oldState, state) => {
           // Nothing has changed. Ignore it.
-          if (newState.doc === oldState.doc) {
+          if (state.doc === oldState.doc) {
             return;
           }
 
-          const tr = newState.tr;
+          const tr = state.tr;
 
-          newState.doc.descendants((node, pos) => {
+          state.doc.descendants((node, pos) => {
             if (node.isBlock && node.type.name === "task" && !node.attrs.id) {
               tr.setNodeMarkup(pos, undefined, {
                 ...node.attrs,
