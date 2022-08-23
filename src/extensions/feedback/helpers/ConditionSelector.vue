@@ -155,7 +155,6 @@ export default defineComponent({
 
   methods: {
     updateEventConditionsList(trigger: EventTrigger, newConditionNames: string[]) {
-      console.log("updateModelValue", trigger, newConditionNames);
       this.editor.commands.updateEventTrigger(trigger, {
         conditions: newConditionNames.map((newConditionName) => {
           const eventCondition = trigger.conditions.find(

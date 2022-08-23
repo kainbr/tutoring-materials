@@ -6,7 +6,8 @@ import type {
 } from "@/extensions/task/types";
 import type { Feedback } from "@/extensions/feedback/types";
 import type { JSONContent } from "@tiptap/vue-3";
-import type { formatFunction } from "@/extensions/task/types";
+import type {} from "@/extensions/task/types";
+import type { propsInterface } from "@/extensions/task/helpers";
 
 // Content
 export interface SCOption {
@@ -40,11 +41,6 @@ export interface SCOptionAnswer {
   value: boolean;
 }
 
-export type SCFormatFunction<T> = formatFunction<
-  SCOption[],
-  SCEvaluation,
-  Feedback[],
-  SCOptions,
-  SCState,
-  T
->;
+export type SCFormatFunction<T> = (
+  data: propsInterface<SCOptions, SCOption[], SCEvaluation, SCState>
+) => T;

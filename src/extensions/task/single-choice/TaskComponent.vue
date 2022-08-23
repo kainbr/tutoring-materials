@@ -171,7 +171,7 @@ import { v4 as uuid } from "uuid";
 import { useTask } from "@/extensions/task/helpers";
 import { formatOptions } from "@/extensions/task/single-choice/format/options";
 import { formatContent } from "@/extensions/task/single-choice/format/content";
-import { formatTaskState } from "@/extensions/task/single-choice/format/state";
+import { formatState } from "@/extensions/task/single-choice/format/state";
 import { formatFeedbacks } from "@/extensions/task/single-choice/format/feedbacks";
 import {
   formatEvaluation,
@@ -183,8 +183,7 @@ import { calculateHexIcon } from "@/helpers/util";
 import { onBeforeUnmount, onMounted } from "vue";
 
 // Types
-import type { Editor, JSONContent } from "@tiptap/vue-3";
-import type { TaskEmits, TaskProps } from "@/extensions/task/types";
+import type { JSONContent } from "@tiptap/vue-3";
 import type {
   SCOption,
   SCEvaluation,
@@ -195,44 +194,67 @@ import type {
   EventOption,
   EventOptionCondition,
   EventOptionConditionBoolean,
-  StoredFeedback,
 } from "@/extensions/feedback/types";
 import ConfigurationButton from "@/extensions/feedback/hint/ConfigurationButton.vue";
 import { isEqual } from "lodash-es";
+import { formatTriggers } from "@/extensions/task/single-choice/format/triggers";
+import { Editor } from "@tiptap/vue-3";
+import { EventTrigger, StoredFeedback } from "@/extensions/feedback/types";
 
-interface SCProps extends TaskProps {
+interface SCProps {
   id: string;
   editor: Editor;
+  options?: SCOptions;
   content?: SCOption[];
   evaluation?: SCEvaluation;
-  feedbacks?: StoredFeedback[];
-  options?: SCOptions;
   state?: SCState;
+  feedbacks?: StoredFeedback[];
+  triggers?: EventTrigger[];
 }
 
-interface SCEmits extends TaskEmits {
+interface SCEmits {
+  (e: "update:options", options: SCOptions): void;
   (e: "update:content", content: SCOption[]): void;
   (e: "update:evaluation", evaluation: SCEvaluation): void;
-  (e: "update:feedbacks", feedbacks: StoredFeedback): void;
-  (e: "update:options", options: SCOptions): void;
-  (e: "update:state", options: SCState): void;
-  (e: "update", task: SCState): void;
+  (e: "update:state", state: SCState): void;
+  (e: "update:feedbacks", feedbacks: StoredFeedback[]): void;
+  (e: "update:triggers", triggers: EventTrigger[]): void;
+  (
+    e: "update",
+    task: {
+      options?: SCOptions;
+      content?: SCOption[];
+      evaluation?: SCEvaluation;
+      state?: SCState;
+      feedbacks?: StoredFeedback[];
+      triggers?: EventTrigger[];
+    }
+  ): void;
   (e: "submit"): void;
 }
 
 const props = defineProps<SCProps>();
-
 const emit = defineEmits<SCEmits>();
 
-const { updateContent, updateEvaluation, updateFeedbacks, updateOptions, updateState } = useTask<
-  SCProps,
-  SCEmits,
-  SCOption[],
-  SCEvaluation,
-  StoredFeedback[],
-  SCOptions,
-  SCState
->(props, emit, formatOptions, formatContent, formatTaskState, formatEvaluation, formatFeedbacks);
+const {
+  updateContent,
+  updateEvaluation,
+  updateFeedbacks,
+  updateOptions,
+  updateState,
+  //createFeedback,
+  //updateFeedback,
+  //removeFeedback,
+} = useTask<SCProps, SCEmits, SCOptions, SCOption[], SCEvaluation, SCState>(
+  props,
+  emit,
+  formatOptions,
+  formatContent,
+  formatEvaluation,
+  formatState,
+  formatFeedbacks,
+  formatTriggers
+);
 
 /**
  * Task specific functions
@@ -412,10 +434,12 @@ onBeforeUnmount(() => {
 });
 
 const createFeedback = (feedback: StoredFeedback) => {
+  console.log("createFeedback local");
   updateFeedbacks([...(!!props.feedbacks ? props.feedbacks : []), feedback]);
 };
 
 const updateFeedback = (feedback: StoredFeedback, attributes: Partial<StoredFeedback>) => {
+  console.log("updateFeedback local");
   if (!!props.feedbacks) {
     updateFeedbacks(
       props.feedbacks.map((f: StoredFeedback) =>

@@ -177,7 +177,6 @@ export default defineComponent({
       return calculateHexIcon(str);
     },
     addActiveFeedback(feedback) {
-      console.log("addActiveFeedback", feedback);
       this.editor.commands.addActiveFeedback(
         this.editor.getAttributes("document").feedbacks.find((feedback) => feedback.id === feedback)
       );

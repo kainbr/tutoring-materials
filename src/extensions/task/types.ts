@@ -1,23 +1,40 @@
 import type { Editor } from "@tiptap/vue-3";
-import type { StoredFeedback } from "@/extensions/feedback/types";
+import type { EventTrigger, StoredFeedback } from "@/extensions/feedback/types";
 
-export interface TaskProps {
+export interface TaskProps<
+  O extends TaskOptions,
+  C extends TaskContent,
+  E extends TaskEvaluation,
+  S extends TaskState
+> {
   id: string;
   editor: Editor;
-  content?: TaskContent;
-  evaluation?: TaskEvaluation;
-  feedbacks?: StoredFeedback;
-  options?: TaskOptions;
-  state?: TaskState;
+  options?: O;
+  content?: C;
+  evaluation?: E;
+  state?: S;
+  feedbacks?: StoredFeedback[];
+  triggers?: EventTrigger[];
 }
 
-export interface TaskEmits {
-  (e: "update:content", content: unknown): void;
-  (e: "update:evaluation", evaluation: unknown): void;
-  (e: "update:feedbacks", feedbacks: unknown): void;
-  (e: "update:options", options: unknown): void;
-  (e: "update:state", options: unknown): void;
-  (e: "update", task: unknown): void;
+export interface TaskEmits<O, C, E, S> {
+  (e: "update:options", options: O): void;
+  (e: "update:content", content: C): void;
+  (e: "update:evaluation", evaluation: E): void;
+  (e: "update:state", state: S): void;
+  (e: "update:feedbacks", feedbacks: StoredFeedback[]): void;
+  (e: "update:triggers", triggers: EventTrigger[]): void;
+  (
+    e: "update",
+    task: {
+      options?: O;
+      content?: C;
+      evaluation?: E;
+      state?: S;
+      feedbacks?: StoredFeedback[];
+      triggers?: EventTrigger[];
+    }
+  ): void;
   (e: "submit"): void;
 }
 
@@ -57,20 +74,4 @@ export interface TaskState {
   type: string;
   answer: unknown;
   empty: boolean;
-}
-
-export interface formatFunction<C, E, F, O, S, T> {
-  (data: {
-    id: string;
-    newContent?: C;
-    newEvaluation?: E;
-    newFeedbacks?: F;
-    newOptions?: O;
-    newState?: S;
-    oldContent?: C;
-    oldEvaluation?: E;
-    oldFeedbacks?: F;
-    oldOptions?: O;
-    oldState?: S;
-  }): T;
 }

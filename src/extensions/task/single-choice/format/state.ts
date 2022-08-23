@@ -5,9 +5,9 @@ import type {
   SCOptions,
   SCState,
 } from "@/extensions/task/single-choice/types";
-import { getDefaultTaskState } from "@/extensions/task/helpers";
+import { getDefaultTaskState } from "@/extensions/task/defaults";
 
-export const formatTaskState: SCFormatFunction<SCState> = function ({
+export const formatState: SCFormatFunction<SCState> = function ({
   id,
   newContent,
   newState,
@@ -15,7 +15,6 @@ export const formatTaskState: SCFormatFunction<SCState> = function ({
   oldOptions,
   oldState,
 }) {
-  console.log("Format task state", newState);
   const state: Partial<SCState> = !newState ? <Partial<SCState>>getDefaultTaskState(id) : newState;
 
   state.type = "single-choice";
@@ -27,7 +26,10 @@ export const formatTaskState: SCFormatFunction<SCState> = function ({
   return <SCState>state;
 };
 
-function formatAnswer(newState: SCState | null, newContent: SCOption[] | null): SCOptionAnswer[] {
+function formatAnswer(
+  newState: SCState | undefined,
+  newContent: SCOption[] | undefined
+): SCOptionAnswer[] {
   if (!!newContent && Array.isArray(newContent)) {
     return newContent.map((option: SCOption) => {
       return {
@@ -41,10 +43,10 @@ function formatAnswer(newState: SCState | null, newContent: SCOption[] | null): 
 }
 
 function formatOrder(
-  newContent: SCOption[] | null,
-  newOptions: SCOptions | null,
-  oldOptions: SCOptions | null,
-  oldState: SCState | null
+  newContent: SCOption[] | undefined,
+  newOptions: SCOptions | undefined,
+  oldOptions: SCOptions | undefined,
+  oldState: SCState | undefined
 ): number[] {
   // If no content is given we cannot determine how long the order has to be
   if (!newContent) {
