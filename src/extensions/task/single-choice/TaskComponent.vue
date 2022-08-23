@@ -69,6 +69,10 @@
           >
             <IconArrowDown />
           </EditorMenuButton>
+          <EditorMenuButton tabindex="-1" @click="addFeedbackHint(option.id)">
+            <IconFeedback />
+          </EditorMenuButton>
+          <!--
           <ConfigurationButton
             :editor="editor"
             :parent="id"
@@ -79,6 +83,7 @@
             :remove-feedback="() => removeFeedback(feedbacks.find((f: StoredFeedback) =>
                   f.type === 'feedback-hint' && f.config.reference === option.id))"
           />
+          -->
           <EditorMenuButton
             :disabled="content.length <= 1"
             tabindex="-1"
@@ -159,6 +164,7 @@ export default {
 <script setup lang="ts">
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import IconAdd from "@/helpers/icons/IconAdd.vue";
+import IconFeedback from "@/helpers/icons/IconFeedback.vue";
 import IconArrowDown from "@/helpers/icons/IconArrowDown.vue";
 import IconArrowUp from "@/helpers/icons/IconArrowUp.vue";
 import IconShuffle from "@/helpers/icons/IconShuffle.vue";
@@ -200,6 +206,7 @@ import { isEqual } from "lodash-es";
 import { formatTriggers } from "@/extensions/task/single-choice/format/triggers";
 import { Editor } from "@tiptap/vue-3";
 import { EventTrigger, StoredFeedback } from "@/extensions/feedback/types";
+import editorFooter from "@/helpers/EditorFooter.vue";
 
 interface SCProps {
   id: string;
@@ -237,14 +244,16 @@ const props = defineProps<SCProps>();
 const emit = defineEmits<SCEmits>();
 
 const {
+  update,
   updateContent,
   updateEvaluation,
   updateFeedbacks,
   updateOptions,
   updateState,
-  //createFeedback,
-  //updateFeedback,
-  //removeFeedback,
+  updateTriggers,
+  createFeedback,
+  updateFeedback,
+  removeFeedback,
 } = useTask<SCProps, SCEmits, SCOptions, SCOption[], SCEvaluation, SCState>(props, emit, [
   formatOptions,
   formatContent,
@@ -431,35 +440,57 @@ onBeforeUnmount(() => {
   // props.editor.commands.removeEventOption(eventOption);
 });
 
-const createFeedback = (feedback: StoredFeedback) => {
-  console.log("createFeedback local");
-  updateFeedbacks([...(!!props.feedbacks ? props.feedbacks : []), feedback]);
-};
+const addFeedbackHint = (reference: string) => {
+  const uid = uuid();
+  const hintFeedback: StoredFeedback = {
+    id: uid,
+    type: "feedback-hint",
+    label: {
+      message: "global.feedback.type-feedback-hint",
+      hexIcon: calculateHexIcon(uid),
+    },
+    parent: props.id,
+    config: {
+      reference: reference,
+      content: {
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Hello world!",
+              },
+            ],
+          },
+        ],
+      },
+    },
+  };
 
-const updateFeedback = (feedback: StoredFeedback, attributes: Partial<StoredFeedback>) => {
-  console.log("updateFeedback local");
-  if (!!props.feedbacks) {
-    updateFeedbacks(
-      props.feedbacks.map((f: StoredFeedback) =>
-        f.id === feedback.id ? { ...f, ...attributes } : f
-      )
-    );
-  }
-};
+  const trigger: EventTrigger = {
+    id: uuid(),
+    event: "answer-submitted",
+    parent: props.id,
+    conditions: [
+      {
+        fact: reference + "-correct",
+        operation: "equal",
+        value: false,
+      },
+    ],
+    feedbacks: [uid],
+  };
 
-const removeFeedback = (feedback: StoredFeedback) => {
-  console.log(
-    "removeFeedback",
-    feedback,
-    !!props.feedbacks,
-    props.feedbacks?.filter((f: StoredFeedback) => f.id !== feedback.id)
-  );
-  if (!!props.feedbacks) {
-    updateFeedbacks(props.feedbacks.filter((f: StoredFeedback) => f.id !== feedback.id));
-  }
+  update({
+    newFeedbacks: [...(!!props.feedbacks ? props.feedbacks : []), hintFeedback],
+    newTriggers: [...(!!props.triggers ? props.triggers : []), trigger],
+  });
 };
 
 defineExpose({
+  update,
   updateContent,
   updateEvaluation,
   updateFeedbacks,
@@ -476,5 +507,6 @@ defineExpose({
   createFeedback,
   updateFeedback,
   removeFeedback,
+  addFeedbackHint,
 });
 </script>

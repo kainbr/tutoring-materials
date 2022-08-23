@@ -35,14 +35,6 @@ export function formatTask<O, C, E, S>(
       data = formatFunction(data);
     }
   );
-
-  // Filter out triggers that do not have a parent anymore
-  if (!!data.newTriggers) {
-    data.newTriggers = data.newTriggers.filter(
-      (t: EventTrigger) => !(!!t.removeIfEmpty && t.feedbacks.length === 0)
-    );
-  }
-
   return data;
 }
 
@@ -58,15 +50,16 @@ export function useTask<
   emit: A,
   formatFunctions: ((data: propsInterface<O, C, E, S>) => propsInterface<O, C, E, S>)[]
 ): {
+  update: (attributes: Partial<propsInterface<O, C, E, S>>) => void;
   updateOptions: (newOptions: O) => void;
   updateContent: (newContent: C) => void;
   updateEvaluation: (newEvaluation: E) => void;
   updateState: (newState: S) => void;
   updateFeedbacks: (newFeedbacks: StoredFeedback[]) => void;
   updateTriggers: (newTriggers: EventTrigger[]) => void;
-  // createFeedback: (feedback: StoredFeedback) => void;
-  // updateFeedback: (feedback: StoredFeedback, attributes: Partial<StoredFeedback>) => void;
-  // removeFeedback: (feedback: StoredFeedback) => void;
+  createFeedback: (feedback: StoredFeedback) => void;
+  updateFeedback: (feedback: StoredFeedback, attributes: Partial<StoredFeedback>) => void;
+  removeFeedback: (feedback: StoredFeedback) => void;
 } {
   const data: propsInterface<O, C, E, S> = {
     id: props.id,
@@ -161,6 +154,37 @@ export function useTask<
       deep: true,
     }
   );
+
+  // Format on internal changes
+  const update = (attributes: Partial<propsInterface<O, C, E, S>>): void => {
+    const newData = formatTask<O, C, E, S>(
+      {
+        id: props.id,
+        newOptions: props.options,
+        newContent: props.content,
+        newEvaluation: props.evaluation,
+        newState: props.state,
+        newFeedbacks: props.feedbacks,
+        newTriggers: props.triggers,
+        oldOptions: props.options,
+        oldContent: props.content,
+        oldEvaluation: props.evaluation,
+        oldState: props.state,
+        oldFeedbacks: props.feedbacks,
+        oldTriggers: props.triggers,
+        ...attributes,
+      },
+      formatFunctions
+    );
+    emit("update", {
+      options: newData.newOptions,
+      content: newData.newContent,
+      evaluation: newData.newEvaluation,
+      state: newData.newState,
+      feedbacks: newData.newFeedbacks,
+      triggers: newData.newTriggers,
+    });
+  };
 
   // Format on internal changes
   const updateOptions = (newOptions: O): void => {
@@ -280,7 +304,6 @@ export function useTask<
   };
 
   const updateFeedbacks = (newFeedbacks: StoredFeedback[]): void => {
-    console.log("Called updateFeedbacks from helpers.ts");
     const newData = formatTask<O, C, E, S>(
       {
         id: props.id,
@@ -299,14 +322,6 @@ export function useTask<
       },
       formatFunctions
     );
-    console.log("From updateFeedbacks from helpers.ts", {
-      options: newData.newOptions,
-      content: newData.newContent,
-      evaluation: newData.newEvaluation,
-      state: newData.newState,
-      feedbacks: newData.newFeedbacks,
-      triggers: newData.newTriggers,
-    });
     emit("update", {
       options: newData.newOptions,
       content: newData.newContent,
@@ -346,15 +361,36 @@ export function useTask<
     });
   };
 
+  const createFeedback = (feedback: StoredFeedback) => {
+    updateFeedbacks([...(!!props.feedbacks ? props.feedbacks : []), feedback]);
+  };
+
+  const updateFeedback = (feedback: StoredFeedback, attributes: Partial<StoredFeedback>) => {
+    if (!!props.feedbacks) {
+      updateFeedbacks(
+        props.feedbacks.map((f: StoredFeedback) =>
+          f.id === feedback.id ? { ...f, ...attributes } : f
+        )
+      );
+    }
+  };
+
+  const removeFeedback = (feedback: StoredFeedback) => {
+    if (!!props.feedbacks) {
+      updateFeedbacks(props.feedbacks.filter((f: StoredFeedback) => f.id !== feedback.id));
+    }
+  };
+
   return {
+    update,
     updateOptions,
     updateContent,
     updateEvaluation,
     updateState,
     updateFeedbacks,
     updateTriggers,
-    //createFeedback,
-    //updateFeedback,
-    //removeFeedback,
+    createFeedback,
+    updateFeedback,
+    removeFeedback,
   };
 }

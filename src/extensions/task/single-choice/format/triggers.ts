@@ -24,7 +24,6 @@ export const formatTriggers: SCFormatFunction = function (data) {
           },
         ],
         feedbacks: [f.id],
-        removeIfEmpty: true,
       };
 
       const eventTrigger = (data.newTriggers as EventTrigger[]).find((t: EventTrigger) =>

@@ -25,7 +25,6 @@ export type EventTrigger = {
   parent: string | null;
   conditions: EventRule[];
   feedbacks: string[];
-  removeIfEmpty?: boolean;
 };
 
 export type EventRule = {

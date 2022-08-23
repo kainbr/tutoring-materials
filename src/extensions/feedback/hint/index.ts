@@ -6,6 +6,7 @@ import { v4 as uuid } from "uuid";
 
 import type { StoredFeedback } from "@/extensions/feedback/types";
 import type { HintFeedback } from "@/extensions/feedback/hint/types";
+import { ref } from "vue";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -13,7 +14,11 @@ declare module "@tiptap/core" {
       /**
        * Add a default hint feedback to permanent feedback store.
        */
-      addFeedbackHint: (attributes: Partial<HintFeedback>) => ReturnType;
+      addFeedbackHint: (
+        parent: string,
+        reference: string,
+        attributes: Partial<HintFeedback>
+      ) => ReturnType;
     };
   }
 }
@@ -24,9 +29,10 @@ export const FeedbackHint = Extension.create({
   addCommands() {
     return {
       addFeedbackHint:
-        (attributes) =>
+        (parent, reference, attributes) =>
         ({ commands }) => {
           const defaultConfig = {
+            reference: reference,
             content: {
               type: "doc",
               content: [
@@ -43,7 +49,7 @@ export const FeedbackHint = Extension.create({
             },
           };
 
-          const uid = !attributes.id ? uuid() : attributes.id;
+          const uid = uuid();
           const feedback: StoredFeedback = {
             id: uid,
             type: this.name,
@@ -51,7 +57,7 @@ export const FeedbackHint = Extension.create({
               message: "global.feedback.type-feedback-hint",
               hexIcon: calculateHexIcon(uid),
             },
-            parent: null,
+            parent: parent,
             config: defaultConfig,
           };
 
