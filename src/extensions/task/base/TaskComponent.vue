@@ -48,9 +48,6 @@
         :triggers="node.attrs.triggers"
         @update="update"
       />
-      <!--
-        :active-feedbacks="activeFeedbacks"
-      -->
 
       <div v-if="!editor.isEditable && !!state" class="my-1 w-full">
         <SubmitButton
@@ -62,14 +59,6 @@
           :editor="editor"
         >
         </SubmitButton>
-        <!--
-          @update:state="updateState"
-          @update:options="updateOptions"
-          @update:content="updateContent"
-          @update:evaluation="updateEvaluation"
-          @update:feedbacks="updateFeedbacks"
-          @update:triggers="updateTriggers"
-        -->
       </div>
     </div>
   </node-view-wrapper>
@@ -85,7 +74,7 @@ import SubmitButton from "@/extensions/task/base/SubmitButton.vue";
 import SingleChoice from "@/extensions/task/single-choice/TaskComponent.vue";
 
 import type { Ref } from "vue";
-import type { EventTrigger, Feedback, StoredFeedback } from "@/extensions/feedback/types";
+import type { EventTrigger, StoredFeedback } from "@/extensions/feedback/types";
 import type { NodeViewProps } from "@tiptap/core";
 import type { PropType } from "vue";
 import type { TaskContent, TaskEvaluation, TaskOptions, TaskState } from "@/extensions/task/types";
@@ -141,17 +130,6 @@ export default defineComponent({
       );
     });
 
-    /*
-    const activeFeedbacks: Ref<Feedback[]> = computed(() => {
-      return !!props.editor.storage.feedback?.feedbacks
-        ? props.editor.storage.feedback.feedbacks.filter(
-            (feedback: Feedback) => feedback.parent === props.node.attrs.id
-          )
-        : [];
-    });
-    
-     */
-
     const update = (newValues: {
       options: TaskOptions;
       content: TaskContent;
@@ -160,16 +138,12 @@ export default defineComponent({
       feedbacks: StoredFeedback[];
       triggers: EventTrigger[];
     }) => {
-      console.log("Received update", newValues);
-
       props.updateAttributes({
         options: newValues.options,
         content: newValues.content,
         evaluation: newValues.evaluation,
+        feedbacks: newValues.feedbacks,
         triggers: newValues.triggers,
-      });
-      props.updateAttributes({
-        feedbacks: [...newValues.feedbacks],
       });
       if (!state.value) {
         props.editor.commands.addTaskState(newValues.state);
@@ -177,32 +151,6 @@ export default defineComponent({
         props.editor.commands.updateTaskState(state.value, newValues.state);
       }
     };
-
-    /*
-    const updateOptions = (options: TaskOptions) => {
-      props.updateAttributes({ options: options });
-    };
-
-    const updateContent = (content: TaskContent) => {
-      props.updateAttributes({ content: content });
-    };
-
-    const updateEvaluation = (evaluation: TaskEvaluation) => {
-      props.updateAttributes({ evaluation: evaluation });
-    };
-
-    const updateState = (state: TaskState) => {
-      
-    };
-
-    const updateFeedbacks = (feedbacks: Feedback[]) => {
-      props.updateAttributes({ feedbacks: feedbacks });
-    };
-
-    const updateTriggers = (triggers: EventTrigger[]) => {
-      props.updateAttributes({ triggers: triggers });
-    };
-     */
 
     onMounted(() => {
       props.editor.storage.document.eventBus().emit("task-created", {
@@ -224,16 +172,8 @@ export default defineComponent({
 
     return {
       state,
-      // activeFeedbacks,
       calculateHexIcon,
       update,
-      /*
-      updateContent,
-      updateEvaluation,
-      updateFeedbacks,
-      updateOptions,
-      updateState,
-       */
     };
   },
 });

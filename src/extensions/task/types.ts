@@ -18,12 +18,6 @@ export interface TaskProps<
 }
 
 export interface TaskEmits<O, C, E, S> {
-  (e: "update:options", options: O): void;
-  (e: "update:content", content: C): void;
-  (e: "update:evaluation", evaluation: E): void;
-  (e: "update:state", state: S): void;
-  (e: "update:feedbacks", feedbacks: StoredFeedback[]): void;
-  (e: "update:triggers", triggers: EventTrigger[]): void;
   (
     e: "update",
     task: {

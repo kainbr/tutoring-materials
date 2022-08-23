@@ -1,5 +1,5 @@
 <template>
-  <TaskScaffold :is-editor="editor.isEditable" contenteditable="false" @submit="$emit('submit')">
+  <TaskScaffold contenteditable="false" :editor="editor" :feedbacks="feedbacks" :update="update">
     <!--
     Render
     -->
@@ -72,18 +72,6 @@
           <EditorMenuButton tabindex="-1" @click="addFeedbackHint(option.id)">
             <IconFeedback />
           </EditorMenuButton>
-          <!--
-          <ConfigurationButton
-            :editor="editor"
-            :parent="id"
-            :reference="option.id"
-            :create-feedback="(feedback) => createFeedback(feedback)"
-            :update-feedback="(attributes) => updateFeedback(feedbacks.find((f: StoredFeedback) =>
-                  f.type === 'feedback-hint' && f.config.reference === option.id), attributes)"
-            :remove-feedback="() => removeFeedback(feedbacks.find((f: StoredFeedback) =>
-                  f.type === 'feedback-hint' && f.config.reference === option.id))"
-          />
-          -->
           <EditorMenuButton
             :disabled="content.length <= 1"
             tabindex="-1"
@@ -100,8 +88,8 @@
           <div style="display: flex; gap: 1px">
             <EditorMenuButton
               :active="options?.shuffle"
-              :on-active-click="() => updateOptions({ ...options, shuffle: false })"
-              :on-inactive-click="() => updateOptions({ ...options, shuffle: true })"
+              :on-active-click="() => update({ options: { ...options, shuffle: false } })"
+              :on-inactive-click="() => update({ options: { ...options, shuffle: true } })"
             >
               <IconShuffle />
             </EditorMenuButton>
@@ -122,20 +110,15 @@
         :value="evaluation.name"
         :options="evaluationOptions.map((o) => o.name)"
         :label="$t('editor.task.evaluation-label-type')"
-        @update:value="updateEvaluation({ ...evaluation, name: $event })"
+        @update:value="update({ evaluation: { ...evaluation, name: $event } })"
       />
     </template>
 
     <!-- Feedbacks -->
-    <template #feedbacks>
-      <FeedbackListComponent
-        :editor="editor"
-        :feedbacks="feedbacks"
-        :create-feedback="(feedback) => createFeedback(feedback)"
-        :update-feedback="(feedback, attributes) => updateFeedback(feedback, attributes)"
-        :remove-feedback="(feedback) => removeFeedback(feedback)"
-      />
-    </template>
+    <template #feedbacks> </template>
+
+    <!-- Triggers -->
+    <template #triggers> test </template>
 
     <!-- Options -->
     <template #options>
@@ -148,7 +131,7 @@
           has-correct-state
           has-incorrect-state
           has-final-incorrect-state
-          @update:options="updateOptions($event)"
+          @update:options="update({ options: $event })"
         />
       </div>
     </template>
@@ -171,7 +154,6 @@ import IconShuffle from "@/helpers/icons/IconShuffle.vue";
 import IconTrash from "@/helpers/icons/IconTrash.vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
 import TaskScaffold from "@/extensions/task/base/TaskScaffold.vue";
-import FeedbackListComponent from "@/extensions/feedback/FeedbackListComponent.vue";
 import { v4 as uuid } from "uuid";
 
 import { useTask } from "@/extensions/task/helpers";
@@ -201,12 +183,10 @@ import type {
   EventOptionCondition,
   EventOptionConditionBoolean,
 } from "@/extensions/feedback/types";
-import ConfigurationButton from "@/extensions/feedback/hint/ConfigurationButton.vue";
 import { isEqual } from "lodash-es";
 import { formatTriggers } from "@/extensions/task/single-choice/format/triggers";
 import { Editor } from "@tiptap/vue-3";
 import { EventTrigger, StoredFeedback } from "@/extensions/feedback/types";
-import editorFooter from "@/helpers/EditorFooter.vue";
 
 interface SCProps {
   id: string;
@@ -220,12 +200,14 @@ interface SCProps {
 }
 
 interface SCEmits {
+  /*
   (e: "update:options", options: SCOptions): void;
   (e: "update:content", content: SCOption[]): void;
   (e: "update:evaluation", evaluation: SCEvaluation): void;
   (e: "update:state", state: SCState): void;
   (e: "update:feedbacks", feedbacks: StoredFeedback[]): void;
   (e: "update:triggers", triggers: EventTrigger[]): void;
+   */
   (
     e: "update",
     task: {
@@ -243,25 +225,11 @@ interface SCEmits {
 const props = defineProps<SCProps>();
 const emit = defineEmits<SCEmits>();
 
-const {
-  update,
-  updateContent,
-  updateEvaluation,
-  updateFeedbacks,
-  updateOptions,
-  updateState,
-  updateTriggers,
-  createFeedback,
-  updateFeedback,
-  removeFeedback,
-} = useTask<SCProps, SCEmits, SCOptions, SCOption[], SCEvaluation, SCState>(props, emit, [
-  formatOptions,
-  formatContent,
-  formatEvaluation,
-  formatState,
-  formatFeedbacks,
-  formatTriggers,
-]);
+const { update } = useTask<SCProps, SCEmits, SCOptions, SCOption[], SCEvaluation, SCState>(
+  props,
+  emit,
+  [formatOptions, formatContent, formatEvaluation, formatState, formatFeedbacks, formatTriggers]
+);
 
 /**
  * Task specific functions
@@ -274,7 +242,7 @@ const addOption = () => {
       id: uuid(),
       content: { type: "doc", content: [{ type: "paragraph" }] },
     });
-    updateContent(contentCopy);
+    update({ content: contentCopy });
   }
 };
 
@@ -283,7 +251,7 @@ const removeOption = (index: number) => {
     if (props.content.length > 1) {
       const contentCopy = props.content;
       contentCopy.splice(index, 1);
-      updateContent(contentCopy);
+      update({ content: contentCopy });
     }
   }
 };
@@ -293,7 +261,7 @@ const moveUpOption = (index: number, option: SCOption) => {
     const contentCopy = props.content;
     contentCopy.splice(index - 1, 0, option);
     contentCopy.splice(index + 1, 1);
-    updateContent(contentCopy);
+    update({ content: contentCopy });
   }
 };
 
@@ -302,7 +270,7 @@ const moveDownOption = (index: number, option: SCOption) => {
     const contentCopy = props.content;
     contentCopy.splice(index + 2, 0, option);
     contentCopy.splice(index, 1);
-    updateContent(contentCopy);
+    update({ content: contentCopy });
   }
 };
 
@@ -311,13 +279,15 @@ const updateAnswerOptionValue = (option: SCOption) => {
     const newSolution = props.evaluation.solution.map((s) => {
       return { ...s, value: s.id === option.id };
     });
-    updateEvaluation({ ...props.evaluation, solution: newSolution });
+    update({ evaluation: { ...props.evaluation, solution: newSolution } });
   }
 };
 
 const updateAnswerOptionContent = (option: SCOption, $event: JSONContent) => {
   if (Array.isArray(props.content)) {
-    updateContent(props.content.map((o) => (option?.id === o.id ? { ...o, content: $event } : o)));
+    update({
+      content: props.content.map((o) => (option?.id === o.id ? { ...o, content: $event } : o)),
+    });
   }
 };
 
@@ -336,9 +306,11 @@ const changeAnswerOptionValue = (option: SCOption) => {
     });
 
     if (!isEqual(oldAnswer, newAnswer)) {
-      updateState({
-        ...props.state,
-        answer: newAnswer,
+      update({
+        state: {
+          ...props.state,
+          answer: newAnswer,
+        },
       });
 
       props.editor.storage.document.eventBus().emit("answer-changed", {
@@ -491,11 +463,6 @@ const addFeedbackHint = (reference: string) => {
 
 defineExpose({
   update,
-  updateContent,
-  updateEvaluation,
-  updateFeedbacks,
-  updateOptions,
-  updateState,
   addOption,
   removeOption,
   moveUpOption,
@@ -504,9 +471,6 @@ defineExpose({
   updateAnswerOptionContent,
   changeAnswerOptionValue,
   evaluationOptions,
-  createFeedback,
-  updateFeedback,
-  removeFeedback,
   addFeedbackHint,
 });
 </script>

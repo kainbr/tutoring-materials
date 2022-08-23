@@ -1,4 +1,6 @@
+import { isEqual, pick } from "lodash-es";
 import { onMounted, watch } from "vue";
+
 import type {
   TaskContent,
   TaskEmits,
@@ -6,7 +8,6 @@ import type {
   TaskProps,
   TaskState,
 } from "@/extensions/task/types";
-import { isEqual } from "lodash-es";
 import type { TaskOptions } from "@/extensions/task/types";
 import type { EventTrigger, StoredFeedback } from "@/extensions/feedback/types";
 
@@ -49,38 +50,29 @@ export function useTask<
   props: P,
   emit: A,
   formatFunctions: ((data: propsInterface<O, C, E, S>) => propsInterface<O, C, E, S>)[]
-): {
-  update: (attributes: Partial<propsInterface<O, C, E, S>>) => void;
-  updateOptions: (options: O) => void;
-  updateContent: (content: C) => void;
-  updateEvaluation: (evaluation: E) => void;
-  updateState: (state: S) => void;
-  updateFeedbacks: (feedbacks: StoredFeedback[]) => void;
-  updateTriggers: (triggers: EventTrigger[]) => void;
-  createFeedback: (feedback: StoredFeedback) => void;
-  updateFeedback: (feedback: StoredFeedback, attributes: Partial<StoredFeedback>) => void;
-  removeFeedback: (feedback: StoredFeedback) => void;
-} {
-  const data: propsInterface<O, C, E, S> = {
-    id: props.id,
-    options: props.options,
-    content: props.content,
-    evaluation: props.evaluation,
-    state: props.state,
-    feedbacks: props.feedbacks,
-    triggers: props.triggers,
-    oldOptions: props.options,
-    oldContent: props.content,
-    oldEvaluation: props.evaluation,
-    oldState: props.state,
-    oldFeedbacks: props.feedbacks,
-    oldTriggers: props.triggers,
+): { update: (attributes: Partial<propsInterface<O, C, E, S>>) => void } {
+  const getData = (props: P): propsInterface<O, C, E, S> => {
+    return {
+      id: props.id,
+      options: props.options,
+      content: props.content,
+      evaluation: props.evaluation,
+      state: props.state,
+      feedbacks: props.feedbacks,
+      triggers: props.triggers,
+      oldOptions: props.options,
+      oldContent: props.content,
+      oldEvaluation: props.evaluation,
+      oldState: props.state,
+      oldFeedbacks: props.feedbacks,
+      oldTriggers: props.triggers,
+    };
   };
 
   onMounted(() => {
     const newData = formatTask<O, C, E, S>(
       {
-        ...data,
+        ...getData(props),
         oldOptions: undefined,
         oldContent: undefined,
         oldEvaluation: undefined,
@@ -90,17 +82,12 @@ export function useTask<
       },
       formatFunctions
     );
-    emit("update", {
-      options: newData.options,
-      content: newData.content,
-      evaluation: newData.evaluation,
-      state: newData.state,
-      feedbacks: newData.feedbacks,
-      triggers: newData.triggers,
-    });
+    emit(
+      "update",
+      pick(newData, ["options", "content", "evaluation", "state", "feedbacks", "triggers"])
+    );
   });
 
-  // Watch for external changes
   watch(
     [
       () => props.options,
@@ -140,14 +127,19 @@ export function useTask<
           },
           formatFunctions
         );
-        emit("update", {
-          options: newData.options,
-          content: newData.content,
-          evaluation: newData.evaluation,
-          state: newData.state,
-          feedbacks: newData.feedbacks,
-          triggers: newData.triggers,
-        });
+        if (
+          !isEqual(options, newData.options) ||
+          !isEqual(content, newData.content) ||
+          !isEqual(evaluation, newData.evaluation) ||
+          !isEqual(state, newData.state) ||
+          !isEqual(feedbacks, newData.feedbacks) ||
+          !isEqual(triggers, newData.triggers)
+        ) {
+          emit(
+            "update",
+            pick(newData, ["options", "content", "evaluation", "state", "feedbacks", "triggers"])
+          );
+        }
       }
     },
     {
@@ -155,242 +147,19 @@ export function useTask<
     }
   );
 
-  // Format on internal changes
   const update = (attributes: Partial<propsInterface<O, C, E, S>>): void => {
     const newData = formatTask<O, C, E, S>(
       {
-        id: props.id,
-        options: props.options,
-        content: props.content,
-        evaluation: props.evaluation,
-        state: props.state,
-        feedbacks: props.feedbacks,
-        triggers: props.triggers,
-        oldOptions: props.options,
-        oldContent: props.content,
-        oldEvaluation: props.evaluation,
-        oldState: props.state,
-        oldFeedbacks: props.feedbacks,
-        oldTriggers: props.triggers,
+        ...getData(props),
         ...attributes,
       },
       formatFunctions
     );
-    emit("update", {
-      options: newData.options,
-      content: newData.content,
-      evaluation: newData.evaluation,
-      state: newData.state,
-      feedbacks: newData.feedbacks,
-      triggers: newData.triggers,
-    });
-  };
-
-  // Format on internal changes
-  const updateOptions = (options: O): void => {
-    const newData = formatTask<O, C, E, S>(
-      {
-        id: props.id,
-        options: options,
-        content: props.content,
-        evaluation: props.evaluation,
-        state: props.state,
-        feedbacks: props.feedbacks,
-        triggers: props.triggers,
-        oldOptions: props.options,
-        oldContent: props.content,
-        oldEvaluation: props.evaluation,
-        oldState: props.state,
-        oldFeedbacks: props.feedbacks,
-        oldTriggers: props.triggers,
-      },
-      formatFunctions
+    emit(
+      "update",
+      pick(newData, ["options", "content", "evaluation", "state", "feedbacks", "triggers"])
     );
-    emit("update", {
-      options: newData.options,
-      content: newData.content,
-      evaluation: newData.evaluation,
-      state: newData.state,
-      feedbacks: newData.feedbacks,
-      triggers: newData.triggers,
-    });
   };
 
-  const updateContent = (content: C): void => {
-    const newData = formatTask<O, C, E, S>(
-      {
-        id: props.id,
-        options: props.options,
-        content: content,
-        evaluation: props.evaluation,
-        state: props.state,
-        feedbacks: props.feedbacks,
-        triggers: props.triggers,
-        oldOptions: props.options,
-        oldContent: props.content,
-        oldEvaluation: props.evaluation,
-        oldState: props.state,
-        oldFeedbacks: props.feedbacks,
-        oldTriggers: props.triggers,
-      },
-      formatFunctions
-    );
-    emit("update", {
-      options: newData.options,
-      content: newData.content,
-      evaluation: newData.evaluation,
-      state: newData.state,
-      feedbacks: newData.feedbacks,
-      triggers: newData.triggers,
-    });
-  };
-
-  const updateEvaluation = (evaluation: E): void => {
-    const newData = formatTask<O, C, E, S>(
-      {
-        id: props.id,
-        options: props.options,
-        content: props.content,
-        evaluation: evaluation,
-        state: props.state,
-        feedbacks: props.feedbacks,
-        triggers: props.triggers,
-        oldOptions: props.options,
-        oldContent: props.content,
-        oldEvaluation: props.evaluation,
-        oldState: props.state,
-        oldFeedbacks: props.feedbacks,
-        oldTriggers: props.triggers,
-      },
-      formatFunctions
-    );
-    emit("update", {
-      options: newData.options,
-      content: newData.content,
-      evaluation: newData.evaluation,
-      state: newData.state,
-      feedbacks: newData.feedbacks,
-      triggers: newData.triggers,
-    });
-  };
-
-  const updateState = (state: S): void => {
-    const newData = formatTask<O, C, E, S>(
-      {
-        id: props.id,
-        options: props.options,
-        content: props.content,
-        evaluation: props.evaluation,
-        state: state,
-        feedbacks: props.feedbacks,
-        triggers: props.triggers,
-        oldOptions: props.options,
-        oldContent: props.content,
-        oldEvaluation: props.evaluation,
-        oldState: props.state,
-        oldFeedbacks: props.feedbacks,
-        oldTriggers: props.triggers,
-      },
-      formatFunctions
-    );
-    emit("update", {
-      options: newData.options,
-      content: newData.content,
-      evaluation: newData.evaluation,
-      state: newData.state,
-      feedbacks: newData.feedbacks,
-      triggers: newData.triggers,
-    });
-  };
-
-  const updateFeedbacks = (feedbacks: StoredFeedback[]): void => {
-    const newData = formatTask<O, C, E, S>(
-      {
-        id: props.id,
-        options: props.options,
-        content: props.content,
-        evaluation: props.evaluation,
-        state: props.state,
-        feedbacks: feedbacks,
-        triggers: props.triggers,
-        oldOptions: props.options,
-        oldContent: props.content,
-        oldEvaluation: props.evaluation,
-        oldState: props.state,
-        oldFeedbacks: props.feedbacks,
-        oldTriggers: props.triggers,
-      },
-      formatFunctions
-    );
-    emit("update", {
-      options: newData.options,
-      content: newData.content,
-      evaluation: newData.evaluation,
-      state: newData.state,
-      feedbacks: newData.feedbacks,
-      triggers: newData.triggers,
-    });
-  };
-
-  const updateTriggers = (triggers: EventTrigger[]): void => {
-    const newData = formatTask<O, C, E, S>(
-      {
-        id: props.id,
-        options: props.options,
-        content: props.content,
-        evaluation: props.evaluation,
-        state: props.state,
-        feedbacks: props.feedbacks,
-        triggers: triggers,
-        oldOptions: props.options,
-        oldContent: props.content,
-        oldEvaluation: props.evaluation,
-        oldState: props.state,
-        oldFeedbacks: props.feedbacks,
-        oldTriggers: props.triggers,
-      },
-      formatFunctions
-    );
-    emit("update", {
-      options: newData.options,
-      content: newData.content,
-      evaluation: newData.evaluation,
-      state: newData.state,
-      feedbacks: newData.feedbacks,
-      triggers: newData.triggers,
-    });
-  };
-
-  const createFeedback = (feedback: StoredFeedback) => {
-    updateFeedbacks([...(!!props.feedbacks ? props.feedbacks : []), feedback]);
-  };
-
-  const updateFeedback = (feedback: StoredFeedback, attributes: Partial<StoredFeedback>) => {
-    if (!!props.feedbacks) {
-      updateFeedbacks(
-        props.feedbacks.map((f: StoredFeedback) =>
-          f.id === feedback.id ? { ...f, ...attributes } : f
-        )
-      );
-    }
-  };
-
-  const removeFeedback = (feedback: StoredFeedback) => {
-    if (!!props.feedbacks) {
-      updateFeedbacks(props.feedbacks.filter((f: StoredFeedback) => f.id !== feedback.id));
-    }
-  };
-
-  return {
-    update,
-    updateOptions,
-    updateContent,
-    updateEvaluation,
-    updateState,
-    updateFeedbacks,
-    updateTriggers,
-    createFeedback,
-    updateFeedback,
-    removeFeedback,
-  };
+  return { update };
 }
