@@ -145,7 +145,7 @@ export default defineComponent({
       this.editor.commands.updateEventTrigger(this.trigger, {
         event: $event.name,
         parent: $event?.parent,
-        conditions: [],
+        rules: [],
       });
     },
   },

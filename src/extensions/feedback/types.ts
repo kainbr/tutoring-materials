@@ -22,21 +22,22 @@ export interface StoredFeedback extends Feedback {
 export type EventTrigger = {
   id: string;
   event: string;
-  conditions: EventCondition[];
-  feedbacks: string[];
   parent: string | null;
+  conditions: EventRule[];
+  feedbacks: string[];
+  removeIfEmpty?: boolean;
 };
 
-export type EventCondition = {
-  name: string;
-  variable: string;
+export type EventRule = {
+  fact: string;
+  operation: string;
   value: unknown;
 };
 
 export type EventOption = {
   name: string;
   label: Label;
-  conditions: EventOptionCondition[];
+  facts: EventOptionCondition[];
   parent?: string;
 };
 

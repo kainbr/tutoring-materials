@@ -35,6 +35,14 @@ export function formatTask<O, C, E, S>(
       data = formatFunction(data);
     }
   );
+
+  // Filter out triggers that do not have a parent anymore
+  if (!!data.newTriggers) {
+    data.newTriggers = data.newTriggers.filter(
+      (t: EventTrigger) => !(!!t.removeIfEmpty && t.feedbacks.length === 0)
+    );
+  }
+
   return data;
 }
 
@@ -56,37 +64,10 @@ export function useTask<
   updateState: (newState: S) => void;
   updateFeedbacks: (newFeedbacks: StoredFeedback[]) => void;
   updateTriggers: (newTriggers: EventTrigger[]) => void;
-  createFeedback: (feedback: StoredFeedback) => void;
-  updateFeedback: (feedback: StoredFeedback, attributes: Partial<StoredFeedback>) => void;
-  removeFeedback: (feedback: StoredFeedback) => void;
+  // createFeedback: (feedback: StoredFeedback) => void;
+  // updateFeedback: (feedback: StoredFeedback, attributes: Partial<StoredFeedback>) => void;
+  // removeFeedback: (feedback: StoredFeedback) => void;
 } {
-  class DataContainer {
-    private data: propsInterface<O, C, E, S>;
-
-    constructor(data: propsInterface<O, C, E, S>) {
-      this.data = data;
-    }
-
-    process(formatFunction: (data: propsInterface<O, C, E, S>) => propsInterface<O, C, E, S>) {
-      this.data = formatFunction(this.data);
-    }
-
-    getData() {
-      return this.data;
-    }
-
-    getFormattedNewData() {
-      return {
-        options: this.data.newOptions,
-        content: this.data.newContent,
-        evaluation: this.data.newEvaluation,
-        state: this.data.newState,
-        feedbacks: this.data.newFeedbacks,
-        triggers: this.data.newTriggers,
-      };
-    }
-  }
-
   const data: propsInterface<O, C, E, S> = {
     id: props.id,
     newOptions: props.options,
@@ -299,6 +280,7 @@ export function useTask<
   };
 
   const updateFeedbacks = (newFeedbacks: StoredFeedback[]): void => {
+    console.log("Called updateFeedbacks from helpers.ts");
     const newData = formatTask<O, C, E, S>(
       {
         id: props.id,
@@ -317,6 +299,14 @@ export function useTask<
       },
       formatFunctions
     );
+    console.log("From updateFeedbacks from helpers.ts", {
+      options: newData.newOptions,
+      content: newData.newContent,
+      evaluation: newData.newEvaluation,
+      state: newData.newState,
+      feedbacks: newData.newFeedbacks,
+      triggers: newData.newTriggers,
+    });
     emit("update", {
       options: newData.newOptions,
       content: newData.newContent,
@@ -356,30 +346,6 @@ export function useTask<
     });
   };
 
-  const createFeedback = (feedback: StoredFeedback) => {
-    if (!!props.feedbacks && Array.isArray(props.feedbacks)) {
-      updateFeedbacks([...props.feedbacks, feedback]);
-    } else {
-      updateFeedbacks([feedback]);
-    }
-  };
-
-  const updateFeedback = (feedback: StoredFeedback, attributes: Partial<StoredFeedback>) => {
-    if (!!props.feedbacks) {
-      updateFeedbacks(
-        props.feedbacks.map((f: StoredFeedback) =>
-          f.id === feedback.id ? { ...f, ...attributes } : f
-        )
-      );
-    }
-  };
-
-  const removeFeedback = (feedback: StoredFeedback) => {
-    if (!!props.feedbacks) {
-      updateFeedbacks(props.feedbacks.filter((f: StoredFeedback) => f.id !== feedback.id));
-    }
-  };
-
   return {
     updateOptions,
     updateContent,
@@ -387,8 +353,8 @@ export function useTask<
     updateState,
     updateFeedbacks,
     updateTriggers,
-    createFeedback,
-    updateFeedback,
-    removeFeedback,
+    //createFeedback,
+    //updateFeedback,
+    //removeFeedback,
   };
 }

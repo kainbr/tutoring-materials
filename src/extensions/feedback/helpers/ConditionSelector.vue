@@ -1,7 +1,7 @@
 <template>
   <div v-if="conditionOptions.length > 0" class="flex flex-row items-center">
     <span class="text-sm py-0.5"> {{ $t("editor.trigger.builder-and") }} </span>
-    <div v-for="(condition, index) in trigger.conditions" :key="condition.name">
+    <div v-for="(condition, index) in trigger.rules" :key="condition.name">
       <span
         class="inline-flex flex-nowrap items-center m-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
       >
@@ -26,10 +26,10 @@
           </svg>
         </button>
       </span>
-      <span v-if="index < trigger.conditions.length - 1"> and </span>
+      <span v-if="index < trigger.rules.length - 1"> and </span>
     </div>
     <Combobox
-      :model-value="trigger.conditions.map((c) => c.name)"
+      :model-value="trigger.rules.map((c) => c.name)"
       class="pr-2"
       multiple
       nullable
@@ -40,14 +40,14 @@
           <ComboboxButton class="cursor-pointer">
             <div class="pl-2">
               <span
-                v-if="trigger.conditions.length === 0"
+                v-if="trigger.rules.length === 0"
                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
               >
                 Select condition
               </span>
             </div>
             <span
-              v-if="trigger.conditions.length > 0"
+              v-if="trigger.rules.length > 0"
               class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
             >
               +
@@ -93,7 +93,7 @@
 import { defineComponent } from "vue";
 import { Combobox, ComboboxButton, ComboboxOption, ComboboxOptions } from "@headlessui/vue";
 import type {
-  EventCondition,
+  EventRule,
   EventOption,
   EventOptionCondition,
   EventTrigger,
@@ -156,9 +156,9 @@ export default defineComponent({
   methods: {
     updateEventConditionsList(trigger: EventTrigger, newConditionNames: string[]) {
       this.editor.commands.updateEventTrigger(trigger, {
-        conditions: newConditionNames.map((newConditionName) => {
-          const eventCondition = trigger.conditions.find(
-            (condition: EventCondition) => condition.name === newConditionName
+        rules: newConditionNames.map((newConditionName) => {
+          const eventCondition = trigger.rules.find(
+            (condition: EventRule) => condition.name === newConditionName
           );
 
           if (!eventCondition) {

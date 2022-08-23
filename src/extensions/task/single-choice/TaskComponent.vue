@@ -74,9 +74,9 @@
             :parent="id"
             :reference="option.id"
             :create-feedback="(feedback) => createFeedback(feedback)"
-            :update-feedback="(attributes) => updateFeedback(feedbacks.find((f: Feedback) =>
+            :update-feedback="(attributes) => updateFeedback(feedbacks.find((f: StoredFeedback) =>
                   f.type === 'feedback-hint' && f.config.reference === option.id), attributes)"
-            :remove-feedback="() => removeFeedback(feedbacks.find((f: Feedback) =>
+            :remove-feedback="() => removeFeedback(feedbacks.find((f: StoredFeedback) =>
                   f.type === 'feedback-hint' && f.config.reference === option.id))"
           />
           <EditorMenuButton
@@ -420,7 +420,7 @@ const eventOption: EventOption = {
     message: "global.event.type-answer-submitted",
     hexIcon: calculateHexIcon(props.id),
   },
-  conditions: getEventOptionConditions(props.content),
+  facts: getEventOptionConditions(props.content),
 };
 
 onMounted(() => {
@@ -448,6 +448,12 @@ const updateFeedback = (feedback: StoredFeedback, attributes: Partial<StoredFeed
 };
 
 const removeFeedback = (feedback: StoredFeedback) => {
+  console.log(
+    "removeFeedback",
+    feedback,
+    !!props.feedbacks,
+    props.feedbacks?.filter((f: StoredFeedback) => f.id !== feedback.id)
+  );
   if (!!props.feedbacks) {
     updateFeedbacks(props.feedbacks.filter((f: StoredFeedback) => f.id !== feedback.id));
   }
