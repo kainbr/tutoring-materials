@@ -74,7 +74,7 @@ import SubmitButton from "@/extensions/task/base/SubmitButton.vue";
 import SingleChoice from "@/extensions/task/single-choice/TaskComponent.vue";
 
 import type { Ref } from "vue";
-import type { EventTrigger, StoredFeedback } from "@/extensions/feedback/types";
+import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
 import type { NodeViewProps } from "@tiptap/core";
 import type { PropType } from "vue";
 import type { TaskContent, TaskEvaluation, TaskOptions, TaskState } from "@/extensions/task/types";
@@ -135,7 +135,7 @@ export default defineComponent({
       content: TaskContent;
       evaluation: TaskEvaluation;
       state: TaskState;
-      feedbacks: StoredFeedback[];
+      feedbacks: Feedback[];
       triggers: EventTrigger[];
     }) => {
       props.updateAttributes({

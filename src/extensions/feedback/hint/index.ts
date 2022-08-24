@@ -4,9 +4,8 @@ import { Extension } from "@tiptap/core";
 import { calculateHexIcon } from "@/helpers/util";
 import { v4 as uuid } from "uuid";
 
-import type { StoredFeedback } from "@/extensions/feedback/types";
+import type { Feedback } from "@/extensions/feedback/types";
 import type { HintFeedback } from "@/extensions/feedback/hint/types";
-import { ref } from "vue";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -50,7 +49,7 @@ export const FeedbackHint = Extension.create({
           };
 
           const uid = uuid();
-          const feedback: StoredFeedback = {
+          const feedback: Feedback = {
             id: uid,
             type: this.name,
             label: {

@@ -4,7 +4,7 @@ import { Extension } from "@tiptap/core";
 import { calculateHexIcon } from "@/helpers/util";
 import { v4 as uuid } from "uuid";
 
-import type { StoredFeedback } from "@/extensions/feedback/types";
+import type { Feedback } from "@/extensions/feedback/types";
 import type { NotificationFeedback } from "@/extensions/feedback/notification/types";
 
 declare module "@tiptap/core" {
@@ -44,7 +44,7 @@ export const FeedbackNotification = Extension.create({
           };
 
           const uid = !attributes.id ? uuid() : attributes.id;
-          const feedback: StoredFeedback = {
+          const feedback: Feedback = {
             id: uid,
             type: this.name,
             label: {

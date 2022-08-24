@@ -49,7 +49,7 @@
 import { defineComponent } from "vue";
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
-import type { StoredFeedback } from "@/extensions/feedback/types";
+import type { Feedback } from "@/extensions/feedback/types";
 import FeedbackListComponent from "@/extensions/feedback/FeedbackListComponent.vue";
 
 export default defineComponent({
@@ -65,7 +65,7 @@ export default defineComponent({
       required: true,
     },
     feedbacks: {
-      type: Array as PropType<StoredFeedback[]>,
+      type: Array as PropType<Feedback[]>,
       required: true,
     },
     update: {
@@ -75,24 +75,24 @@ export default defineComponent({
   },
 
   methods: {
-    createFeedback(feedback: StoredFeedback) {
+    createFeedback(feedback: Feedback) {
       this.update({ feedbacks: [...(!!this.feedbacks ? this.feedbacks : []), feedback] });
     },
 
-    updateFeedback(feedback: StoredFeedback, attributes: Partial<StoredFeedback>) {
+    updateFeedback(feedback: Feedback, attributes: Partial<Feedback>) {
       if (!!this.feedbacks) {
         this.update({
-          feedbacks: this.feedbacks.map((f: StoredFeedback) =>
+          feedbacks: this.feedbacks.map((f: Feedback) =>
             f.id === feedback.id ? { ...f, ...attributes } : f
           ),
         });
       }
     },
 
-    removeFeedback(feedback: StoredFeedback) {
+    removeFeedback(feedback: Feedback) {
       if (!!this.feedbacks) {
         this.update({
-          feedbacks: this.feedbacks.filter((f: StoredFeedback) => f.id !== feedback.id),
+          feedbacks: this.feedbacks.filter((f: Feedback) => f.id !== feedback.id),
         });
       }
     },

@@ -30,7 +30,7 @@ import FeedbackNotification from "@/extensions/feedback/notification/Configurati
 
 import type { Editor } from "@tiptap/vue-3";
 import type { PropType } from "vue";
-import type { StoredFeedback } from "@/extensions/feedback/types";
+import type { Feedback } from "@/extensions/feedback/types";
 
 export default defineComponent({
   name: "FeedbackListComponent",
@@ -47,7 +47,7 @@ export default defineComponent({
       required: true,
     },
     feedbacks: {
-      type: Array as PropType<StoredFeedback[]>,
+      type: Array as PropType<Feedback[]>,
       required: true,
     },
     createFeedback: {

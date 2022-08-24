@@ -1,15 +1,20 @@
 <template>
   <div class="flex flex-row justify-between">
-    <div class="flex flex-col grow">
-      <EventSelector :trigger="trigger" :editor="editor" />
+    <div class="flex flex-row flex-wrap items-center grow gap-y-1">
+      <EventSelector :events="events" :trigger="trigger" @update:event="updateEvent" />
 
-      <ConditionSelector :trigger="trigger" :editor="editor" />
+      <ConditionSelector :conditions="conditions" :trigger="trigger" @update:rules="updateRules" />
 
-      <FeedbackSelector :trigger="trigger" :editor="editor" />
+      <FeedbackSelector
+        :feedbacks="feedbacks"
+        :trigger="trigger"
+        :editor="editor"
+        @update:feedbacks="updateFeedbacks"
+      />
     </div>
     <!-- Standard buttons -->
     <div class="flex gap-0.5 ml-3 h-fit">
-      <EditorMenuButton :on-inactive-click="() => editor.commands.addEventTrigger(trigger)">
+      <EditorMenuButton :on-inactive-click="() => addEventTrigger(trigger)">
         <IconCopy />
       </EditorMenuButton>
       <EditorMenuButton :on-inactive-click="() => editor.commands.removeEventTrigger(trigger)">
@@ -21,15 +26,17 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { v4 as uuid } from "uuid";
 import IconCopy from "@/helpers/icons/IconCopy.vue";
 import IconTrash from "@/helpers/icons/IconTrash.vue";
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import EventSelector from "@/extensions/feedback/helpers/EventSelector.vue";
-import type { PropType } from "vue";
-import type { EventTrigger } from "@/extensions/feedback/types";
 import ConditionSelector from "@/extensions/feedback/helpers/ConditionSelector.vue";
 import FeedbackSelector from "@/extensions/feedback/helpers/FeedbackSelector.vue";
+
 import type { Editor } from "@tiptap/vue-3";
+import type { EventOption, EventRule, EventTrigger } from "@/extensions/feedback/types";
+import type { PropType } from "vue";
 
 export default defineComponent({
   name: "EventTriggerComponent",
@@ -54,12 +61,43 @@ export default defineComponent({
     },
   },
 
-  emits: ["update:trigger"],
+  computed: {
+    events() {
+      return this.editor.storage.feedbacks.events;
+    },
+    conditions() {
+      return (
+        this.editor.storage.feedbacks.events.find(
+          (o: EventOption) => o.name === this.trigger.event && o.parent === this.trigger.parent
+        )?.conditions || []
+      );
+    },
+    feedbacks() {
+      return this.editor.getAttributes("document").feedbacks;
+    },
+  },
 
-  data() {
-    return {
-      isValid: false,
-    };
+  methods: {
+    addEventTrigger(trigger: EventTrigger) {
+      this.editor.commands.addEventTrigger({ ...trigger, id: uuid() });
+    },
+    updateEvent($event: { name: string; parent: string }) {
+      this.editor.commands.updateEventTrigger(this.trigger, {
+        ...this.trigger,
+        event: $event.name,
+        parent: $event.parent,
+      });
+    },
+    updateRules($event: EventRule[]) {
+      this.editor.commands.updateEventTrigger(this.trigger, {
+        rules: $event,
+      });
+    },
+    updateFeedbacks($event: string[]) {
+      this.editor.commands.updateEventTrigger(this.trigger, {
+        feedbacks: $event,
+      });
+    },
   },
 });
 </script>

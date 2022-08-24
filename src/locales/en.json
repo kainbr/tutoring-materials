@@ -78,6 +78,7 @@
     },
     "trigger": {
       "builder-and": "and",
+      "builder-filter-feedbacks": "Filter feedbacks",
       "builder-if": "If",
       "builder-select-event": "Select event",
       "builder-select-feedback": "Select feedback",
@@ -86,6 +87,21 @@
   },
   "global": {
     "condition": {
+      "boolean": {
+        "label-correct": "correct",
+        "label-equal": "=",
+        "label-false": "false",
+        "label-incorrect": "incorrect",
+        "label-is": "is",
+        "label-true": "true"
+      },
+      "number": {
+        "label-equal": "=",
+        "label-greater": ">",
+        "label-greater-equal": ">=",
+        "label-smaller": "<",
+        "label-smaller-equal": "<="
+      },
       "single-choice": {
         "answer-option-not-selected": "{index}. Option is not selected",
         "answer-option-selected": "{index}. Option is selected",

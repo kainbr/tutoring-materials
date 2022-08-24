@@ -178,15 +178,11 @@ import type {
   SCOptions,
   SCState,
 } from "@/extensions/task/single-choice/types";
-import type {
-  EventOption,
-  EventOptionCondition,
-  EventOptionConditionBoolean,
-} from "@/extensions/feedback/types";
+import type { EventOption } from "@/extensions/feedback/types";
 import { isEqual } from "lodash-es";
 import { formatTriggers } from "@/extensions/task/single-choice/format/triggers";
 import { Editor } from "@tiptap/vue-3";
-import { EventTrigger, StoredFeedback } from "@/extensions/feedback/types";
+import { EventTrigger, Feedback } from "@/extensions/feedback/types";
 
 interface SCProps {
   id: string;
@@ -195,19 +191,11 @@ interface SCProps {
   content?: SCOption[];
   evaluation?: SCEvaluation;
   state?: SCState;
-  feedbacks?: StoredFeedback[];
+  feedbacks?: Feedback[];
   triggers?: EventTrigger[];
 }
 
 interface SCEmits {
-  /*
-  (e: "update:options", options: SCOptions): void;
-  (e: "update:content", content: SCOption[]): void;
-  (e: "update:evaluation", evaluation: SCEvaluation): void;
-  (e: "update:state", state: SCState): void;
-  (e: "update:feedbacks", feedbacks: StoredFeedback[]): void;
-  (e: "update:triggers", triggers: EventTrigger[]): void;
-   */
   (
     e: "update",
     task: {
@@ -215,7 +203,7 @@ interface SCEmits {
       content?: SCOption[];
       evaluation?: SCEvaluation;
       state?: SCState;
-      feedbacks?: StoredFeedback[];
+      feedbacks?: Feedback[];
       triggers?: EventTrigger[];
     }
   ): void;
@@ -397,11 +385,11 @@ const getAnswerOptionConditions = (
 const eventOption: EventOption = {
   name: "answer-submitted",
   parent: props.id,
+  conditions: [], //getEventOptionConditions(props.content),
   label: {
     message: "global.event.type-answer-submitted",
     hexIcon: calculateHexIcon(props.id),
   },
-  facts: getEventOptionConditions(props.content),
 };
 
 onMounted(() => {
@@ -414,7 +402,7 @@ onBeforeUnmount(() => {
 
 const addFeedbackHint = (reference: string) => {
   const uid = uuid();
-  const hintFeedback: StoredFeedback = {
+  const hintFeedback: Feedback = {
     id: uid,
     type: "feedback-hint",
     label: {
@@ -445,8 +433,9 @@ const addFeedbackHint = (reference: string) => {
     id: uuid(),
     event: "answer-submitted",
     parent: props.id,
-    conditions: [
+    rules: [
       {
+        id: uuid(),
         fact: reference + "-correct",
         operation: "equal",
         value: false,

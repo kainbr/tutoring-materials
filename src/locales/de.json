@@ -78,6 +78,7 @@
     },
     "trigger": {
       "builder-and": "und",
+      "builder-filter-feedbacks": "Filter Rückmeldungen",
       "builder-if": "Wenn",
       "builder-select-event": "Ereignis auswählen",
       "builder-select-feedback": "Rückmeldung auswählen",
@@ -86,6 +87,21 @@
   },
   "global": {
     "condition": {
+      "boolean": {
+        "label-correct": "korrekt",
+        "label-equal": "=",
+        "label-false": "falsch",
+        "label-incorrect": "inkorrekt",
+        "label-is": "ist",
+        "label-true": "wahr"
+      },
+      "number": {
+        "label-equal": "=",
+        "label-greater": ">",
+        "label-greater-equal": ">=",
+        "label-smaller": "<",
+        "label-smaller-equal": "<="
+      },
       "single-choice": {
         "answer-option-not-selected": "{index}. Option ist nicht ausgewählt",
         "answer-option-selected": "{index}. Option ist ausgewählt",

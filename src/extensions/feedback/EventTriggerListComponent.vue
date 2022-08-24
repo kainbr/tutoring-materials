@@ -8,12 +8,7 @@
         <div class="px-3.5 pt-0.5">
           <span> {{ index + 1 }}. </span>
         </div>
-        <EventTriggerComponent
-          :key="trigger.id"
-          :trigger="trigger"
-          :editor="editor"
-          class="w-full"
-        />
+        <EventTriggerComponent :trigger="trigger" :editor="editor" class="w-full" />
       </li>
     </ul>
   </div>

@@ -116,7 +116,8 @@ export default defineComponent({
     const addEventTrigger = () => {
       props.editor.commands.addEventTrigger({
         id: uuid(),
-        event: undefined,
+        event: null,
+        parent: null,
         rules: [],
         feedbacks: [],
       });

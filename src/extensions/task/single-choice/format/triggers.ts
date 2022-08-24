@@ -1,5 +1,5 @@
 import type { SCFormatFunction } from "@/extensions/task/single-choice/types";
-import type { EventTrigger, StoredFeedback } from "@/extensions/feedback/types";
+import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
 import type { HintFeedback } from "@/extensions/feedback/hint/types";
 import { isEqual, pick } from "lodash-es";
 import { v4 as uuid } from "uuid";
@@ -10,13 +10,13 @@ export const formatTriggers: SCFormatFunction = function (data) {
   }
 
   // Add event triggers for feedback hints
-  data.feedbacks?.forEach((f: StoredFeedback) => {
+  data.feedbacks?.forEach((f: Feedback) => {
     if (f.type === "feedback-hint") {
       const trigger: EventTrigger = {
         id: uuid(),
         event: "answer-submitted",
         parent: data.id,
-        conditions: [
+        rules: [
           {
             fact: (f as HintFeedback).config.reference + "-correct",
             operation: "equal",
@@ -45,7 +45,7 @@ export const formatTriggers: SCFormatFunction = function (data) {
       return {
         ...t,
         feedbacks: t.feedbacks.filter((id) => {
-          return data.feedbacks?.find((feedback: StoredFeedback) => feedback.id === id);
+          return data.feedbacks?.find((feedback: Feedback) => feedback.id === id);
         }),
       };
     }),

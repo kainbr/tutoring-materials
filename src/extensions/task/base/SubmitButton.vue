@@ -79,7 +79,7 @@ export default defineComponent({
   computed: {
     hints() {
       return (
-        this.editor.storage.feedback?.activeFeedbacks.filter(
+        this.editor.storage.feedback?.active.filter(
           (s: Feedback) => s.type === "feedback-hint" && s.parent === this.id
         ) || []
       );

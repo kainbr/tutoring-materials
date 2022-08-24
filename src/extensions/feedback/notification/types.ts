@@ -1,7 +1,7 @@
 import type { JSONContent } from "@tiptap/vue-3";
-import type { StoredFeedback } from "@/extensions/feedback/types";
+import type { Feedback } from "@/extensions/feedback/types";
 
-export interface NotificationFeedback extends StoredFeedback {
+export interface NotificationFeedback extends Feedback {
   config: {
     content: JSONContent;
   };

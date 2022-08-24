@@ -38,7 +38,7 @@ export default defineComponent({
   computed: {
     activeNotificationFeedbacks() {
       return (
-        this.editor.storage.feedbacks?.activeFeedbacks.filter(
+        this.editor.storage.feedbacks?.active.filter(
           (s: Feedback) => s.type === "feedback-notification"
         ) || []
       );

@@ -260,8 +260,8 @@ export default defineComponent({
         if (!isEqual(state?.tasks, editor.storage.tasks.taskStates)) {
           editor.storage.tasks.taskStates = !!state?.tasks ? state?.tasks : [];
         }
-        if (!isEqual(state?.feedbacks, editor.storage.feedbacks.activeFeedbacks)) {
-          editor.storage.feedbacks.activeFeedbacks = !!state?.feedbacks ? state.feedbacks : [];
+        if (!isEqual(state?.feedbacks, editor.storage.feedbacks.active)) {
+          editor.storage.feedbacks.active = !!state?.feedbacks ? state.feedbacks : [];
         }
       },
       { deep: true }
@@ -272,7 +272,7 @@ export default defineComponent({
     });
 
     watch(
-      [() => editor.storage.tasks.taskStates, () => editor.storage.feedbacks.activeFeedbacks],
+      [() => editor.storage.tasks.taskStates, () => editor.storage.feedbacks.active],
       ([states, feedbacks], [oldStates, oldFeedbacks]) => {
         if (!isEqual(states, oldStates) || !isEqual(feedbacks, oldFeedbacks)) {
           context.emit("update:state", {
@@ -280,7 +280,7 @@ export default defineComponent({
             feedbacks: feedbacks,
           });
           /*
-          console.log("watch taskStates and activeFeedbacks triggered", editor.isEditable);
+          console.log("watch taskStates and active triggered", editor.isEditable);
           console.log(
             "truth",
             !isEqual(states, oldStates),

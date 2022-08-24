@@ -1,5 +1,5 @@
 import type { Editor } from "@tiptap/vue-3";
-import type { EventTrigger, StoredFeedback } from "@/extensions/feedback/types";
+import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
 
 export interface TaskProps<
   O extends TaskOptions,
@@ -13,7 +13,7 @@ export interface TaskProps<
   content?: C;
   evaluation?: E;
   state?: S;
-  feedbacks?: StoredFeedback[];
+  feedbacks?: Feedback[];
   triggers?: EventTrigger[];
 }
 
@@ -25,7 +25,7 @@ export interface TaskEmits<O, C, E, S> {
       content?: C;
       evaluation?: E;
       state?: S;
-      feedbacks?: StoredFeedback[];
+      feedbacks?: Feedback[];
       triggers?: EventTrigger[];
     }
   ): void;

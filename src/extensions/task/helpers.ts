@@ -9,7 +9,7 @@ import type {
   TaskState,
 } from "@/extensions/task/types";
 import type { TaskOptions } from "@/extensions/task/types";
-import type { EventTrigger, StoredFeedback } from "@/extensions/feedback/types";
+import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
 
 export type propsInterface<O, C, E, S> = {
   id: string;
@@ -17,13 +17,13 @@ export type propsInterface<O, C, E, S> = {
   content?: C;
   evaluation?: E;
   state?: S;
-  feedbacks?: StoredFeedback[];
+  feedbacks?: Feedback[];
   triggers?: EventTrigger[];
   oldOptions?: O;
   oldContent?: C;
   oldEvaluation?: E;
   oldState?: S;
-  oldFeedbacks?: StoredFeedback[];
+  oldFeedbacks?: Feedback[];
   oldTriggers?: EventTrigger[];
 };
 

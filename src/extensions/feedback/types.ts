@@ -5,14 +5,11 @@ import type { Label } from "@/extensions/document/types";
  */
 
 export interface Feedback {
+  id: string;
   type: string;
   parent: string | null;
   config: object;
-}
-
-export interface StoredFeedback extends Feedback {
-  id: string;
-  label: Label;
+  label?: Label;
 }
 
 /**
@@ -21,45 +18,58 @@ export interface StoredFeedback extends Feedback {
 
 export type EventTrigger = {
   id: string;
-  event: string;
+  event: string | null;
   parent: string | null;
-  conditions: EventRule[];
+  rules: EventRule[];
   feedbacks: string[];
 };
 
 export type EventRule = {
+  id: string;
   fact: string;
   operation: string;
   value: unknown;
 };
 
+export interface BooleanEventRule extends EventRule {
+  value: boolean;
+}
+
+export interface NumberEventRule extends EventRule {
+  value: number;
+}
+
+/**
+ * An EventOption can be selected as the 'event' for an event trigger.
+ */
 export type EventOption = {
   name: string;
+  parent: string | null;
+  conditions: EventCondition[];
   label: Label;
-  facts: EventOptionCondition[];
-  parent?: string;
 };
 
-export interface EventOptionCondition {
-  name: string;
-  variable: string;
+/**
+ * An EventOption specifies a condition that can be selected for a specific
+ * event option. They are turned into an EventRule when selected.
+ */
+export type EventCondition = {
+  fact: string;
   label: Label;
-  type: string;
-  default: unknown;
-  editable: boolean;
-}
+  type: "boolean" | "number";
+  defaultOperation: string;
+  defaultValue: unknown;
+  options?: BooleanConditionOptions | NumberConditionOptions;
+};
 
-export interface EventOptionConditionBoolean extends EventOptionCondition {
-  type: "Boolean";
-  default: boolean;
-}
+export type BooleanConditionOptions = {
+  trueLabel?: string;
+  falseLabel?: string;
+  equalLabel?: string;
+};
 
-export interface EventOptionConditionNumber extends EventOptionCondition {
-  type: "Number";
-  default: number;
-}
-
-export interface EventOptionConditionString extends EventOptionCondition {
-  type: "String";
-  default: string;
-}
+export type NumberConditionOptions = {
+  min?: number;
+  max?: number;
+  step?: number;
+};

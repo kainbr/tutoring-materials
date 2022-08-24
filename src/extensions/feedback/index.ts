@@ -1,15 +1,16 @@
 // noinspection JSUnusedGlobalSymbols
 
 import { Extension } from "@tiptap/core";
+import { isEqual } from "lodash-es";
+
+import type { Event } from "@/extensions/document/types";
 import type {
-  Feedback,
-  EventTrigger,
+  EventCondition,
   EventOption,
-  StoredFeedback,
+  EventTrigger,
+  Feedback,
 } from "@/extensions/feedback/types";
 import type { MarkFeedback } from "@/extensions/feedback/mark/types";
-import type { Event } from "@/extensions/document/types";
-import { isEqual } from "lodash-es";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -17,15 +18,15 @@ declare module "@tiptap/core" {
       /**
        * Adds a feedback to the permanent feedback store.
        */
-      addFeedback: (feedback: StoredFeedback) => ReturnType;
+      addFeedback: (feedback: Feedback) => ReturnType;
       /**
        * Updates a feedback in the permanent feedback store.
        */
-      updateFeedback: (feedback: StoredFeedback, attributes: Partial<StoredFeedback>) => ReturnType;
+      updateFeedback: (feedback: Feedback, attributes: Partial<Feedback>) => ReturnType;
       /**
        * Removes a feedback from the permanent feedback store.
        */
-      removeFeedback: (feedback: StoredFeedback, removeEmptyTrigger?: boolean) => ReturnType;
+      removeFeedback: (feedback: Feedback, removeEmptyTrigger?: boolean) => ReturnType;
       /**
        * Adds a feedback to the active state feedback store.
        */
@@ -39,17 +40,39 @@ declare module "@tiptap/core" {
        */
       removeActiveFeedback: (feedback: Feedback) => ReturnType;
       /**
-       * Todo: Add method description
+       * Adds a new event option to the global storage.
        */
-      addEventOption: (event: EventOption) => ReturnType;
+      addEventOption: (eventOption: EventOption) => ReturnType;
       /**
-       * Todo: Add method description
+       * Remove an event option from the global storage.
        */
-      updateEventOption: (event: EventOption, attributes: Partial<EventOption>) => ReturnType;
+      removeEventOption: (eventOption: EventOption) => ReturnType;
       /**
-       * Todo: Add method description
+       * Adds an EventCondition to an event option which matches the event name and parent.
+       * If the event option does not exist, no condition is added.
        */
-      removeEventOption: (trigger: EventOption) => ReturnType;
+      addEventCondition: (
+        event: string,
+        parent: string | null,
+        condition: EventCondition
+      ) => ReturnType;
+      /**
+       * Updates the condition that matches the event, parent and condition with the provided attributes.
+       */
+      updateEventCondition: (
+        event: string,
+        parent: string,
+        condition: EventCondition,
+        attributes: Partial<EventCondition>
+      ) => ReturnType;
+      /**
+       * Removes the condition that also matches the event and parent.
+       */
+      removeEventCondition: (
+        event: string,
+        parent: string,
+        condition: EventCondition
+      ) => ReturnType;
       /**
        * Todo: Add method description
        */
@@ -67,8 +90,8 @@ declare module "@tiptap/core" {
 }
 
 export interface FeedbackExtensionStorage {
-  activeFeedbacks: Feedback[];
-  eventOptions: EventOption[];
+  active: Feedback[];
+  events: EventOption[];
 }
 
 export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStorage>({
@@ -76,8 +99,8 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
 
   addStorage() {
     return {
-      activeFeedbacks: [],
-      eventOptions: [],
+      active: [],
+      events: [],
     };
   },
 
@@ -101,7 +124,7 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
     // Listen to all events that are emitted
     this.editor.storage.document.eventBus().on("*", (type: string, event: Event) => {
       const triggers: EventTrigger[] = this.editor.getAttributes("document").triggers;
-      const feedbacks: StoredFeedback[] = this.editor.getAttributes("document").feedbacks;
+      const feedbacks: Feedback[] = this.editor.getAttributes("document").feedbacks;
 
       // Filter the stored triggers for events that match type and parent
       const eventTriggerWithType = triggers.filter(
@@ -114,11 +137,11 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
       // add them to the state store of active feedbacks.
       eventTriggerWithType.forEach((trigger: EventTrigger) => {
         // Todo: Check conditions
-        console.log("Set conditions: ", trigger.conditions);
+        console.log("Set conditions: ", trigger.rules);
         console.log("Available conditions: ", event.conditions);
 
         trigger.feedbacks.forEach((id: string) => {
-          const feedback = feedbacks.find((f: StoredFeedback) => f.id === id);
+          const feedback = feedbacks.find((f: Feedback) => f.id === id);
           if (feedback) {
             this.editor.commands.addActiveFeedback(feedback);
           }
@@ -132,8 +155,6 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
       addFeedback:
         (feedback) =>
         ({ commands }) => {
-          console.log("addFeedback", this.editor.getAttributes("document").feedbacks, feedback);
-
           commands.updateAttributes("document", {
             feedbacks: [...this.editor.getAttributes("document").feedbacks, feedback],
           });
@@ -144,18 +165,16 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
       updateFeedback:
         (feedback, attributes) =>
         ({ commands }) => {
-          const feedbacks = this.editor
-            .getAttributes("document")
-            .feedbacks.map((s: StoredFeedback) => {
-              if (s.id === feedback.id) {
-                return {
-                  ...s,
-                  ...attributes,
-                };
-              } else {
-                return s;
-              }
-            });
+          const feedbacks = this.editor.getAttributes("document").feedbacks.map((s: Feedback) => {
+            if (s.id === feedback.id) {
+              return {
+                ...s,
+                ...attributes,
+              };
+            } else {
+              return s;
+            }
+          });
 
           commands.updateAttributes("document", { feedbacks });
 
@@ -184,7 +203,7 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
 
           // Remove feedback from stored feedbacks list and also from triggers using it
           commands.updateAttributes("document", {
-            feedbacks: feedbacks.filter((s: StoredFeedback) => s.id !== feedback.id),
+            feedbacks: feedbacks.filter((s: Feedback) => s.id !== feedback.id),
             triggers: (() => {
               let triggers = this.editor.getAttributes("document").triggers;
 
@@ -201,7 +220,7 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
             })(),
           });
 
-          this.storage.activeFeedbacks = this.storage.activeFeedbacks.filter(
+          this.storage.active = this.storage.active.filter(
             (f: Feedback) => f.type !== feedback.type || f.parent !== feedback.type
           );
 
@@ -213,7 +232,7 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
           return false;
         }
 
-        const activeFeedback = this.storage.activeFeedbacks.find(
+        const activeFeedback = this.storage.active.find(
           (f: Feedback) =>
             f.type === feedback.type &&
             f.parent === feedback.parent &&
@@ -225,13 +244,13 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
           return false;
         }
 
-        this.storage.activeFeedbacks = [...this.storage.activeFeedbacks, feedback];
+        this.storage.active = [...this.storage.active, feedback];
 
         return true;
       },
 
       updateActiveFeedback: (feedback, attributes) => () => {
-        this.storage.activeFeedbacks = this.storage.activeFeedbacks.map((f: Feedback) => {
+        this.storage.active = this.storage.active.map((f: Feedback) => {
           if (
             f.type === feedback.type &&
             f.parent === feedback.parent &&
@@ -250,7 +269,7 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
       },
 
       removeActiveFeedback: (feedback) => () => {
-        this.storage.activeFeedbacks = this.storage.activeFeedbacks.filter((f: Feedback) => {
+        this.storage.active = this.storage.active.filter((f: Feedback) => {
           return !(
             f.type === feedback.type &&
             f.parent === feedback.parent &&
@@ -261,33 +280,73 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
         return true;
       },
 
-      addEventOption: (option) => () => {
-        const eventOption = this.storage.eventOptions.find(
-          (o: EventOption) => o.name === option.name && o.parent === option.parent
+      addEventOption: (eventOption) => () => {
+        const option = this.storage.events.find(
+          (o: EventOption) => o.name === eventOption.name && o.parent === eventOption.parent
         );
-        if (!eventOption) {
-          this.storage.eventOptions = [...this.storage.eventOptions, option];
+        if (!option) {
+          this.storage.events = [...this.storage.events, eventOption];
         }
 
         return true;
       },
 
-      updateEventOption: (option, attributes) => () => {
-        this.storage.eventOptions = this.storage.eventOptions.map((o: EventOption) => {
-          if (o.name === option.name && o.parent === option.parent) {
-            return { ...o, ...attributes };
+      removeEventOption: (eventOption) => () => {
+        this.storage.events = this.storage.events.filter(
+          (o: EventOption) => o.name !== eventOption.name && o.parent !== eventOption.parent
+        );
+
+        return true;
+      },
+
+      addEventCondition: (event, parent, condition) => () => {
+        this.storage.events = this.storage.events.map((o: EventOption) => {
+          if (
+            o.name === event &&
+            o.parent === parent &&
+            !o.conditions.find((c: EventCondition) => isEqual(c, condition))
+          ) {
+            return { ...o, conditions: [...o.conditions, condition] };
           } else {
-            return { ...o };
+            return o;
           }
         });
 
         return true;
       },
 
-      removeEventOption: (option) => () => {
-        this.storage.eventOptions = this.storage.eventOptions.filter(
-          (o: EventOption) => o.name !== option.name && o.parent !== option.parent
-        );
+      updateEventCondition: (event, parent, condition, attributes) => () => {
+        this.storage.events = this.storage.events.map((o: EventOption) => {
+          if (o.name === event && o.parent === parent) {
+            return {
+              ...o,
+              conditions: o.conditions.map((c: EventCondition) => {
+                if (isEqual(c, condition)) {
+                  return { ...c, ...attributes };
+                } else {
+                  return c;
+                }
+              }),
+            };
+          } else {
+            return o;
+          }
+        });
+
+        return true;
+      },
+
+      removeEventCondition: (event, parent, condition) => () => {
+        this.storage.events = this.storage.events.map((o: EventOption) => {
+          if (o.name === event && o.parent === parent) {
+            return {
+              ...o,
+              conditions: o.conditions.filter((c: EventCondition) => !isEqual(c, condition)),
+            };
+          } else {
+            return o;
+          }
+        });
 
         return true;
       },

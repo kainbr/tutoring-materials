@@ -1,6 +1,6 @@
-import type { StoredFeedback } from "@/extensions/feedback/types";
+import type { Feedback } from "@/extensions/feedback/types";
 
-export interface MarkFeedback extends StoredFeedback {
+export interface MarkFeedback extends Feedback {
   config: {
     ref: string;
     bold?: {

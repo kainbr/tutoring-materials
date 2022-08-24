@@ -5,13 +5,8 @@
       class="flex flex-row gap-2 items-center cursor-pointer"
       @click="toggleActiveFeedback"
     >
-      <span
-        class="text-sm"
-        :class="{
-          'font-semibold': isActive,
-        }"
-      >
-        <LabelComponent :label="feedback.label"></LabelComponent>
+      <span class="text-sm" :class="{ 'font-semibold': isActive }">
+        <LabelComponent :label="feedback.label" />
       </span>
     </div>
 
@@ -19,12 +14,8 @@
       <div class="flex grow gap-0.5 px-1 justify-end">
         <slot name="default"></slot>
       </div>
-
       <div class="flex gap-0.5 ml-3">
-        <EditorMenuButton
-          v-tippy="$t('editor.menu.feedback-copy-tooltip')"
-          :on-inactive-click="copy"
-        >
+        <EditorMenuButton v-tippy="$t('editor.menu.feedback-copy-tooltip')" @click="copy">
           <IconCopy />
         </EditorMenuButton>
         <EditorMenuButton v-tippy="$t('editor.menu.feedback-remove-tooltip')" @click="remove">
@@ -47,7 +38,7 @@ import LabelComponent from "@/helpers/LabelComponent.vue";
 
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
-import type { Feedback, StoredFeedback } from "@/extensions/feedback/types";
+import type { Feedback } from "@/extensions/feedback/types";
 
 export default defineComponent({
   name: "FeedbackConfigurationComponent",
@@ -60,7 +51,7 @@ export default defineComponent({
       required: true,
     },
     feedback: {
-      type: Object as PropType<StoredFeedback>,
+      type: Object as PropType<Feedback>,
       required: true,
     },
     createFeedback: {
@@ -79,7 +70,7 @@ export default defineComponent({
 
   setup(props) {
     const isActive = computed(() => {
-      return props.editor.storage.feedbacks.activeFeedbacks.find(
+      return props.editor.storage.feedbacks.active.find(
         (f: Feedback) =>
           f.type === props.feedback.type &&
           f.parent === props.feedback.parent &&
@@ -97,11 +88,12 @@ export default defineComponent({
 
     const copy = () => {
       // Make a copy of the current feedback and overwrite id and hexIcon
-      const copyFeedback = { ...props.feedback };
       const uid = uuid();
-      copyFeedback.id = uid;
-      copyFeedback.label = { ...copyFeedback.label, hexIcon: calculateHexIcon(uid) };
-      props.createFeedback(copyFeedback);
+      props.createFeedback({
+        ...props.feedback,
+        id: uid,
+        label: { ...props.feedback.label, hexIcon: calculateHexIcon(uid) },
+      });
     };
 
     const remove = () => {
