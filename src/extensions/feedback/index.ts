@@ -1,6 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
-import { Extension } from "@tiptap/core";
+import { Extension, findChildren } from "@tiptap/core";
 import { isEqual } from "lodash-es";
 
 import type { Event } from "@/extensions/document/types";
@@ -11,6 +11,9 @@ import type {
   Feedback,
 } from "@/extensions/feedback/types";
 import type { MarkFeedback } from "@/extensions/feedback/mark/types";
+import type { NodeWithPos } from "@tiptap/vue-3";
+import { Plugin, PluginKey } from "prosemirror-state";
+import type { EventRule } from "@/extensions/feedback/types";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -95,6 +98,16 @@ export interface FeedbackExtensionStorage {
 }
 
 export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStorage>({
+  onUpdate() {
+    // Cleanup events that do not have a valid parent anymore
+    const taskIds = findChildren(this.editor.state.doc, (node) => node.type.name === "task").map(
+      (node: NodeWithPos) => node.node.attrs.id
+    );
+    this.storage.events = this.storage.events.filter(
+      (e: EventOption) => e.parent === null || taskIds.includes(e.parent)
+    );
+  },
+
   name: "feedbacks",
 
   addStorage() {
@@ -148,6 +161,72 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
         });
       });
     });
+  },
+
+  addProseMirrorPlugins() {
+    return [
+      new Plugin({
+        key: new PluginKey("feedback"),
+        appendTransaction: (transaction, oldState, state) => {
+          // Nothing has changed. Ignore it.
+          if (state.doc === oldState.doc) {
+            return;
+          }
+
+          const tr = state.tr;
+
+          state.doc.descendants((node, pos) => {
+            if (node.type.name === "document" && !!node.attrs.feedbacks) {
+              // Fetch ids of available tasks
+              const taskIds = findChildren(state.doc, (node) => node.type.name === "task").map(
+                (node) => node.node.attrs.id
+              );
+
+              // Feedbacks
+              const feedbacks = node.attrs.feedbacks.filter(
+                (f: Feedback) => taskIds.includes(f.parent) || f.parent === null
+              );
+
+              // Events
+              const events = this.storage.events.filter(
+                (e: EventOption) => taskIds.includes(e.parent) || e.parent === null
+              );
+
+              // Triggers
+              const feedbacksIds: string[] = feedbacks.map((f: Feedback) => f.id);
+              const triggers = node.attrs.triggers.map((t: EventTrigger) => {
+                // Fetch corresponding event option with conditions
+                const eventOption = events.find(
+                  (e: EventOption) => t.event === e.name && t.parent === e.parent
+                );
+                const availableFacts = !!eventOption
+                  ? eventOption.conditions.map((c: EventCondition) => c.fact)
+                  : [];
+                return {
+                  ...t,
+                  ...(!taskIds.includes(t.parent) && t.parent !== null
+                    ? { event: null, parent: null }
+                    : {}),
+                  rules: t.rules.filter((r: EventRule) => availableFacts.includes(r.fact)),
+                  feedbacks: t.feedbacks.filter((feedback) => feedbacksIds.includes(feedback)),
+                };
+              });
+
+              // Update
+              tr.setNodeMarkup(pos, undefined, {
+                ...node.attrs,
+                feedbacks,
+                triggers,
+              });
+
+              // this.storage.events = events;
+            }
+          });
+
+          return tr;
+        },
+      }),
+    ];
   },
 
   addCommands() {

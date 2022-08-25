@@ -13,10 +13,12 @@
           :key="feedback.config"
           :editor="editor"
           :feedback="feedback"
+        ></component>
+        <!--
           :create-feedback="createFeedback"
           :update-feedback="updateFeedback"
           :remove-feedback="removeFeedback"
-        ></component>
+        -->
       </li>
     </ul>
   </div>
@@ -50,6 +52,7 @@ export default defineComponent({
       type: Array as PropType<Feedback[]>,
       required: true,
     },
+    /*
     createFeedback: {
       type: Function,
       required: true,
@@ -62,6 +65,8 @@ export default defineComponent({
       type: Function,
       required: true,
     },
+
+     */
   },
 });
 </script>

@@ -14,6 +14,8 @@ import { defineComponent } from "vue";
 import TutoringMaterial from "@/TutoringMaterial.vue";
 import type { PropType } from "vue";
 import type { JSONContent } from "@tiptap/vue-3";
+import type { TaskState } from "@/extensions/task/types";
+import type { Feedback } from "@/extensions/feedback/types";
 
 export default defineComponent({
   name: "TutoringMaterialEditor",
@@ -57,12 +59,12 @@ export default defineComponent({
 
   data() {
     return {
-      state: undefined,
+      state: undefined as { tasks: TaskState[]; feedbacks: Feedback[] } | undefined,
     };
   },
 
   methods: {
-    updateState($event) {
+    updateState($event: { tasks: TaskState[]; feedbacks: Feedback[] }) {
       this.state = { ...$event };
     },
   },

@@ -1,8 +1,6 @@
 <template>
-  <TaskScaffold contenteditable="false" :editor="editor" :feedbacks="feedbacks" :update="update">
-    <!--
-    Render
-    -->
+  <TaskScaffold contenteditable="false" :editor="editor">
+    <!-- Render -->
     <template #render>
       <div
         v-for="index in state?.order"
@@ -28,9 +26,7 @@
       </div>
     </template>
 
-    <!--
-    Content
-    -->
+    <!-- Content -->
     <template #content>
       <div
         v-for="(option, index) in content"
@@ -114,12 +110,6 @@
       />
     </template>
 
-    <!-- Feedbacks -->
-    <template #feedbacks> </template>
-
-    <!-- Triggers -->
-    <template #triggers> test </template>
-
     <!-- Options -->
     <template #options>
       <div v-if="options" class="mt-1 flex flex-col gap-2">
@@ -139,12 +129,8 @@
 </template>
 
 <script lang="ts">
-export default {
-  name: "TaskSingleChoice",
-};
-</script>
+import { defineComponent } from "vue";
 
-<script setup lang="ts">
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import IconAdd from "@/helpers/icons/IconAdd.vue";
 import IconFeedback from "@/helpers/icons/IconFeedback.vue";
@@ -154,312 +140,242 @@ import IconShuffle from "@/helpers/icons/IconShuffle.vue";
 import IconTrash from "@/helpers/icons/IconTrash.vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
 import TaskScaffold from "@/extensions/task/base/TaskScaffold.vue";
-import { v4 as uuid } from "uuid";
+import OptionsDefaults from "@/helpers/tasks/OptionsDefaults.vue";
+import OptionsFormEnum from "@/helpers/tasks/OptionsFormEnum.vue";
 
-import { useTask } from "@/extensions/task/helpers";
+import { calculateHexIcon } from "@/helpers/util";
 import { formatOptions } from "@/extensions/task/single-choice/format/options";
 import { formatContent } from "@/extensions/task/single-choice/format/content";
 import { formatState } from "@/extensions/task/single-choice/format/state";
-import { formatFeedbacks } from "@/extensions/task/single-choice/format/feedbacks";
+import { formatEvents } from "@/extensions/task/single-choice/format/events";
 import {
   formatEvaluation,
   evaluationOptions,
 } from "@/extensions/task/single-choice/format/evaluation";
-import OptionsDefaults from "@/helpers/tasks/OptionsDefaults.vue";
-import OptionsFormEnum from "@/helpers/tasks/OptionsFormEnum.vue";
-import { calculateHexIcon } from "@/helpers/util";
-import { onBeforeUnmount, onMounted } from "vue";
+import { useTask } from "@/extensions/task/helpers";
+import { v4 as uuid } from "uuid";
 
 // Types
+import type { PropType } from "vue";
 import type { JSONContent } from "@tiptap/vue-3";
 import type {
   SCOption,
   SCEvaluation,
   SCOptions,
   SCState,
+  SCProps,
+  SCEmits,
 } from "@/extensions/task/single-choice/types";
-import type { EventOption } from "@/extensions/feedback/types";
 import { isEqual } from "lodash-es";
-import { formatTriggers } from "@/extensions/task/single-choice/format/triggers";
-import { Editor } from "@tiptap/vue-3";
-import { EventTrigger, Feedback } from "@/extensions/feedback/types";
+import type { Editor } from "@tiptap/vue-3";
+import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
 
-interface SCProps {
-  id: string;
-  editor: Editor;
-  options?: SCOptions;
-  content?: SCOption[];
-  evaluation?: SCEvaluation;
-  state?: SCState;
-  feedbacks?: Feedback[];
-  triggers?: EventTrigger[];
-}
+export default defineComponent({
+  name: "TaskSingleChoice",
 
-interface SCEmits {
-  (
-    e: "update",
-    task: {
-      options?: SCOptions;
-      content?: SCOption[];
-      evaluation?: SCEvaluation;
-      state?: SCState;
-      feedbacks?: Feedback[];
-      triggers?: EventTrigger[];
-    }
-  ): void;
-  (e: "submit"): void;
-}
-
-const props = defineProps<SCProps>();
-const emit = defineEmits<SCEmits>();
-
-const { update } = useTask<SCProps, SCEmits, SCOptions, SCOption[], SCEvaluation, SCState>(
-  props,
-  emit,
-  [formatOptions, formatContent, formatEvaluation, formatState, formatFeedbacks, formatTriggers]
-);
-
-/**
- * Task specific functions
- */
-
-const addOption = () => {
-  if (Array.isArray(props.content)) {
-    const contentCopy = props.content;
-    contentCopy.push({
-      id: uuid(),
-      content: { type: "doc", content: [{ type: "paragraph" }] },
-    });
-    update({ content: contentCopy });
-  }
-};
-
-const removeOption = (index: number) => {
-  if (Array.isArray(props.content)) {
-    if (props.content.length > 1) {
-      const contentCopy = props.content;
-      contentCopy.splice(index, 1);
-      update({ content: contentCopy });
-    }
-  }
-};
-
-const moveUpOption = (index: number, option: SCOption) => {
-  if (Array.isArray(props.content)) {
-    const contentCopy = props.content;
-    contentCopy.splice(index - 1, 0, option);
-    contentCopy.splice(index + 1, 1);
-    update({ content: contentCopy });
-  }
-};
-
-const moveDownOption = (index: number, option: SCOption) => {
-  if (Array.isArray(props.content)) {
-    const contentCopy = props.content;
-    contentCopy.splice(index + 2, 0, option);
-    contentCopy.splice(index, 1);
-    update({ content: contentCopy });
-  }
-};
-
-const updateAnswerOptionValue = (option: SCOption) => {
-  if (!!props.evaluation && Array.isArray(props.evaluation.solution)) {
-    const newSolution = props.evaluation.solution.map((s) => {
-      return { ...s, value: s.id === option.id };
-    });
-    update({ evaluation: { ...props.evaluation, solution: newSolution } });
-  }
-};
-
-const updateAnswerOptionContent = (option: SCOption, $event: JSONContent) => {
-  if (Array.isArray(props.content)) {
-    update({
-      content: props.content.map((o) => (option?.id === o.id ? { ...o, content: $event } : o)),
-    });
-  }
-};
-
-const changeAnswerOptionValue = (option: SCOption) => {
-  if (
-    Array.isArray(props.content) &&
-    !!props.state &&
-    !["correct", "final-incorrect"].includes(props.state.state)
-  ) {
-    const oldAnswer = props.state?.answer;
-    const newAnswer = props.content.map((o: SCOption) => {
-      return {
-        id: o.id,
-        value: o.id === option.id,
-      };
-    });
-
-    if (!isEqual(oldAnswer, newAnswer)) {
-      update({
-        state: {
-          ...props.state,
-          answer: newAnswer,
-        },
-      });
-
-      props.editor.storage.document.eventBus().emit("answer-changed", {
-        parent: props.id,
-        label: {
-          message: "global.event.type-answer-changed",
-          hexIcon: calculateHexIcon(props.id),
-        },
-        data: {
-          ...props.state,
-          answer: newAnswer,
-          oldAnswer: oldAnswer,
-        },
-      });
-    }
-  }
-};
-
-const getEventOptionConditions = (content: SCOption[] | undefined): EventOptionCondition[] => {
-  return [
-    {
-      name: "response-correct",
-      variable: "response",
-      type: "Boolean" as const,
-      label: {
-        message: "global.condition.single-choice.response-correct",
-      },
-      editable: false,
-      default: true,
-    },
-    {
-      name: "response-incorrect",
-      variable: "response",
-      type: "Boolean" as const,
-      label: {
-        message: "global.condition.single-choice.response-incorrect",
-      },
-      editable: false,
-      default: false,
-    },
-    ...getAnswerOptionConditions(content),
-  ];
-};
-
-const getAnswerOptionConditions = (
-  content: SCOption[] | undefined
-): EventOptionConditionBoolean[] => {
-  return !!content && Array.isArray(content)
-    ? [
-        ...content.map((option, index) => {
-          return {
-            name: "answer-option-selected-" + option.id,
-            variable: "answer-option-" + option.id,
-            type: "Boolean" as const,
-            label: {
-              message: "global.condition.single-choice.answer-option-selected",
-              data: {
-                index: index + 1,
-              },
-            },
-            editable: false,
-            default: true,
-          };
-        }),
-        ...content.map((option, index) => {
-          return {
-            name: "answer-option-not-selected-" + option.id,
-            variable: "answer-option-" + option.id,
-            type: "Boolean" as const,
-            label: {
-              message: "global.condition.single-choice.answer-option-not-selected",
-              data: {
-                index: index + 1,
-              },
-            },
-            editable: false,
-            default: false,
-          };
-        }),
-      ]
-    : [];
-};
-
-const eventOption: EventOption = {
-  name: "answer-submitted",
-  parent: props.id,
-  conditions: [], //getEventOptionConditions(props.content),
-  label: {
-    message: "global.event.type-answer-submitted",
-    hexIcon: calculateHexIcon(props.id),
+  components: {
+    EditorMenuButton,
+    IconAdd,
+    IconFeedback,
+    IconArrowDown,
+    IconArrowUp,
+    IconShuffle,
+    IconTrash,
+    InlineEditor,
+    TaskScaffold,
+    OptionsDefaults,
+    OptionsFormEnum,
   },
-};
 
-onMounted(() => {
-  props.editor.commands.addEventOption(eventOption);
-});
-
-onBeforeUnmount(() => {
-  // props.editor.commands.removeEventOption(eventOption);
-});
-
-const addFeedbackHint = (reference: string) => {
-  const uid = uuid();
-  const hintFeedback: Feedback = {
-    id: uid,
-    type: "feedback-hint",
-    label: {
-      message: "global.feedback.type-feedback-hint",
-      hexIcon: calculateHexIcon(uid),
+  props: {
+    id: {
+      type: String,
+      required: true,
     },
-    parent: props.id,
-    config: {
-      reference: reference,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "paragraph",
+    editor: {
+      type: Object as PropType<Editor>,
+      required: true,
+    },
+    options: {
+      type: Object as PropType<SCOptions | undefined>,
+      default: undefined,
+    },
+    content: {
+      type: Object as PropType<SCOption[] | undefined>,
+      default: undefined,
+    },
+    evaluation: {
+      type: Object as PropType<SCEvaluation | undefined>,
+      default: undefined,
+    },
+    state: {
+      type: Object as PropType<SCState | undefined>,
+      default: undefined,
+    },
+  },
+
+  emits: ["update", "submit"],
+
+  setup(props, { emit }) {
+    const { update } = useTask<SCProps, SCEmits, SCOptions, SCOption[], SCEvaluation, SCState>(
+      props,
+      emit,
+      [formatOptions, formatContent, formatEvaluation, formatState, formatEvents]
+    );
+
+    const addOption = () => {
+      if (Array.isArray(props.content)) {
+        const contentCopy = props.content;
+        contentCopy.push({
+          id: uuid(),
+          content: { type: "doc", content: [{ type: "paragraph" }] },
+        });
+        update({ content: contentCopy });
+      }
+    };
+
+    const removeOption = (index: number) => {
+      if (Array.isArray(props.content)) {
+        if (props.content.length > 1) {
+          const contentCopy = props.content;
+          contentCopy.splice(index, 1);
+          update({ content: contentCopy });
+        }
+      }
+    };
+
+    const moveUpOption = (index: number, option: SCOption) => {
+      if (Array.isArray(props.content)) {
+        const contentCopy = props.content;
+        contentCopy.splice(index - 1, 0, option);
+        contentCopy.splice(index + 1, 1);
+        update({ content: contentCopy });
+      }
+    };
+
+    const moveDownOption = (index: number, option: SCOption) => {
+      if (Array.isArray(props.content)) {
+        const contentCopy = props.content;
+        contentCopy.splice(index + 2, 0, option);
+        contentCopy.splice(index, 1);
+        update({ content: contentCopy });
+      }
+    };
+
+    const updateAnswerOptionValue = (option: SCOption) => {
+      if (!!props.evaluation && Array.isArray(props.evaluation.solution)) {
+        const newSolution = props.evaluation.solution.map((s) => {
+          return { ...s, value: s.id === option.id };
+        });
+        update({ evaluation: { ...props.evaluation, solution: newSolution } });
+      }
+    };
+
+    const updateAnswerOptionContent = (option: SCOption, $event: JSONContent) => {
+      if (Array.isArray(props.content)) {
+        update({
+          content: props.content.map((o) => (option?.id === o.id ? { ...o, content: $event } : o)),
+        });
+      }
+    };
+
+    const changeAnswerOptionValue = (option: SCOption) => {
+      if (
+        Array.isArray(props.content) &&
+        !!props.state &&
+        !["correct", "final-incorrect"].includes(props.state.state)
+      ) {
+        const oldAnswer = props.state?.answer;
+        const newAnswer = props.content.map((o: SCOption) => {
+          return {
+            id: o.id,
+            value: o.id === option.id,
+          };
+        });
+
+        if (!isEqual(oldAnswer, newAnswer)) {
+          update({
+            state: {
+              ...props.state,
+              answer: newAnswer,
+            },
+          });
+
+          props.editor.storage.document.eventBus().emit("answer-changed", {
+            parent: props.id,
+            label: {
+              message: "global.event.type-answer-changed",
+              hexIcon: calculateHexIcon(props.id),
+            },
+            data: {
+              ...props.state,
+              answer: newAnswer,
+              oldAnswer: oldAnswer,
+            },
+          });
+        }
+      }
+    };
+
+    const addFeedbackHint = (reference: string) => {
+      const uid = uuid();
+      const hintFeedback: Feedback = {
+        id: uid,
+        parent: props.id,
+        type: "feedback-hint",
+        label: {
+          message: "global.feedback.type-feedback-hint",
+          hexIcon: calculateHexIcon(uid),
+        },
+        config: {
+          reference: reference,
+          content: {
+            type: "doc",
             content: [
               {
-                type: "text",
-                text: "Hello world!",
+                type: "paragraph",
+                content: [
+                  {
+                    type: "text",
+                    text: "Hello world!",
+                  },
+                ],
               },
             ],
           },
-        ],
-      },
-    },
-  };
+        },
+      };
 
-  const trigger: EventTrigger = {
-    id: uuid(),
-    event: "answer-submitted",
-    parent: props.id,
-    rules: [
-      {
+      const trigger: EventTrigger = {
         id: uuid(),
-        fact: reference + "-correct",
-        operation: "equal",
-        value: false,
-      },
-    ],
-    feedbacks: [uid],
-  };
+        event: "answer-submitted",
+        parent: props.id,
+        rules: [
+          {
+            id: uuid(),
+            fact: reference + "-correct",
+            operation: "equal",
+            value: false,
+          },
+        ],
+        feedbacks: [uid],
+      };
 
-  update({
-    feedbacks: [...(!!props.feedbacks ? props.feedbacks : []), hintFeedback],
-    triggers: [...(!!props.triggers ? props.triggers : []), trigger],
-  });
-};
+      props.editor.chain().addFeedback(hintFeedback).addEventTrigger(trigger).run();
+    };
 
-defineExpose({
-  update,
-  addOption,
-  removeOption,
-  moveUpOption,
-  moveDownOption,
-  updateAnswerOptionValue,
-  updateAnswerOptionContent,
-  changeAnswerOptionValue,
-  evaluationOptions,
-  addFeedbackHint,
+    return {
+      update,
+      addOption,
+      removeOption,
+      moveUpOption,
+      moveDownOption,
+      updateAnswerOptionValue,
+      updateAnswerOptionContent,
+      changeAnswerOptionValue,
+      evaluationOptions,
+      addFeedbackHint,
+    };
+  },
 });
 </script>

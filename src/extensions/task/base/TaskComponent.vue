@@ -44,8 +44,6 @@
         :content="node.attrs.content"
         :evaluation="node.attrs.evaluation"
         :state="state"
-        :feedbacks="node.attrs.feedbacks"
-        :triggers="node.attrs.triggers"
         @update="update"
       />
 
@@ -74,7 +72,7 @@ import SubmitButton from "@/extensions/task/base/SubmitButton.vue";
 import SingleChoice from "@/extensions/task/single-choice/TaskComponent.vue";
 
 import type { Ref } from "vue";
-import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
+import type { EventOption } from "@/extensions/feedback/types";
 import type { NodeViewProps } from "@tiptap/core";
 import type { PropType } from "vue";
 import type { TaskContent, TaskEvaluation, TaskOptions, TaskState } from "@/extensions/task/types";
@@ -135,21 +133,27 @@ export default defineComponent({
       content: TaskContent;
       evaluation: TaskEvaluation;
       state: TaskState;
-      feedbacks: Feedback[];
-      triggers: EventTrigger[];
+      events: EventOption;
     }) => {
       props.updateAttributes({
         options: newValues.options,
         content: newValues.content,
         evaluation: newValues.evaluation,
-        feedbacks: newValues.feedbacks,
-        triggers: newValues.triggers,
       });
+
       if (!state.value) {
         props.editor.commands.addTaskState(newValues.state);
       } else {
         props.editor.commands.updateTaskState(state.value, newValues.state);
       }
+
+      // eslint-disable-next-line vue/no-mutating-props
+      props.editor.storage.feedbacks.events = [
+        ...props.editor.storage.feedbacks.events.filter(
+          (e: EventOption) => e.parent !== props.node.attrs.id
+        ),
+        ...(!!newValues.events && Array.isArray(newValues.events) ? newValues.events : []),
+      ];
     };
 
     onMounted(() => {

@@ -81,6 +81,8 @@ import TutoringMaterialPlayer from "@/TutoringMaterialPlayer.vue";
 import type { JSONContent } from "@tiptap/vue-3";
 import type { PropType } from "vue";
 import type { DocumentState } from "@/extensions/document/types";
+import type { TaskState } from "@/extensions/task/types";
+import type { Feedback } from "@/extensions/feedback/types";
 
 export default defineComponent({
   name: "TutoringMaterialPreview",
@@ -178,7 +180,7 @@ export default defineComponent({
     resetPlayer() {
       this.$emit("reset");
     },
-    updateState($event) {
+    updateState($event: { tasks: TaskState[]; feedbacks: Feedback[] }) {
       this.$emit("update:state", $event);
     },
   },

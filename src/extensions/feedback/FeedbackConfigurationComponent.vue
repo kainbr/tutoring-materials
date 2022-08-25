@@ -54,6 +54,7 @@ export default defineComponent({
       type: Object as PropType<Feedback>,
       required: true,
     },
+    /*
     createFeedback: {
       type: Function,
       required: true,
@@ -66,6 +67,7 @@ export default defineComponent({
       type: Function,
       required: true,
     },
+     */
   },
 
   setup(props) {
@@ -89,16 +91,21 @@ export default defineComponent({
     const copy = () => {
       // Make a copy of the current feedback and overwrite id and hexIcon
       const uid = uuid();
-      props.createFeedback({
+      props.editor.commands.addFeedback({
         ...props.feedback,
         id: uid,
-        label: { ...props.feedback.label, hexIcon: calculateHexIcon(uid) },
+        label: !!props.feedback.label
+          ? {
+              ...props.feedback.label,
+              hexIcon: calculateHexIcon(uid),
+            }
+          : undefined,
       });
     };
 
     const remove = () => {
       props.editor.commands.removeActiveFeedback(props.feedback);
-      props.removeFeedback(props.feedback);
+      props.editor.commands.removeFeedback(props.feedback);
     };
 
     return { isActive, toggleActiveFeedback, copy, remove };

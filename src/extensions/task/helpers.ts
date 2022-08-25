@@ -9,7 +9,7 @@ import type {
   TaskState,
 } from "@/extensions/task/types";
 import type { TaskOptions } from "@/extensions/task/types";
-import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
+import type { EventOption, EventTrigger, Feedback } from "@/extensions/feedback/types";
 
 export type propsInterface<O, C, E, S> = {
   id: string;
@@ -19,6 +19,7 @@ export type propsInterface<O, C, E, S> = {
   state?: S;
   feedbacks?: Feedback[];
   triggers?: EventTrigger[];
+  events?: EventOption[];
   oldOptions?: O;
   oldContent?: C;
   oldEvaluation?: E;
@@ -58,14 +59,11 @@ export function useTask<
       content: props.content,
       evaluation: props.evaluation,
       state: props.state,
-      feedbacks: props.feedbacks,
-      triggers: props.triggers,
+      events: [],
       oldOptions: props.options,
       oldContent: props.content,
       oldEvaluation: props.evaluation,
       oldState: props.state,
-      oldFeedbacks: props.feedbacks,
-      oldTriggers: props.triggers,
     };
   };
 
@@ -82,32 +80,17 @@ export function useTask<
       },
       formatFunctions
     );
-    emit(
-      "update",
-      pick(newData, ["options", "content", "evaluation", "state", "feedbacks", "triggers"])
-    );
+    emit("update", pick(newData, ["options", "content", "evaluation", "state", "events"]));
   });
 
   watch(
-    [
-      () => props.options,
-      () => props.content,
-      () => props.evaluation,
-      () => props.state,
-      () => props.feedbacks,
-      () => props.triggers,
-    ],
-    (
-      [options, content, evaluation, state, feedbacks, triggers],
-      [oldOptions, oldContent, oldEvaluation, oldState, oldFeedbacks, oldTriggers]
-    ) => {
+    [() => props.options, () => props.content, () => props.evaluation, () => props.state],
+    ([options, content, evaluation, state], [oldOptions, oldContent, oldEvaluation, oldState]) => {
       if (
         !isEqual(options, oldOptions) ||
         !isEqual(content, oldContent) ||
         !isEqual(evaluation, oldEvaluation) ||
-        !isEqual(state, oldState) ||
-        !isEqual(feedbacks, oldFeedbacks) ||
-        !isEqual(triggers, oldTriggers)
+        !isEqual(state, oldState)
       ) {
         const newData = formatTask<O, C, E, S>(
           <propsInterface<O, C, E, S>>{
@@ -115,15 +98,12 @@ export function useTask<
             options,
             content,
             evaluation,
-            feedbacks,
             state,
-            triggers,
+            events: [],
             oldOptions,
             oldContent,
             oldEvaluation,
             oldState,
-            oldFeedbacks,
-            oldTriggers,
           },
           formatFunctions
         );
@@ -131,14 +111,9 @@ export function useTask<
           !isEqual(options, newData.options) ||
           !isEqual(content, newData.content) ||
           !isEqual(evaluation, newData.evaluation) ||
-          !isEqual(state, newData.state) ||
-          !isEqual(feedbacks, newData.feedbacks) ||
-          !isEqual(triggers, newData.triggers)
+          !isEqual(state, newData.state)
         ) {
-          emit(
-            "update",
-            pick(newData, ["options", "content", "evaluation", "state", "feedbacks", "triggers"])
-          );
+          emit("update", pick(newData, ["options", "content", "evaluation", "state", "events"]));
         }
       }
     },
@@ -155,10 +130,7 @@ export function useTask<
       },
       formatFunctions
     );
-    emit(
-      "update",
-      pick(newData, ["options", "content", "evaluation", "state", "feedbacks", "triggers"])
-    );
+    emit("update", pick(newData, ["options", "content", "evaluation", "state", "events"]));
   };
 
   return { update };

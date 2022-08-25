@@ -56,6 +56,7 @@ export type EventOption = {
 export type EventCondition = {
   fact: string;
   label: Label;
+  previewLabel?: Label;
   type: "boolean" | "number";
   defaultOperation: string;
   defaultValue: unknown;

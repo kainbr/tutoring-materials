@@ -1,11 +1,10 @@
 <template>
-  <feedback-configuration-component
-    :editor="editor"
-    :feedback="feedback"
+  <feedback-configuration-component :editor="editor" :feedback="feedback">
+    <!--
     :create-feedback="createFeedback"
     :update-feedback="updateFeedback"
     :remove-feedback="removeFeedback"
-  >
+    -->
     <template #default>
       <button
         type="button"
@@ -15,6 +14,7 @@
         {{ $t("editor.feedback.hint-modal-edit-button") }}
       </button>
       <TransitionRoot appear :show="open" as="template">
+        <!--suppress HtmlUnknownAttribute -->
         <Dialog as="div" class="relative z-10" @close="open = false">
           <TransitionChild
             as="template"
@@ -83,26 +83,18 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import FeedbackConfigurationComponent from "@/extensions/feedback/FeedbackConfigurationComponent.vue";
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
+import { DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
 
-import type { Editor, NodeWithPos } from "@tiptap/vue-3";
+import type { Editor } from "@tiptap/vue-3";
 import type { HintFeedback } from "@/extensions/feedback/hint/types";
 import type { PropType } from "vue";
-import ConfigurationModal from "@/extensions/feedback/hint/ConfigurationModal.vue";
-import { findChildren } from "@tiptap/core";
-import type { Feedback } from "@/extensions/feedback/types";
-import type { JSONContent } from "@tiptap/vue-3";
-import { v4 as uuid } from "uuid";
-import { calculateHexIcon } from "@/helpers/util";
 
 export default defineComponent({
   name: "FeedbackHintConfigurationComponent",
 
   components: {
-    ConfigurationModal,
     FeedbackConfigurationComponent,
-    Dialog,
     DialogPanel,
     DialogTitle,
     TransitionChild,
@@ -119,6 +111,7 @@ export default defineComponent({
       type: Object as PropType<Editor>,
       required: true,
     },
+    /*
     createFeedback: {
       type: Function as PropType<(feedback: HintFeedback) => void>,
       required: true,
@@ -133,6 +126,7 @@ export default defineComponent({
       type: Function as PropType<(feedback: HintFeedback) => void>,
       required: true,
     },
+     */
   },
 
   data() {
@@ -144,7 +138,7 @@ export default defineComponent({
 
   methods: {
     updateHintFeedback() {
-      this.updateFeedback(this.feedback, {
+      this.editor.commands.updateFeedback(this.feedback, {
         config: {
           ...this.feedback.config,
           content: this.contentCandidate,
@@ -153,7 +147,7 @@ export default defineComponent({
       this.open = false;
     },
     removeHintFeedback() {
-      this.removeFeedback(this.feedback);
+      this.editor.commands.removeFeedback(this.feedback);
       this.open = false;
     },
   },

@@ -9,6 +9,7 @@
       class="inline-flex flex-nowrap items-center mx-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
     >
       <RuleEditor
+        v-if="!!conditions.find((condition) => rule.fact === condition.fact)"
         :rule="rule"
         :condition="conditions.find((condition) => rule.fact === condition.fact)"
         @update:rule="updateRule(rule, $event)"
@@ -29,7 +30,7 @@
 
   <!-- Dropdown -->
   <Combobox v-if="conditions.length > 0" :model-value="conditions" class="pr-2">
-    <div class="relative">
+    <div>
       <div class="flex gap-1">
         <ComboboxButton class="cursor-pointer">
           <div class="pl-2">
@@ -58,7 +59,7 @@
           class="absolute z-50 max-h-60 w-fit overflow-auto rounded-md bg-white py-1 text-sm shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
         >
           <ComboboxOption
-            v-for="condition in filteredConditions"
+            v-for="condition in conditions"
             :key="condition"
             v-slot="{ active, selected }"
             as="template"
@@ -71,7 +72,9 @@
               ]"
             >
               <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">
-                <LabelComponent :label="condition.label" />
+                <LabelComponent
+                  :label="!!condition.previewLabel ? condition.previewLabel : condition.label"
+                />
               </span>
             </li>
           </ComboboxOption>
@@ -117,22 +120,13 @@ export default defineComponent({
 
   emits: ["update:rules"],
 
-  data() {
-    return {
-      conditionsQuery: "",
-    };
-  },
-
-  computed: {
-    filteredConditions(): EventCondition[] {
-      return this.conditionsQuery === ""
-        ? this.conditions
-        : this.conditions.filter((option: EventCondition) =>
-            this.$t(option.label.message)
-              .toLowerCase()
-              .replace(/\s+/g, "")
-              .includes(this.conditionsQuery.toLowerCase().replace(/\s+/g, ""))
-          );
+  watch: {
+    conditions(newConditions) {
+      const availableFacts = newConditions.map((c: EventCondition) => c.fact);
+      const newRules = this.trigger.rules.filter((r: EventRule) => availableFacts.includes(r.fact));
+      if (newRules.length !== this.trigger.rules.length) {
+        this.$emit("update:rules", newRules);
+      }
     },
   },
 
@@ -147,7 +141,7 @@ export default defineComponent({
 
       this.$emit("update:rules", [...this.trigger.rules, rule]);
     },
-    updateRule(rule: EventRule, newRule: EventRule) {
+    updateOperation(rule: EventRule, newRule: EventRule) {
       this.$emit(
         "update:rules",
         this.trigger.rules.map((r: EventRule) => (isEqual(rule, r) ? newRule : r))

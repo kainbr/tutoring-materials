@@ -2,7 +2,7 @@
   <span>
     <!-- eslint-disable vue/no-v-html -->
     <span v-if="label.hexIcon" class="px-1" v-html="label.hexIcon" />
-    {{ $t(label.message, label.data) }}
+    {{ compiledLabel }}
   </span>
 </template>
 
@@ -18,6 +18,16 @@ export default defineComponent({
     label: {
       type: Object as PropType<Label>,
       required: true,
+    },
+  },
+
+  computed: {
+    compiledLabel() {
+      if (!!this.label.data) {
+        return this.$t(this.label.message, this.label.data);
+      } else {
+        return this.$t(this.label.message);
+      }
     },
   },
 });

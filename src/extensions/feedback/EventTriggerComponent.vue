@@ -66,11 +66,15 @@ export default defineComponent({
       return this.editor.storage.feedbacks.events;
     },
     conditions() {
-      return (
-        this.editor.storage.feedbacks.events.find(
-          (o: EventOption) => o.name === this.trigger.event && o.parent === this.trigger.parent
-        )?.conditions || []
+      const eventOption = this.editor.storage.feedbacks.events.find(
+        (o: EventOption) => o.name === this.trigger.event && o.parent === this.trigger.parent
       );
+
+      if (!!eventOption) {
+        return eventOption.conditions;
+      } else {
+        return [];
+      }
     },
     feedbacks() {
       return this.editor.getAttributes("document").feedbacks;
@@ -82,6 +86,7 @@ export default defineComponent({
       this.editor.commands.addEventTrigger({ ...trigger, id: uuid() });
     },
     updateEvent($event: { name: string; parent: string }) {
+      console.log("updateEvent", $event);
       this.editor.commands.updateEventTrigger(this.trigger, {
         ...this.trigger,
         event: $event.name,

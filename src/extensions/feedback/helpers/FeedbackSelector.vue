@@ -2,7 +2,7 @@
   <span class="text-sm py-0.5"> {{ $t("editor.trigger.builder-then") }} </span>
 
   <!-- Existing feedbacks -->
-  <div v-for="(feedback, index) in triggerFeedbacks" :key="feedback">
+  <div v-for="(feedback, index) in triggerFeedbacks" :key="feedback.id">
     <span
       class="cursor-default inline-flex flex-nowrap items-center mx-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
       @mouseenter="editor.commands.addActiveFeedback(feedback)"
@@ -145,8 +145,9 @@ export default defineComponent({
 
   computed: {
     triggerFeedbacks() {
-      return this.trigger.feedbacks.map((feedbackId: string) =>
-        this.feedbacks.find((feedback: Feedback) => feedback.id === feedbackId)
+      return this.trigger.feedbacks.map(
+        (feedbackId: string) =>
+          this.feedbacks.find((feedback: Feedback) => feedback.id === feedbackId) as Feedback
       );
     },
     filteredFeedbacks() {

@@ -130,5 +130,22 @@ export default defineComponent({
       return this.events.find((option: EventOption) => option.name === this.trigger.event);
     },
   },
+
+  /*
+  watch: {
+    events(newEvents) {
+      const event = newEvents.find(
+        (e: EventOption) => e.name === this.trigger.event && e.parent === this.trigger.parent
+      );
+      if (!event) {
+        this.$emit("update:event", {
+          name: null,
+          parent: null,
+        });
+      }
+    },
+  },
+
+   */
 });
 </script>

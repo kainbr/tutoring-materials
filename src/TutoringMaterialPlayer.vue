@@ -3,7 +3,7 @@
     :content="content"
     :state="state"
     @update:state="$emit('update:state', $event)"
-    @event="emitState"
+    @event="$emit('event', $event)"
   ></TutoringMaterial>
 </template>
 
@@ -13,6 +13,8 @@ import TutoringMaterial from "@/TutoringMaterial.vue";
 import type { PropType } from "vue";
 import type { JSONContent } from "@tiptap/vue-3";
 import type { DocumentState } from "@/extensions/document/types";
+import type { TaskState } from "@/extensions/task/types";
+import type { Feedback } from "@/extensions/feedback/types";
 
 export default defineComponent({
   name: "TutoringMaterialPlayer",
@@ -52,7 +54,7 @@ export default defineComponent({
   emits: ["update:state", "event"],
 
   methods: {
-    emitState($event) {
+    updateState($event: { tasks: TaskState[]; feedbacks: Feedback[] }) {
       this.$emit("event", $event);
     },
   },

@@ -3,14 +3,10 @@
     <select
       :value="rule.operation"
       class="bg-transparent cursor-pointer appearance-none"
-      @change="$emit('update:rule', { ...rule, operation: $event.target.value })"
+      @change="updateOperation"
     >
       <option value="equal">
-        {{
-          !!condition.options.equalLabel
-            ? $t(condition.options.equalLabel)
-            : $t("global.condition.boolean.label-equal")
-        }}
+        {{ equalLabel }}
       </option>
     </select>
   </span>
@@ -19,21 +15,13 @@
     <select
       :value="rule.value"
       class="bg-transparent cursor-pointer appearance-none"
-      @change="$emit('update:rule', { ...rule, value: $event.target.value })"
+      @change="updateValue"
     >
       <option :value="true">
-        {{
-          !!condition.options.trueLabel
-            ? $t(condition.options.trueLabel)
-            : $t("global.condition.boolean.label-true")
-        }}
+        {{ trueLabel }}
       </option>
       <option :value="false">
-        {{
-          !!condition.options.falseLabel
-            ? $t(condition.options.falseLabel)
-            : $t("global.condition.boolean.label-false")
-        }}
+        {{ falseLabel }}
       </option>
     </select>
   </span>
@@ -43,7 +31,11 @@
 import { defineComponent } from "vue";
 
 import type { PropType } from "vue";
-import type { BooleanEventRule, EventCondition } from "@/extensions/feedback/types";
+import type {
+  BooleanConditionOptions,
+  BooleanEventRule,
+  EventCondition,
+} from "@/extensions/feedback/types";
 
 export default defineComponent({
   name: "BooleanRuleEditor",
@@ -58,6 +50,43 @@ export default defineComponent({
       required: true,
     },
   },
+
   emits: ["update:rule"],
+
+  computed: {
+    equalLabel() {
+      return this.$t(
+        (this.condition.options as BooleanConditionOptions)?.equalLabel ||
+          "global.condition.boolean.label-equal"
+      );
+    },
+    trueLabel() {
+      return this.$t(
+        (this.condition.options as BooleanConditionOptions)?.trueLabel ||
+          "global.condition.boolean.label-true"
+      );
+    },
+    falseLabel() {
+      return this.$t(
+        (this.condition.options as BooleanConditionOptions)?.falseLabel ||
+          "global.condition.boolean.label-false"
+      );
+    },
+  },
+
+  methods: {
+    updateOperation($event: Event) {
+      this.$emit("update:rule", {
+        ...this.rule,
+        operation: ($event.target as HTMLSelectElement).value,
+      });
+    },
+    updateValue($event: Event) {
+      this.$emit("update:rule", {
+        ...this.rule,
+        value: ($event.target as HTMLSelectElement).value,
+      });
+    },
+  },
 });
 </script>

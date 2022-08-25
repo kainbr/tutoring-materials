@@ -103,8 +103,11 @@
         "label-smaller-equal": "<="
       },
       "single-choice": {
-        "answer-option-not-selected": "{index}. Option ist nicht ausgewählt",
-        "answer-option-selected": "{index}. Option ist ausgewählt",
+        "answer-option-correct": "{index}. Distraktor",
+        "answer-option-correct-equal": "ist",
+        "answer-option-correct-false": "inkorrekt",
+        "answer-option-correct-preview": "{index}. Distraktor (Korrektheit)",
+        "answer-option-correct-true": "korrekt",
         "response-correct": "Antwort korrekt",
         "response-incorrect": "Antwort inkorrekt"
       }
