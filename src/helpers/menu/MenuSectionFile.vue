@@ -12,10 +12,10 @@
     <UploadModal
       v-model="fileModalOpen"
       :editor="editor"
-      :upload-callback="(e) => editor.commands.uploadDocument(e)"
       :title="$t('editor.menu.file-upload-headline')"
+      :upload-callback="(e: Event) => editor.commands.uploadDocument(e)"
       :supported-formats="$t('editor.menu.file-upload-supported-formats')"
-      accepted-files="file/*,.json"
+      :accepted-files="'file/*,.json'"
     />
   </div>
 </template>

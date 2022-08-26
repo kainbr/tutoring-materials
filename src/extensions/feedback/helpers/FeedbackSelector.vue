@@ -49,14 +49,6 @@
     <ComboboxOptions
       class="absolute z-50 max-h-60 w-fit overflow-auto rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
     >
-      <div class="p-1">
-        <ComboboxInput
-          class="w-full w-60 border-none py-2 pl-3 text-sm leading-5 text-gray-900 focus:ring-0"
-          :display-trigger="(option) => option?.label"
-          :placeholder="$t('editor.trigger.builder-filter-feedbacks')"
-          @change="feedbacksQuery = $event.target.value"
-        />
-      </div>
       <!--suppress JSValidateTypes -->
       <ComboboxOption
         v-for="feedback in filteredFeedbacks"
@@ -93,13 +85,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import {
-  Combobox,
-  ComboboxButton,
-  ComboboxInput,
-  ComboboxOption,
-  ComboboxOptions,
-} from "@headlessui/vue";
+import { Combobox, ComboboxButton, ComboboxOption, ComboboxOptions } from "@headlessui/vue";
 import IconClose from "@/helpers/icons/IconClose.vue";
 import LabelComponent from "@/helpers/LabelComponent.vue";
 
@@ -115,7 +101,6 @@ export default defineComponent({
     IconClose,
     Combobox,
     ComboboxButton,
-    ComboboxInput,
     ComboboxOptions,
     ComboboxOption,
   },

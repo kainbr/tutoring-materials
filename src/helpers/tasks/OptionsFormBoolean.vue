@@ -8,7 +8,7 @@
         :disabled="disabled"
         :checked="value"
         class="block focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
-        @change="$emit('update:value', $event.target.checked)"
+        @change="updateValue"
       />
     </template>
   </OptionsFormBase>
@@ -48,6 +48,12 @@ export default defineComponent({
 
   emits: {
     "update:value": null,
+  },
+
+  methods: {
+    updateValue($event: Event) {
+      this.$emit("update:value", ($event.target as HTMLInputElement).checked);
+    },
   },
 });
 </script>

@@ -26,7 +26,7 @@
             class="mr-2"
             :active="editor.isActive('feedback-mark')"
             :on-active-click="() => editor.chain().focus().unsetFeedbackMark().run()"
-            :on-inactive-click="() => editor.chain().focus().setFeedbackMark().run()"
+            :on-inactive-click="() => editor.chain().focus().setFeedbackMark({}).run()"
           >
             <IconText />
           </EditorMenuButton>
@@ -37,10 +37,12 @@
                 class="p-2"
                 :editor="editor"
                 :feedbacks="editor.getAttributes('document').feedbacks"
+              />
+              <!--
                 :create-feedback="editor.commands.addFeedback"
                 :update-feedback="editor.commands.updateFeedback"
                 :remove-feedback="editor.commands.removeFeedback"
-              />
+              -->
             </div>
           </DisclosurePanel>
         </Disclosure>

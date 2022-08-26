@@ -122,7 +122,8 @@
       "type-feedback-hint": "Tipp",
       "type-feedback-mark": "Textformatierung ändern",
       "type-feedback-notification": "Zeige Benachrichtigung"
-    }
+    },
+    "missing-label": "Keine Beschriftung vorhanden"
   },
   "index": {
     "headline-editor": "Editor",

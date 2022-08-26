@@ -94,7 +94,7 @@
     <UploadModal
       v-model="imageModalOpen"
       :editor="editor"
-      :upload-callback="(e) => editor.commands.uploadImage(e)"
+      :upload-callback="(e: Event) => editor.commands.uploadImage(e)"
       accepted-files="image/png, image/jpeg"
       :title="$t('editor.menu.image-upload-headline')"
       :supported-formats="$t('editor.menu.image-upload-supported-formats')"

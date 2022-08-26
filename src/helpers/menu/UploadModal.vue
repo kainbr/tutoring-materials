@@ -5,7 +5,7 @@
       as="div"
       class="relative z-10"
       :initial-focus="uploadInput"
-      @close="$emit('update.modelValue', false)"
+      @close="$emit('update:modelValue', false)"
     >
       <TransitionChild
         as="template"
@@ -133,22 +133,34 @@ export default defineComponent({
   setup(props, context) {
     const uploadInput = ref(null);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function changeFile(e: any) {
-      props.uploadCallback(e.target.files ? e.target.files[0] : null);
-      context.emit("update:modelValue", false);
+    function changeFile(e: Event) {
+      const fileList: FileList | null =
+        !!e.target && !!(e.target as HTMLInputElement).files
+          ? (e.target as HTMLInputElement).files
+          : null;
+
+      if (!!fileList && fileList.length > 0) {
+        props.uploadCallback(fileList[0]);
+        context.emit("update:modelValue", false);
+      }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function dragoverFile(e: any) {
+    function dragoverFile(e: Event) {
       e.preventDefault();
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function dropFile(e: any) {
+    function dropFile(e: Event) {
       e.preventDefault();
-      props.uploadCallback(e.dataTransfer.files ? e.dataTransfer.files[0] : null);
-      context.emit("update:modelValue", false);
+
+      const fileList: FileList | null =
+        !!e.target && !!(e.target as HTMLInputElement).files
+          ? (e.target as HTMLInputElement).files
+          : null;
+
+      if (!!fileList && fileList.length > 0) {
+        props.uploadCallback(fileList[0]);
+        context.emit("update:modelValue", false);
+      }
     }
 
     return { uploadInput, changeFile, dragoverFile, dropFile };

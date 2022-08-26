@@ -9,7 +9,6 @@
       class="inline-flex flex-nowrap items-center mx-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
     >
       <RuleEditor
-        v-if="!!conditions.find((condition) => rule.fact === condition.fact)"
         :rule="rule"
         :condition="conditions.find((condition) => rule.fact === condition.fact)"
         @update:rule="updateRule(rule, $event)"
@@ -60,7 +59,7 @@
         >
           <ComboboxOption
             v-for="condition in conditions"
-            :key="condition"
+            :key="condition.fact"
             v-slot="{ active, selected }"
             as="template"
             @click="addRule(condition)"
@@ -131,6 +130,9 @@ export default defineComponent({
   },
 
   methods: {
+    getConditionByRule(rule: EventRule) {
+      return this.conditions.find((condition: EventCondition) => rule.fact === condition.fact);
+    },
     addRule(condition: EventCondition) {
       const rule: EventRule = {
         id: uuid(),
@@ -141,7 +143,7 @@ export default defineComponent({
 
       this.$emit("update:rules", [...this.trigger.rules, rule]);
     },
-    updateOperation(rule: EventRule, newRule: EventRule) {
+    updateRule(rule: EventRule, newRule: EventRule) {
       this.$emit(
         "update:rules",
         this.trigger.rules.map((r: EventRule) => (isEqual(rule, r) ? newRule : r))

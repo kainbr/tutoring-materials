@@ -133,7 +133,7 @@
               class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md pl-2 pr-2 grow"
               :placeholder="$t('editor.menu.image-caption-description')"
               type="text"
-              @input="updateAttributes({ title: $event.target.value })"
+              @input="updateTitle"
             />
           </div>
           <div class="flex flex-row mt-1">
@@ -143,7 +143,7 @@
               class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md pl-2 pr-2 grow"
               :placeholder="$t('editor.menu.image-alt-description')"
               type="text"
-              @input="updateAttributes({ alt: $event.target.value })"
+              @input="updateAlt"
             />
           </div>
         </div>
@@ -188,6 +188,15 @@ export default defineComponent({
         case "left":
           return "start";
       }
+    },
+  },
+
+  methods: {
+    updateTitle($event: Event) {
+      this.updateAttributes({ title: ($event.target as HTMLInputElement).value });
+    },
+    updateAlt($event: Event) {
+      this.updateAttributes({ alt: ($event.target as HTMLInputElement).value });
     },
   },
 });

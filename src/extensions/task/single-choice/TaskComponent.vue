@@ -2,26 +2,23 @@
   <TaskScaffold contenteditable="false" :editor="editor">
     <!-- Render -->
     <template #render>
-      <div
-        v-for="index in state?.order"
-        :key="index"
-        class="flex flex-row gap-2 pl-2 items-center cursor-default"
-        :class="{
-          'bg-red-50':
-            ['correct', 'final-incorrect'].includes(state.state) &&
-            evaluation.solution.find((s) => s.id === content[index].id).value === false,
-          'bg-green-50':
-            ['correct', 'final-incorrect'].includes(state.state) &&
-            evaluation.solution.find((s) => s.id === content[index].id).value === true,
-        }"
-        @click="changeAnswerOptionValue(content[index])"
-      >
-        <input
-          type="radio"
-          :checked="state?.answer.find((o) => o.id === content[index].id)?.value || false"
-        />
-        <div style="flex-grow: 1" class="py-1">
-          <InlineEditor :content="content[index].content" />
+      <div v-for="index in state?.order" :key="index" class="gap-2 items-center cursor-default">
+        <div
+          class="flex flex-row pl-2"
+          :class="{
+            'bg-green-50': !!content ? showCorrectAnswerOption(content[index]) : false,
+            'bg-red-50': !!content ? showIncorrectAnswerOption(content[index]) : false,
+          }"
+          @click="!!content ? changeAnswerOptionValue(content[index]) : () => {}"
+        >
+          <input
+            type="radio"
+            class="mr-2"
+            :checked="!!content ? isOptionChecked(content[index]) : false"
+          />
+          <div style="flex-grow: 1" class="py-1">
+            <InlineEditor :content="!!content ? content[index].content : undefined" />
+          </div>
         </div>
       </div>
     </template>
@@ -59,7 +56,7 @@
             <IconArrowUp />
           </EditorMenuButton>
           <EditorMenuButton
-            :disabled="index === content.length - 1"
+            :disabled="!content || index === content.length - 1"
             tabindex="-1"
             @click="moveDownOption(index, option)"
           >
@@ -69,7 +66,7 @@
             <IconFeedback />
           </EditorMenuButton>
           <EditorMenuButton
-            :disabled="content.length <= 1"
+            :disabled="!content || content.length <= 1"
             tabindex="-1"
             @click="removeOption(index)"
           >
@@ -106,7 +103,7 @@
         :value="evaluation.name"
         :options="evaluationOptions.map((o) => o.name)"
         :label="$t('editor.task.evaluation-label-type')"
-        @update:value="update({ evaluation: { ...evaluation, name: $event } })"
+        @update:value="updateEvaluationName"
       />
     </template>
 
@@ -197,20 +194,28 @@ export default defineComponent({
       required: true,
     },
     options: {
-      type: Object as PropType<SCOptions | undefined>,
-      default: undefined,
+      type: Object as PropType<SCOptions>,
+      default() {
+        return {};
+      },
     },
     content: {
-      type: Object as PropType<SCOption[] | undefined>,
-      default: undefined,
+      type: Array as PropType<SCOption[]>,
+      default() {
+        return [];
+      },
     },
     evaluation: {
-      type: Object as PropType<SCEvaluation | undefined>,
-      default: undefined,
+      type: Object as PropType<SCEvaluation>,
+      default() {
+        return {};
+      },
     },
     state: {
-      type: Object as PropType<SCState | undefined>,
-      default: undefined,
+      type: Object as PropType<SCState>,
+      default() {
+        return {};
+      },
     },
   },
 
@@ -317,6 +322,36 @@ export default defineComponent({
       }
     };
 
+    const showCorrectAnswerOption = (option: SCOption) => {
+      const state = props.state?.state;
+
+      if (!!option.id && !!state && ["correct", "final-incorrect"].includes(state)) {
+        return !!props.evaluation?.solution.find((s) => s.id === option.id)?.value;
+      } else {
+        return false;
+      }
+    };
+
+    const showIncorrectAnswerOption = (option: SCOption) => {
+      const state = props.state?.state;
+
+      if (!!option.id && !!state && ["correct", "final-incorrect"].includes(state)) {
+        return !props.evaluation?.solution.find((s) => s.id === option.id)?.value;
+      } else {
+        return false;
+      }
+    };
+
+    const isOptionChecked = (option: SCOption) => {
+      const answers = props.state?.answer;
+
+      if (!!answers) {
+        return !!answers.find((o) => o.id === option.id)?.value;
+      } else {
+        return false;
+      }
+    };
+
     const addFeedbackHint = (reference: string) => {
       const uid = uuid();
       const hintFeedback: Feedback = {
@@ -364,6 +399,20 @@ export default defineComponent({
       props.editor.chain().addFeedback(hintFeedback).addEventTrigger(trigger).run();
     };
 
+    const updateEvaluationName = (newName: string) => {
+      switch (newName) {
+        case "all-match":
+        default:
+          update({
+            evaluation: {
+              name: newName,
+              solution:
+                !!props.evaluation && !!props.evaluation.solution ? props.evaluation.solution : [],
+            },
+          });
+      }
+    };
+
     return {
       update,
       addOption,
@@ -373,6 +422,10 @@ export default defineComponent({
       updateAnswerOptionValue,
       updateAnswerOptionContent,
       changeAnswerOptionValue,
+      showCorrectAnswerOption,
+      showIncorrectAnswerOption,
+      isOptionChecked,
+      updateEvaluationName,
       evaluationOptions,
       addFeedbackHint,
     };

@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <span v-if="!!condition">
     <LabelComponent :label="condition.label" />
     <component
       :is="ruleEditor"
@@ -9,6 +9,7 @@
       @update:rule="$emit('update:rule', $event)"
     />
   </span>
+  <span v-else> Unsupported rule </span>
 </template>
 
 <script lang="ts">
@@ -33,7 +34,7 @@ export default defineComponent({
       required: true,
     },
     condition: {
-      type: Object as PropType<EventCondition>,
+      type: Object as PropType<EventCondition | undefined>,
       required: true,
     },
   },
@@ -41,13 +42,17 @@ export default defineComponent({
 
   computed: {
     ruleEditor() {
-      switch (this.condition.type) {
-        case "number":
-          return NumberRuleEditor;
-        case "boolean":
-          return BooleanRuleEditor;
-        default:
-          return null;
+      if (!!this.condition) {
+        switch (this.condition.type) {
+          case "number":
+            return NumberRuleEditor;
+          case "boolean":
+            return BooleanRuleEditor;
+          default:
+            return null;
+        }
+      } else {
+        return null;
       }
     },
   },

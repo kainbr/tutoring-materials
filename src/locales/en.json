@@ -122,7 +122,8 @@
       "type-feedback-hint": "Hint",
       "type-feedback-mark": "Change Text Style",
       "type-feedback-notification": "Show Notification"
-    }
+    },
+    "missing-label": "Label is missing"
   },
   "index": {
     "headline-editor": "Editor",

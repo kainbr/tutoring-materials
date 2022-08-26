@@ -17,7 +17,11 @@ export default defineComponent({
   props: {
     label: {
       type: Object as PropType<Label>,
-      required: true,
+      default() {
+        return {
+          message: "global.missing-label",
+        };
+      },
     },
   },
 

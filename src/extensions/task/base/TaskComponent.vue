@@ -64,7 +64,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted } from "vue";
-import { NodeViewContent, NodeViewWrapper } from "@tiptap/vue-3";
+import { Editor, NodeViewContent, NodeViewWrapper } from "@tiptap/vue-3";
 import { calculateHexIcon } from "@/helpers/util";
 import IconClose from "@/helpers/icons/IconClose.vue";
 import SubmitButton from "@/extensions/task/base/SubmitButton.vue";
@@ -88,7 +88,7 @@ export default defineComponent({
 
   props: {
     editor: {
-      type: Object as PropType<NodeViewProps["editor"]>,
+      type: Object as PropType<Editor>,
       required: true,
     },
     node: {

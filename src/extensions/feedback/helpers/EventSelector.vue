@@ -48,7 +48,7 @@
 
           <ComboboxOption
             v-for="option in filteredEventOptions"
-            :key="option"
+            :key="option.parent + '-' + option.name"
             v-slot="{ active, selected }"
             :value="option"
             as="template"

@@ -8,7 +8,7 @@
         :value="value"
         :disabled="disabled"
         class="w-full px-1.5 py-0.5 block focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
-        @input="$emit('update:value', $event.target.value)"
+        @input="updateValue"
       />
     </template>
   </OptionsFormBase>
@@ -48,6 +48,12 @@ export default defineComponent({
 
   emits: {
     "update:value": null,
+  },
+
+  methods: {
+    updateValue($event: Event) {
+      this.$emit("update:value", ($event.target as HTMLInputElement).value);
+    },
   },
 });
 </script>

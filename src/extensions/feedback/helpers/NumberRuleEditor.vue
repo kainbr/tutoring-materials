@@ -3,7 +3,7 @@
     <select
       :value="rule.operation"
       class="bg-transparent cursor-pointer appearance-none"
-      @change="$emit('update:rule', { ...rule, operation: $event.target.value })"
+      @change="updateOperation"
     >
       <option value="smaller">
         {{ $t("global.condition.number.label-smaller") }}
@@ -29,10 +29,10 @@
       type="number"
       class="bg-transparent cursor-pointer appearance-none w-10"
       :value="rule.value"
-      :min="condition.options?.min"
-      :max="condition.options?.max"
-      :step="condition.options?.step"
-      @change="$emit('update:rule', { ...rule, value: $event.target.value })"
+      :min="min"
+      :max="max"
+      :step="step"
+      @change="updateValue"
     />
   </span>
 </template>
@@ -41,7 +41,11 @@
 import { defineComponent } from "vue";
 
 import type { PropType } from "vue";
-import type { EventCondition, NumberEventRule } from "@/extensions/feedback/types";
+import type {
+  EventCondition,
+  NumberConditionOptions,
+  NumberEventRule,
+} from "@/extensions/feedback/types";
 
 export default defineComponent({
   name: "NumberRuleEditor",
@@ -58,5 +62,32 @@ export default defineComponent({
   },
 
   emits: ["update:rule"],
+
+  computed: {
+    min() {
+      return (this.condition.options as NumberConditionOptions)?.min;
+    },
+    max() {
+      return (this.condition.options as NumberConditionOptions)?.max;
+    },
+    step() {
+      return (this.condition.options as NumberConditionOptions)?.step;
+    },
+  },
+
+  methods: {
+    updateOperation($event: Event) {
+      this.$emit("update:rule", {
+        ...this.rule,
+        operation: ($event.target as HTMLSelectElement).value,
+      });
+    },
+    updateValue($event: Event) {
+      this.$emit("update:rule", {
+        ...this.rule,
+        value: ($event.target as HTMLSelectElement).value,
+      });
+    },
+  },
 });
 </script>
