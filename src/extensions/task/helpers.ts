@@ -9,23 +9,19 @@ import type {
   TaskState,
 } from "@/extensions/task/types";
 import type { TaskOptions } from "@/extensions/task/types";
-import type { EventOption, EventTrigger, Feedback } from "@/extensions/feedback/types";
+import type { EventOption } from "@/extensions/feedback/types";
 
 export type propsInterface<O, C, E, S> = {
   id: string;
-  options?: O;
-  content?: C;
-  evaluation?: E;
-  state?: S;
-  feedbacks?: Feedback[];
-  triggers?: EventTrigger[];
-  events?: EventOption[];
+  options: O;
+  content: C;
+  evaluation: E;
+  state: S;
+  events: EventOption[];
   oldOptions?: O;
   oldContent?: C;
   oldEvaluation?: E;
   oldState?: S;
-  oldFeedbacks?: Feedback[];
-  oldTriggers?: EventTrigger[];
 };
 
 export function formatTask<O, C, E, S>(
@@ -75,8 +71,6 @@ export function useTask<
         oldContent: undefined,
         oldEvaluation: undefined,
         oldState: undefined,
-        oldFeedbacks: undefined,
-        oldTriggers: undefined,
       },
       formatFunctions
     );

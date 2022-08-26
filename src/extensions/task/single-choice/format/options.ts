@@ -5,7 +5,7 @@ export const formatOptions: SCFormatFunction = function (data) {
   data.options = {
     ...defaultTaskOptions,
     ...defaultSingleChoiceOptions,
-    ...(!!data.options ? data.options : {}),
+    ...data.options,
   };
 
   return data;

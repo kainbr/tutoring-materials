@@ -2,7 +2,12 @@ import type { SCFormatFunction } from "@/extensions/task/single-choice/types";
 import type { SCEvaluationOption } from "@/extensions/task/single-choice/types";
 
 export const formatEvaluation: SCFormatFunction = function (data) {
-  switch (data.evaluation?.name) {
+  if (!data.evaluation?.name) {
+    data.evaluation = defaultEvaluation;
+  }
+
+  // Set default values for the specified evaluation
+  switch (data.evaluation.name) {
     case "all-match":
     default:
       data.evaluation = {
@@ -12,19 +17,15 @@ export const formatEvaluation: SCFormatFunction = function (data) {
         },
         ...data.evaluation,
       };
-      break;
   }
 
-  // Check if true values are supplied
-  if (!!data.content && Array.isArray(data.content)) {
-    data.evaluation.solution = data.content.map((option) => {
-      const oldValue = data.evaluation?.solution.find((s) => s.id === option.id)?.value;
-      return {
-        id: option.id,
-        value: oldValue ? oldValue : false,
-      };
-    });
-  }
+  // Add the
+  data.evaluation.solution = data.content.map((option) => {
+    return {
+      id: option.id,
+      value: !!data.evaluation.solution.find((s) => s.id === option.id)?.value,
+    };
+  });
 
   // Make sure that one option is always correct
   if (
@@ -37,8 +38,9 @@ export const formatEvaluation: SCFormatFunction = function (data) {
   return data;
 };
 
-export const defaultEvaluation = {
+const defaultEvaluation = {
   name: "all-match",
+  solution: [],
 };
 
 export const evaluationOptions: SCEvaluationOption[] = [

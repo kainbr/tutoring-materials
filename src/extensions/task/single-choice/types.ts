@@ -4,32 +4,29 @@ import type {
   TaskOptions,
   TaskState,
 } from "@/extensions/task/types";
-import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
 import type { JSONContent } from "@tiptap/vue-3";
 import type { propsInterface } from "@/extensions/task/helpers";
 import type { Editor } from "@tiptap/vue-3";
+import type { EventOption } from "@/extensions/feedback/types";
 
 export interface SCProps {
   id: string;
   editor: Editor;
-  options?: SCOptions;
-  content?: SCOption[];
-  evaluation?: SCEvaluation;
-  state?: SCState;
-  feedbacks?: Feedback[];
-  triggers?: EventTrigger[];
+  options: SCOptions;
+  content: SCOption[];
+  evaluation: SCEvaluation;
+  state: SCState;
 }
 
 export interface SCEmits {
   (
     e: "update",
     task: {
-      options?: SCOptions;
-      content?: SCOption[];
-      evaluation?: SCEvaluation;
-      state?: SCState;
-      feedbacks?: Feedback[];
-      triggers?: EventTrigger[];
+      options: SCOptions;
+      content: SCOption[];
+      evaluation: SCEvaluation;
+      state: SCState;
+      events: EventOption[];
     }
   ): void;
   (e: "submit"): void;

@@ -8,63 +8,44 @@ import type {
 import { getDefaultTaskState } from "@/extensions/task/defaults";
 
 export const formatState: SCFormatFunction = function (data) {
-  const state: Partial<SCState> = <Partial<SCState>>{
+  let answers;
+
+  data.state = {
     ...getDefaultTaskState(data.id),
     ...data.state,
+    type: "single-choice",
+    answer: (answers = formatAnswer(data.state, data.content)),
+    order: formatOrder(data.content, data.options, data.state, data.oldOptions),
+    empty: answers.every((a) => !a.value),
   };
-
-  state.type = "single-choice";
-  state.answer = formatAnswer(data.state, data.content);
-  state.order = formatOrder(data.content, data.options, data.oldOptions, data.oldState);
-  state.empty = state.answer.every((a) => !a.value);
-
-  data.state = <SCState>state;
 
   return data;
 };
 
-function formatAnswer(
-  state: SCState | undefined,
-  content: SCOption[] | undefined
-): SCOptionAnswer[] {
-  if (!!content && Array.isArray(content)) {
-    return content.map((option: SCOption) => {
-      return {
-        id: option.id,
-        value: !!state?.answer?.find((o) => o.id === option.id)?.value,
-      };
-    });
-  } else {
-    return [];
-  }
+function formatAnswer(state: SCState, content: SCOption[]): SCOptionAnswer[] {
+  return content.map((option: SCOption) => {
+    return {
+      id: option.id,
+      value: !!state?.answer?.find((o) => o.id === option.id)?.value,
+    };
+  });
 }
 
 function formatOrder(
-  content: SCOption[] | undefined,
-  options: SCOptions | undefined,
-  oldOptions: SCOptions | undefined,
-  oldState: SCState | undefined
+  content: SCOption[],
+  options: SCOptions,
+  state: SCState,
+  oldOptions: SCOptions | undefined
 ): number[] {
-  // If no content is given we cannot determine how long the order has to be
-  if (!content) {
-    return [];
+  if (!options.shuffle) {
+    return Array.from([...Array(content.length).keys()]);
   }
 
-  if (
-    !!options &&
-    !!oldOptions &&
-    options.shuffle === oldOptions.shuffle &&
-    !!oldState &&
-    content.length === oldState.order.length
-  ) {
-    return oldState.order;
-  } else {
-    if (options?.shuffle) {
-      return shuffleArray(Array.from([...Array(content?.length).keys()]));
-    } else {
-      return Array.from([...Array(content.length).keys()]);
-    }
+  if (options.shuffle && !!oldOptions?.shuffle && content.length === state.order.length) {
+    return state.order;
   }
+
+  return shuffleArray(Array.from([...Array(content.length).keys()]));
 }
 
 function shuffleArray(a: number[]) {

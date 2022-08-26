@@ -9,21 +9,21 @@ export interface TaskProps<
 > {
   id: string;
   editor: Editor;
-  options?: O;
-  content?: C;
-  evaluation?: E;
-  state?: S;
+  options: O;
+  content: C;
+  evaluation: E;
+  state: S;
 }
 
 export interface TaskEmits<O, C, E, S> {
   (
     e: "update",
     task: {
-      options?: O;
-      content?: C;
-      evaluation?: E;
-      state?: S;
-      events?: EventOption[];
+      options: O;
+      content: C;
+      evaluation: E;
+      state: S;
+      events: EventOption[];
     }
   ): void;
   (e: "submit"): void;
