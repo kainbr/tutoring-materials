@@ -17,7 +17,7 @@
 
     <!-- Hint -->
     <div v-if="['incorrect'].includes(state.state)">
-      <span v-for="hint in hints" :key="hint" class="" :class="fontColor">
+      <span v-for="hint in hints" :key="hint" :class="fontColor" class="not-prose">
         <InlineEditor :content="hint.config.content"></InlineEditor>
       </span>
     </div>

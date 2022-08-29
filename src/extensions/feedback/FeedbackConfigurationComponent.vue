@@ -1,11 +1,17 @@
 <template>
   <div class="flex flex-row items-center justify-between">
     <div
+      v-if="hasPreview"
       v-tippy="$t('editor.menu.feedback-toggle-tooltip')"
       class="flex flex-row gap-2 items-center cursor-pointer"
       @click="toggleActiveFeedback"
     >
       <span class="flex-none text-sm" :class="{ 'font-semibold': isActive }">
+        <LabelComponent :label="feedback.label" />
+      </span>
+    </div>
+    <div v-else class="flex flex-row gap-2 items-center">
+      <span class="flex-none text-sm">
         <LabelComponent :label="feedback.label" />
       </span>
     </div>
@@ -54,20 +60,10 @@ export default defineComponent({
       type: Object as PropType<Feedback>,
       required: true,
     },
-    /*
-    createFeedback: {
-      type: Function,
-      required: true,
+    hasPreview: {
+      type: Boolean,
+      default: false,
     },
-    updateFeedback: {
-      type: Function,
-      required: true,
-    },
-    removeFeedback: {
-      type: Function,
-      required: true,
-    },
-     */
   },
 
   setup(props) {

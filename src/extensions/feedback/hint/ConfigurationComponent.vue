@@ -45,6 +45,8 @@
                     <InlineEditor
                       :content="feedback?.config.content"
                       :is-editor="true"
+                      show-top-menu
+                      :show-bubble-menu="false"
                       @update:content="contentCandidate = $event"
                     />
                   </div>

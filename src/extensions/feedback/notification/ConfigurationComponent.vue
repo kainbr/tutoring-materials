@@ -1,5 +1,5 @@
 <template>
-  <feedback-configuration-component :editor="editor" :feedback="feedback">
+  <feedback-configuration-component :editor="editor" :feedback="feedback" has-preview>
     <template #default>
       <span class="ml-4 w-32 flex-auto truncate"> >> {{ getText(feedback.config.content) }} </span>
       <button
@@ -42,7 +42,12 @@
                   </DialogTitle>
 
                   <div class="mt-5">
-                    <InlineEditor v-model:content="contentCandidate" :is-editor="true" />
+                    <InlineEditor
+                      v-model:content="contentCandidate"
+                      :is-editor="true"
+                      show-top-menu
+                      :show-bubble-menu="false"
+                    />
                   </div>
 
                   <div class="flex mt-4 w-full justify-end">

@@ -1,5 +1,5 @@
 <template>
-  <feedback-configuration-component :editor="editor" :feedback="feedback">
+  <feedback-configuration-component :editor="editor" :feedback="feedback" has-preview>
     <template #default>
       <!-- Bold -->
       <MenuButton
