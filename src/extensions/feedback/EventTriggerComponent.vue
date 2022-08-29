@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-row justify-between">
-    <div class="flex flex-row flex-wrap items-center grow gap-y-1">
+    <div class="flex flex-row flex-wrap items-center grow gap-y-1 py-1">
       <EventSelector :events="events" :trigger="trigger" @update:event="updateEvent" />
 
       <ConditionSelector :conditions="conditions" :trigger="trigger" @update:rules="updateRules" />

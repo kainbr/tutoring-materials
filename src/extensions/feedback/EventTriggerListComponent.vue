@@ -3,9 +3,9 @@
     <span v-if="triggers.length === 0" class="text-sm ml-2.5">{{
       $t("editor.footer.trigger-empty-list")
     }}</span>
-    <ul v-else class="divide-y divide-gray-200" role="list">
-      <li v-for="(trigger, index) in triggers" :key="trigger.id" class="flex flex-row">
-        <div class="px-3.5 pt-0.5">
+    <ul v-else role="list">
+      <li v-for="(trigger, index) in triggers" :key="trigger.id" class="flex flex-row items-start">
+        <div class="px-3.5 pt-1.5">
           <span> {{ index + 1 }}. </span>
         </div>
         <EventTriggerComponent :trigger="trigger" :editor="editor" class="w-full" />
