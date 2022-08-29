@@ -1,18 +1,18 @@
 <template>
   <div
-    v-for="(value, index) in playerDimensions.isPortrait
-      ? [...defaultPlayerDimensions].sort((a, b) => b.sortWidth - a.sortWidth)
-      : [...defaultPlayerDimensions].sort((a, b) => b.sortHeight - a.sortHeight)"
+    v-for="(value, index) in isPortrait
+      ? [...playerDimensions].sort((a, b) => b.width - a.width)
+      : [...playerDimensions].sort((a, b) => b.height - a.height)"
     :key="value.label"
     :class="['z-[' + index + '] ' + (index !== 0 ? 'border-x-2' : '')]"
-    :style="'width: ' + (playerDimensions.isPortrait ? value.width : value.height)"
+    :style="'width: ' + (isPortrait ? value.width + 'px' : value.height + 'px')"
     class="absolute left-1/2 transform -translate-x-1/2 bg-slate-200 hover:bg-slate-300 h-5 border-slate-50 cursor-pointer"
-    @click="changePlayerDimensions(value.width, value.height)"
-    @mouseleave="playerDimensions.hoverLabel = null"
-    @mouseover="playerDimensions.hoverLabel = value.label"
+    @click="updateDimensions(value.width, value.height)"
+    @mouseleave="hoverLabel = null"
+    @mouseover="hoverLabel = value.label"
   ></div>
   <div class="absolute left-1/2 transform -translate-x-1/2 z-50 text-sm select-none">
-    {{ playerDimensions.hoverLabel }}
+    {{ hoverLabel }}
   </div>
   <div class="w-full py-4 mt-3">
     <div class="flex w-full items-center justify-end mb-2 px-2">
@@ -20,7 +20,7 @@
         <button
           class="relative inline-flex items-center px-3 py-1.5 rounded-l-md border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
           type="button"
-          @click="playerDimensions.isPortrait = !playerDimensions.isPortrait"
+          @click="rotatePortrait"
         >
           <svg
             class="-ml-1 mr-1 h-4 w-4 text-gray-400"
@@ -60,13 +60,14 @@
     <div
       :style="
         'height: ' +
-        (playerDimensions.isPortrait ? playerDimensions.height : playerDimensions.width) +
+        (isPortrait ? height + 'px' : width + 'px') +
         '; width: ' +
-        (playerDimensions.isPortrait ? playerDimensions.width : playerDimensions.height)
+        (isPortrait ? width + 'px' : height + 'px')
       "
       class="border border-2 rounded-lg overflow-auto mx-auto bg-white transition-all duration-500"
     >
       <tutoring-material-player
+        :key="previewKey"
         :content="content"
         :state="state"
         @update:state="updateState"
@@ -110,7 +111,6 @@ export default defineComponent({
         };
       },
     },
-
     state: {
       type: Object as PropType<DocumentState>,
       default() {
@@ -119,51 +119,39 @@ export default defineComponent({
     },
   },
 
-  emits: ["update:state", "event", "reset"],
+  emits: ["event", "update:state", "reset"],
 
   data() {
     return {
-      indexPlayer: 0,
-      playerDimensions: {
-        width: "375px",
-        height: "667px",
-        isPortrait: true,
-        hoverLabel: null as null | string,
-      },
-      defaultPlayerDimensions: [
+      previewKey: 0,
+      height: 667,
+      width: 375,
+      isPortrait: true,
+      hoverLabel: null as string | null,
+      playerDimensions: [
         {
-          width: "1280px",
-          height: "720px",
-          sortWidth: 1280,
-          sortHeight: 720,
+          width: 1280,
+          height: 720,
           label: "Laptop",
         },
         {
-          width: "768px",
-          height: "1024px",
-          sortWidth: 768,
-          sortHeight: 1024,
+          width: 768,
+          height: 1024,
           label: "Tablet",
         },
         {
-          width: "425px",
-          height: "755px",
-          sortWidth: 425,
-          sortHeight: 755,
+          width: 425,
+          height: 755,
           label: "Mobile L",
         },
         {
-          width: "375px",
-          height: "667px",
-          sortWidth: 375,
-          sortHeight: 667,
+          width: 375,
+          height: 667,
           label: "Mobile M",
         },
         {
-          width: "320px",
-          height: "570px",
-          sortWidth: 320,
-          sortHeight: 570,
+          width: 320,
+          height: 570,
           label: "Mobile S",
         },
       ],
@@ -171,14 +159,16 @@ export default defineComponent({
   },
 
   methods: {
-    changePlayerDimensions(width: string, height: string) {
-      this.playerDimensions = Object.assign({}, this.playerDimensions, {
-        width,
-        height,
-      });
+    updateDimensions(width: number, height: number) {
+      this.width = width;
+      this.height = height;
+    },
+    rotatePortrait() {
+      this.isPortrait = !this.isPortrait;
     },
     resetPlayer() {
       this.$emit("reset");
+      this.previewKey += 1;
     },
     updateState($event: { tasks: TaskState[]; feedbacks: Feedback[] }) {
       this.$emit("update:state", $event);

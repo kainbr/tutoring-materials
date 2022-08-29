@@ -7,6 +7,12 @@
   ],
   "main": "./dist/tutoring-materials.umd.cjs",
   "module": "./dist/tutoring-materials.js",
+  "exports": {
+    ".": {
+      "import": "./dist/tutoring-materials.js",
+      "require": "./dist/tutoring-materials.umd.cjs"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check build-only",
