@@ -140,21 +140,14 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
       const triggers: EventTrigger[] = this.editor.getAttributes("document").triggers;
       const feedbacks: Feedback[] = this.editor.getAttributes("document").feedbacks;
 
-      // console.log("event-bus", this.editor.isEditable, type, event, triggers, feedbacks);
-
       // Filter the stored triggers for events that match type and parent
       const eventTriggerWithType = triggers.filter(
         (trigger: EventTrigger) => trigger.event === type && trigger.parent === event.parent
       );
 
-      // console.log("eventTriggerWithType", eventTriggerWithType);
-
       // For each event trigger in the filtered list, check if the rules are fulfilled.
       // If this holds add them to the state store of active feedbacks.
       eventTriggerWithType.forEach((trigger: EventTrigger) => {
-        // Todo: Check conditions
-        // console.log("Rules: ", trigger.rules);
-        // console.log("Facts: ", event.facts);
         if (
           trigger.rules.every((rule: EventRule) => {
             return checkRules(rule, event.facts);
@@ -198,7 +191,7 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
 
               // Triggers
               const feedbacksIds: string[] = feedbacks.map((f: Feedback) => f.id);
-              const triggers = node.attrs.triggers.map((t: EventTrigger) => {
+              let triggers = node.attrs.triggers.map((t: EventTrigger) => {
                 return {
                   ...t,
                   ...(!taskIds.includes(t.parent) && t.parent !== null
@@ -206,6 +199,20 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
                     : {}),
                   feedbacks: t.feedbacks.filter((feedback) => feedbacksIds.includes(feedback)),
                 };
+              });
+
+              // Remove unnecessary empty triggers, if there are more than one.
+              let hasEmptyTrigger = false;
+              triggers = triggers.filter((t: EventTrigger) => {
+                if (!t.event && !t.parent && !t.rules.length && !t.feedbacks.length) {
+                  if (!hasEmptyTrigger) {
+                    hasEmptyTrigger = true;
+                    return true;
+                  } else {
+                    return false;
+                  }
+                }
+                return true;
               });
 
               // Update
