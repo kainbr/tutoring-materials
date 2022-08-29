@@ -1,37 +1,40 @@
 <template>
-  <div class="container rounded-lg" :class="backgroundColor">
-    <!-- Container -->
-    <div
-      v-if="['correct', 'incorrect', 'final-incorrect'].includes(state.state)"
-      class="flex justify-between transition"
-    >
-      <div class="flex flex-col">
-        <div class="flex flex-row items-center">
-          <span class="text-base font-medium" :class="titleColor">{{ title }}</span>
-        </div>
-        <div class="mt-1">
+  <div class="flex flex-row flex-wrap container rounded-lg items-center" :class="backgroundColor">
+    <!-- Headline -->
+    <div class="flex flex-col justify-between basis-3/4">
+      <Transition appear>
+        <span
+          v-if="['correct', 'incorrect', 'final-incorrect'].includes(state.state)"
+          class="text-base font-medium"
+          :class="titleColor"
+          >{{ title }}</span
+        >
+      </Transition>
+      <Transition appear>
+        <div v-if="['correct', 'incorrect', 'final-incorrect'].includes(state.state)" class="mt-1">
           <span class="text-sm" :class="fontColor">{{ text }}</span>
         </div>
-      </div>
+      </Transition>
+      <Transition appear>
+        <div v-if="['incorrect'].includes(state.state)">
+          <span v-for="hint in hints" :key="hint" :class="fontColor" class="not-prose">
+            <InlineEditor :content="hint.config.content"></InlineEditor>
+          </span>
+        </div>
+      </Transition>
     </div>
 
-    <!-- Hint -->
-    <div v-if="['incorrect'].includes(state.state)">
-      <span v-for="hint in hints" :key="hint" :class="fontColor" class="not-prose">
-        <InlineEditor :content="hint.config.content"></InlineEditor>
-      </span>
+    <div class="grow w-36">
+      <button
+        v-if="['init', 'incorrect'].includes(state.state)"
+        class="inline-flex items-center mt-3 px-3 py-2 w-full justify-center border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        type="button"
+        :disabled="!options.allowEmptyAnswerSubmission && state.empty"
+        @click="submit"
+      >
+        {{ options.textSubmitButton }}
+      </button>
     </div>
-
-    <!-- Button -->
-    <button
-      v-if="['init', 'incorrect'].includes(state.state)"
-      class="inline-flex items-center mt-3 px-3 py-2 w-full justify-center border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-      type="button"
-      :disabled="!options.allowEmptyAnswerSubmission && state.empty"
-      @click="submit"
-    >
-      {{ options.textSubmitButton }}
-    </button>
   </div>
 </template>
 
@@ -182,3 +185,16 @@ export default defineComponent({
   },
 });
 </script>
+
+<!--suppress CssUnusedSymbol -->
+<style>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 1s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+</style>
