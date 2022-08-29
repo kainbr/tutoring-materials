@@ -18,8 +18,6 @@ export const BaseTask = Node.create({
       content: { default: null },
       evaluation: { default: null },
       options: { default: null },
-      feedbacks: { default: [] },
-      triggers: { default: [] },
     };
   },
 

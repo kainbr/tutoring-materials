@@ -196,27 +196,14 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
                 (f: Feedback) => taskIds.includes(f.parent) || f.parent === null
               );
 
-              // Events
-              const events = this.storage.events.filter(
-                (e: EventOption) => taskIds.includes(e.parent) || e.parent === null
-              );
-
               // Triggers
               const feedbacksIds: string[] = feedbacks.map((f: Feedback) => f.id);
               const triggers = node.attrs.triggers.map((t: EventTrigger) => {
-                // Fetch corresponding event option with conditions
-                const eventOption = events.find(
-                  (e: EventOption) => t.event === e.name && t.parent === e.parent
-                );
-                const availableFacts = !!eventOption
-                  ? eventOption.conditions.map((c: EventCondition) => c.fact)
-                  : [];
                 return {
                   ...t,
                   ...(!taskIds.includes(t.parent) && t.parent !== null
                     ? { event: null, parent: null }
                     : {}),
-                  rules: t.rules.filter((r: EventRule) => availableFacts.includes(r.fact)),
                   feedbacks: t.feedbacks.filter((feedback) => feedbacksIds.includes(feedback)),
                 };
               });

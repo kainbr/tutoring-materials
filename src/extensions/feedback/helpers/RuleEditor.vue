@@ -34,10 +34,11 @@ export default defineComponent({
       required: true,
     },
     condition: {
-      type: Object as PropType<EventCondition | undefined>,
+      type: Object as PropType<EventCondition>,
       required: true,
     },
   },
+
   emits: ["update:rule"],
 
   computed: {

@@ -1,7 +1,7 @@
 <template>
   <span>
     <!-- eslint-disable vue/no-v-html -->
-    <span v-if="label.hexIcon" class="px-1" v-html="label.hexIcon" />
+    <span v-if="label.hexIcon" class="px-0.5" v-html="label.hexIcon" />
     {{ compiledLabel }}
   </span>
 </template>

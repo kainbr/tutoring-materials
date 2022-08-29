@@ -6,7 +6,7 @@
     </span>
 
     <!-- Loop over all provided feedbacks -->
-    <ul v-else class="p-0 m-0 divide-y divide-gray-200 list-none" role="list">
+    <ul v-else class="p-0 m-0 ml-4 list-none" role="list">
       <li v-for="feedback in feedbacks" :key="feedback.id" class="py-1 m-0">
         <component
           :is="feedback.type"
@@ -14,11 +14,6 @@
           :editor="editor"
           :feedback="feedback"
         ></component>
-        <!--
-          :create-feedback="createFeedback"
-          :update-feedback="updateFeedback"
-          :remove-feedback="removeFeedback"
-        -->
       </li>
     </ul>
   </div>

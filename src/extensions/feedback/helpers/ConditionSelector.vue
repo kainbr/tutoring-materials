@@ -9,8 +9,9 @@
       class="inline-flex flex-nowrap items-center mx-1 px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
     >
       <RuleEditor
+        v-if="!!getConditionByRule(rule)"
         :rule="rule"
-        :condition="conditions.find((condition) => rule.fact === condition.fact)"
+        :condition="getConditionByRule(rule)"
         @update:rule="updateRule(rule, $event)"
       />
       <button
