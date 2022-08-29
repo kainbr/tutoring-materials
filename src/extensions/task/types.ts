@@ -1,5 +1,6 @@
 import type { Editor } from "@tiptap/vue-3";
 import type { EventOption } from "@/extensions/feedback/types";
+import type { Label } from "@/extensions/document/types";
 
 export interface TaskProps<
   O extends TaskOptions,
@@ -51,6 +52,7 @@ export interface TaskEvaluation {
 
 export interface TaskEvaluationOption {
   name: string;
+  label: Label;
   config: {
     name: string;
     type: "boolean" | "number" | "string";

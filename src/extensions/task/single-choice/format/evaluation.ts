@@ -46,6 +46,9 @@ const defaultEvaluation = {
 export const evaluationOptions: SCEvaluationOption[] = [
   {
     name: "all-match",
+    label: {
+      message: "editor.task.single-choice.evaluation-all-match",
+    },
     config: [],
     default: {},
   },

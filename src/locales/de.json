@@ -68,6 +68,9 @@
       "config-label-title-final-incorrect-answer": "Überschrift falsche Antwort (final)",
       "config-label-title-incorrect-answer": "Überschrift falsche Antwort",
       "evaluation-label-type": "Art",
+      "single-choice": {
+        "evaluation-all-match": "Alle Distraktoren sind korrekt aus-/abgewählt"
+      },
       "title-evaluation": "Auswertung",
       "title-feedbacks": "Rückmeldungen",
       "title-options": "Optionen",

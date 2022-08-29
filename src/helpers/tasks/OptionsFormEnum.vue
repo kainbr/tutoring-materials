@@ -9,8 +9,8 @@
         class="w-full px-1.5 py-0.5 block focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
         @change="$emit('update:value', $event)"
       >
-        <option v-for="option in options" :key="option">
-          {{ option }}
+        <option v-for="option in options" :key="option.value" :value="option.value">
+          <LabelComponent :label="option.label" />
         </option>
       </select>
     </template>
@@ -21,11 +21,13 @@
 import { defineComponent } from "vue";
 import OptionsFormBase from "./OptionsFormBase.vue";
 import type { PropType } from "vue";
+import type { Label } from "@/extensions/document/types";
+import LabelComponent from "@/helpers/LabelComponent.vue";
 
 export default defineComponent({
   name: "OptionsFormEnum",
 
-  components: { OptionsFormBase },
+  components: { LabelComponent, OptionsFormBase },
 
   props: {
     name: {
@@ -49,7 +51,7 @@ export default defineComponent({
       required: true,
     },
     options: {
-      type: Array as PropType<string[]>,
+      type: Array as PropType<{ value: string; label: Label }[]>,
       required: true,
     },
   },

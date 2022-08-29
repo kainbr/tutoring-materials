@@ -101,7 +101,11 @@
         v-if="!!evaluation"
         name="evaluationName"
         :value="evaluation.name"
-        :options="evaluationOptions.map((o) => o.name)"
+        :options="
+          evaluationOptions.map((o) => {
+            return { value: o.name, label: o.label };
+          })
+        "
         :label="$t('editor.task.evaluation-label-type')"
         @update:value="updateEvaluationName"
       />
