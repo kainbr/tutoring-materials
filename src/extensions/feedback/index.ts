@@ -14,6 +14,7 @@ import type { MarkFeedback } from "@/extensions/feedback/mark/types";
 import type { NodeWithPos } from "@tiptap/vue-3";
 import { Plugin, PluginKey } from "prosemirror-state";
 import type { EventRule } from "@/extensions/feedback/types";
+import { checkRules } from "@/extensions/feedback/helpers/checkRules";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -139,6 +140,8 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
       const triggers: EventTrigger[] = this.editor.getAttributes("document").triggers;
       const feedbacks: Feedback[] = this.editor.getAttributes("document").feedbacks;
 
+      // console.log("event-bus", this.editor.isEditable, type, event, triggers, feedbacks);
+
       // Filter the stored triggers for events that match type and parent
       const eventTriggerWithType = triggers.filter(
         (trigger: EventTrigger) => trigger.event === type && trigger.parent === event.parent
@@ -146,19 +149,25 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
 
       // console.log("eventTriggerWithType", eventTriggerWithType);
 
-      // For each event trigger in the filtered list, check if the conditions are fulfilled and if true
-      // add them to the state store of active feedbacks.
+      // For each event trigger in the filtered list, check if the rules are fulfilled.
+      // If this holds add them to the state store of active feedbacks.
       eventTriggerWithType.forEach((trigger: EventTrigger) => {
         // Todo: Check conditions
-        console.log("Set conditions: ", trigger.rules);
-        console.log("Available conditions: ", event.conditions);
-
-        trigger.feedbacks.forEach((id: string) => {
-          const feedback = feedbacks.find((f: Feedback) => f.id === id);
-          if (feedback) {
-            this.editor.commands.addActiveFeedback(feedback);
-          }
-        });
+        // console.log("Rules: ", trigger.rules);
+        // console.log("Facts: ", event.facts);
+        if (
+          trigger.rules.every((rule: EventRule) => {
+            return checkRules(rule, event.facts);
+          })
+        ) {
+          // console.log("activate feedbacks");
+          trigger.feedbacks.forEach((id: string) => {
+            const feedback = feedbacks.find((f: Feedback) => f.id === id);
+            if (feedback) {
+              this.editor.commands.addActiveFeedback(feedback);
+            }
+          });
+        }
       });
     });
   },
@@ -218,8 +227,6 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
                 feedbacks,
                 triggers,
               });
-
-              // this.storage.events = events;
             }
           });
 

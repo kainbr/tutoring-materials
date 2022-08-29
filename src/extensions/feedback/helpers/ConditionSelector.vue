@@ -6,7 +6,7 @@
   <!-- Badges -->
   <div v-for="(rule, index) in trigger.rules" :key="rule.id">
     <span
-      class="inline-flex flex-nowrap items-center mx-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
+      class="inline-flex flex-nowrap items-center mx-1 px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
     >
       <RuleEditor
         :rule="rule"

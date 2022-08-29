@@ -67,7 +67,7 @@ import { computed, defineComponent, onMounted } from "vue";
 import { Editor, NodeViewContent, NodeViewWrapper } from "@tiptap/vue-3";
 import { calculateHexIcon } from "@/helpers/util";
 import IconClose from "@/helpers/icons/IconClose.vue";
-import SubmitButton from "@/extensions/task/base/SubmitButton.vue";
+import SubmitButton from "@/extensions/task/helpers/SubmitButton.vue";
 
 import SingleChoice from "@/extensions/task/single-choice/TaskComponent.vue";
 

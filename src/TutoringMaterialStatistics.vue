@@ -105,15 +105,15 @@
           </dl>
           <dl class="mt-2">
             <dt class="text-sm font-medium text-gray-500">
-              {{ $t("statistics.tab-events-conditions") }}
+              {{ $t("statistics.tab-events-facts") }}
             </dt>
-            <dd v-if="!selectedEvent?.conditions" class="mt-1 text-sm text-gray-900">
-              No conditions provided
+            <dd v-if="!selectedEvent?.facts" class="mt-1 text-sm text-gray-900">
+              No facts provided
             </dd>
           </dl>
           <div>
-            <pre v-if="!!selectedEvent?.conditions" class="mt-1 text-xs text-gray-900">{{
-              selectedEvent?.conditions
+            <pre v-if="!!selectedEvent?.facts" class="mt-1 text-xs text-gray-900">{{
+              selectedEvent?.facts
             }}</pre>
           </div>
           <dl class="mt-2">

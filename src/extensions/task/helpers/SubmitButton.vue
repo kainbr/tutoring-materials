@@ -79,7 +79,7 @@ export default defineComponent({
   computed: {
     hints() {
       return (
-        this.editor.storage.feedback?.active.filter(
+        this.editor.storage.feedbacks.active.filter(
           (s: Feedback) => s.type === "feedback-hint" && s.parent === this.id
         ) || []
       );
@@ -139,17 +139,17 @@ export default defineComponent({
      */
     async submit() {
       // Evaluate answer
-      const { response, conditions } = await evaluate(this.type, this.evaluation, this.state);
+      const { response, facts } = await evaluate(this.type, this.evaluation, this.state);
 
       // Emit event
       this.editor.storage.document.eventBus().emit("answer-submitted", {
         type: this.type,
         parent: this.state.id,
-        conditions: {
+        facts: {
           attempt: this.state.attempt,
           empty: this.state.empty,
           response,
-          ...conditions,
+          ...facts,
         },
         data: {
           ...this.state,

@@ -1,5 +1,5 @@
 import type { TaskState } from "@/extensions/task/types";
-import type { Feedback } from "@/extensions/feedback/types";
+import type { EventFacts, Feedback } from "@/extensions/feedback/types";
 import type { NamedValue } from "vue-i18n";
 
 export interface DocumentState {
@@ -14,7 +14,7 @@ export interface DocumentState {
 export type Event = {
   type: string;
   parent: string | null;
-  conditions: object;
+  facts: EventFacts;
   data: object;
   label: Label;
 };
@@ -22,7 +22,7 @@ export type Event = {
 export type EmittedEvent = {
   type: string;
   ts: number;
-  conditions: object;
+  facts: EventFacts;
   data: object;
   label: Label;
 };

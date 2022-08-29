@@ -62,27 +62,6 @@ export const Document = Node.create<{}, DocumentStorage>({
       conditions: [],
       label: { message: "global.event.type-document-created" },
     });
-
-    this.editor.commands.addEventCondition("document-created", null, {
-      fact: "booleanTest",
-      label: { message: "booleanTest" },
-      type: "boolean",
-      defaultOperation: "equal",
-      defaultValue: false,
-      options: {
-        trueLabel: "global.condition.boolean.label-correct",
-        falseLabel: "global.condition.boolean.label-incorrect",
-        equalLabel: "global.condition.boolean.label-is",
-      },
-    });
-
-    this.editor.commands.addEventCondition("document-created", null, {
-      fact: "numberTest",
-      label: { message: "numberTest" },
-      type: "number",
-      defaultOperation: "equal",
-      defaultValue: 7,
-    });
   },
 
   addCommands() {

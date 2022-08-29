@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<!--suppress JSUnusedGlobalSymbols -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutoring Materials</title>
+    <link href="./dist/style.css" rel="stylesheet" />
+  </head>
+  <body>
+  <div id="app" class="p-2">
+      <div class="flex flex-col max-w-7xl mx-auto mt-10">
+        <header class="flex flex-row w-full justify-between items-center">
+          <h1 class="text-3xl font-bold leading-tight text-gray-900 mb-2">
+            {{ $t('index.headline-editor') }}
+          </h1>
+          <div class="flex flex-row">
+            <div
+              class="h-8 inline-flex p-1 items-center rounded-l-md border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <select v-model="$i18n.locale" class="h-6">
+                <option
+                  v-for="locale in $i18n.availableLocales"
+                  :key="`locale-${locale}`"
+                  :value="locale"
+                >
+                  {{ locale }}
+                </option>
+              </select>
+            </div>
+            <button
+              class="h-8 w-8 inline-flex items-center p-1 rounded-r-md border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              type="button"
+              @click="isSidebarOpen = true"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                class="p-1 h-6 w-6 text-gray-400"
+              >
+                <path fill="none" d="M0 0h24v24H0z" />
+                <path
+                  d="M12 1l9.5 5.5v11L12 23l-9.5-5.5v-11L12 1zm0 2.311L4.5 7.653v8.694l7.5 4.342 7.5-4.342V7.653L12 3.311zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"
+                />
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <main class="w-full flex flex-wrap gap-3">
+          <div class="h-[850px] w-[628px] mx-auto">
+            <tutoring-material-editor
+              v-model:content="content"
+              :is-editor="true"
+              :task-limit="3"
+            ></tutoring-material-editor>
+          </div>
+
+          <div class="h-[850px] max-h-[850px] w-[628px] mx-auto">
+            <tutoring-material-statistics :events="playerEvents"></tutoring-material-statistics>
+          </div>
+        </main>
+      </div>
+
+      <div class="flex flex-row flex-wrap max-w-7xl mx-auto mt-8">
+        <header class="w-full flex flex-row items-center justify-between mb-2">
+          <h1 class="text-3xl font-bold leading-tight text-gray-900">
+            {{ $t('index.headline-preview') }}
+          </h1>
+        </header>
+
+        <!-- Main Player -->
+        <main class="w-full border bg-slate-50 shadow">
+          <tutoring-material-preview
+            v-if="!isReloading"
+            :key="previewKey"
+            :content="content"
+            :state="playerState"
+            @update:state="updateState"
+            @event="updateEvents"
+            @reset="resetPreview"
+          ></tutoring-material-preview>
+        </main>
+      </div>
+
+      <!-- JSON -->
+      <div class="flex flex-row flex-wrap max-w-7xl mt-8 mx-auto">
+        <div class="w-1/2"></div>
+        <div class="w-1/2"></div>
+      </div>
+
+      <!-- Sidebar -->
+      <transition
+        enter-class="opacity-0"
+        enter-active-class="ease-out transition-medium"
+        enter-to-class="opacity-100"
+        leave-class="opacity-100"
+        leave-active-class="ease-out transition-medium"
+        leave-to-class="opacity-0"
+      >
+        <div
+          @keydown.esc="isSidebarOpen = false"
+          v-show="isSidebarOpen"
+          class="z-10 fixed inset-0 transition-opacity"
+        >
+          <div
+            @click="isSidebarOpen = false"
+            class="absolute inset-0 bg-black opacity-50"
+            tabindex="0"
+          ></div>
+        </div>
+      </transition>
+      <aside
+        class="transform top-0 right-0 w-1/2 bg-white fixed h-full overflow-auto ease-in-out transition-all duration-300 z-30"
+        :class="isSidebarOpen ? 'translate-x-0' : 'translate-x-full'"
+      >
+        <div class="text-xs p-4 overflow-auto">
+          playerStates
+          <pre>{{ playerState }}</pre>
+          content
+          <pre>{{ content }}</pre>
+          stateEditor
+          <pre>{{ stateEditor }}</pre>
+        </div>
+      </aside>
+    </div>
+
+  <script async src="https://ga.jspm.io/npm:es-module-shims@1.5.17/dist/es-module-shims.js"></script>
+
+  <script type="importmap">
+      {
+        "imports": {
+          "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.prod.js"
+        }
+      }
+    </script>
+
+
+    <script type="module">
+      import { createApp } from "vue";
+      import TutoringMaterials from "./dist/tutoring-materials.js";
+
+      const app = createApp({
+        data() {
+          return {
+            isSidebarOpen: false,
+            content: undefined,
+            stateEditor: undefined,
+            playerState: undefined,
+            playerEvents: [],
+            previewKey: 0,
+            isReloading: false,
+          };
+        },
+
+        methods: {
+          resetPreview() {
+            this.playerEvents = [];
+            if (!!this.playerState) {
+              this.playerState.tasks = [];
+              this.playerState.feedbacks = [];
+            }
+            this.previewKey += 1;
+          },
+          updateState($event) {
+            this.playerState = $event;
+          },
+          updateEvents($event) {
+            this.playerEvents = [...this.playerEvents, $event];
+          },
+        },
+      });
+
+      app.use(TutoringMaterials);
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>

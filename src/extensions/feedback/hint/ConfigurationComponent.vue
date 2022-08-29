@@ -1,10 +1,5 @@
 <template>
   <feedback-configuration-component :editor="editor" :feedback="feedback">
-    <!--
-    :create-feedback="createFeedback"
-    :update-feedback="updateFeedback"
-    :remove-feedback="removeFeedback"
-    -->
     <template #default>
       <button
         type="button"
@@ -14,7 +9,6 @@
         {{ $t("editor.feedback.hint-modal-edit-button") }}
       </button>
       <TransitionRoot appear :show="open" as="template">
-        <!--suppress HtmlUnknownAttribute -->
         <Dialog as="div" class="relative z-10" @close="open = false">
           <TransitionChild
             as="template"
@@ -83,7 +77,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import FeedbackConfigurationComponent from "@/extensions/feedback/FeedbackConfigurationComponent.vue";
-import { DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
+import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
 
 import type { Editor } from "@tiptap/vue-3";
@@ -94,12 +88,14 @@ export default defineComponent({
   name: "FeedbackHintConfigurationComponent",
 
   components: {
-    FeedbackConfigurationComponent,
+    // eslint-disable-next-line vue/no-reserved-component-names
+    Dialog,
     DialogPanel,
     DialogTitle,
+    FeedbackConfigurationComponent,
+    InlineEditor,
     TransitionChild,
     TransitionRoot,
-    InlineEditor,
   },
 
   props: {
@@ -111,22 +107,6 @@ export default defineComponent({
       type: Object as PropType<Editor>,
       required: true,
     },
-    /*
-    createFeedback: {
-      type: Function as PropType<(feedback: HintFeedback) => void>,
-      required: true,
-    },
-    updateFeedback: {
-      type: Function as PropType<
-        (feedback: HintFeedback, attributes: Partial<HintFeedback>) => void
-      >,
-      required: true,
-    },
-    removeFeedback: {
-      type: Function as PropType<(feedback: HintFeedback) => void>,
-      required: true,
-    },
-     */
   },
 
   data() {
@@ -138,12 +118,15 @@ export default defineComponent({
 
   methods: {
     updateHintFeedback() {
+      this.editor.commands.removeActiveFeedback(this.feedback);
+
       this.editor.commands.updateFeedback(this.feedback, {
         config: {
           ...this.feedback.config,
           content: this.contentCandidate,
         },
       });
+
       this.open = false;
     },
     removeHintFeedback() {

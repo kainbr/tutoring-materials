@@ -8,6 +8,9 @@
       <option value="equal">
         {{ equalLabel }}
       </option>
+      <option value="unequal">
+        {{ unequalLabel }}
+      </option>
     </select>
   </span>
 
@@ -58,6 +61,12 @@ export default defineComponent({
       return this.$t(
         (this.condition.options as BooleanConditionOptions)?.equalLabel ||
           "global.condition.boolean.label-equal"
+      );
+    },
+    unequalLabel() {
+      return this.$t(
+        (this.condition.options as BooleanConditionOptions)?.unequalLabel ||
+          "global.condition.boolean.label-unequal"
       );
     },
     trueLabel() {

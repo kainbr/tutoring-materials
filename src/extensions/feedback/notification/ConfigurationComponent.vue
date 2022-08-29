@@ -77,14 +77,14 @@ export default defineComponent({
   name: "FeedbackNotificationConfigurationComponent",
 
   components: {
-    InlineEditor,
-    FeedbackConfigurationComponent,
-    TransitionRoot,
-    TransitionChild,
     // eslint-disable-next-line vue/no-reserved-component-names
     Dialog,
     DialogPanel,
     DialogTitle,
+    FeedbackConfigurationComponent,
+    InlineEditor,
+    TransitionChild,
+    TransitionRoot,
   },
 
   props: {

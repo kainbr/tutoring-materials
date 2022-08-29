@@ -3,6 +3,54 @@ import { calculateHexIcon } from "@/helpers/util";
 import type { SCFormatFunction, SCOption } from "@/extensions/task/single-choice/types";
 import type { EventCondition, EventOption } from "@/extensions/feedback/types";
 
+const attempt: EventCondition = {
+  fact: "attempt",
+  label: {
+    message: "global.condition.attempt",
+  },
+  type: "number",
+  defaultOperation: "equal",
+  defaultValue: 1,
+};
+
+const response: EventCondition = {
+  fact: "response",
+  label: {
+    message: "global.condition.response",
+  },
+  previewLabel: {
+    message: "global.condition.response-preview",
+  },
+  type: "boolean",
+  defaultOperation: "equal",
+  defaultValue: false,
+  options: {
+    trueLabel: "global.condition.response-correct",
+    falseLabel: "global.condition.response-incorrect",
+    equalLabel: "global.condition.is",
+    unequalLabel: "global.condition.is-not",
+  },
+};
+
+const empty: EventCondition = {
+  fact: "empty",
+  label: {
+    message: "global.condition.empty",
+  },
+  previewLabel: {
+    message: "global.condition.empty-preview",
+  },
+  type: "boolean",
+  defaultOperation: "equal",
+  defaultValue: false,
+  options: {
+    trueLabel: "global.condition.empty-correct",
+    falseLabel: "global.condition.empty-incorrect",
+    equalLabel: "global.condition.is",
+    unequalLabel: "global.condition.is-not",
+  },
+};
+
 export const formatEvents: SCFormatFunction = function (data) {
   const getOptionCorrect = (content: SCOption[]): EventCondition[] => {
     return content.map((option, index) => {
@@ -23,6 +71,32 @@ export const formatEvents: SCFormatFunction = function (data) {
           trueLabel: "global.condition.single-choice.answer-option-correct-true",
           falseLabel: "global.condition.single-choice.answer-option-correct-false",
           equalLabel: "global.condition.single-choice.answer-option-correct-equal",
+          unequalLabel: "global.condition.single-choice.answer-option-correct-unequal",
+        },
+      };
+    });
+  };
+
+  const getOptionSelected = (content: SCOption[]): EventCondition[] => {
+    return content.map((option, index) => {
+      return {
+        fact: option.id + "-selected",
+        label: {
+          message: "global.condition.single-choice.answer-option-selected",
+          data: { index: index + 1 },
+        },
+        previewLabel: {
+          message: "global.condition.single-choice.answer-option-selected-preview",
+          data: { index: index + 1 },
+        },
+        type: "boolean",
+        defaultOperation: "equal",
+        defaultValue: true,
+        options: {
+          trueLabel: "global.condition.single-choice.answer-option-selected-true",
+          falseLabel: "global.condition.single-choice.answer-option-selected-false",
+          equalLabel: "global.condition.single-choice.answer-option-selected-equal",
+          unequalLabel: "global.condition.single-choice.answer-option-selected-unequal",
         },
       };
     });
@@ -31,7 +105,13 @@ export const formatEvents: SCFormatFunction = function (data) {
   const eventOption: EventOption = {
     name: "answer-submitted",
     parent: data.id,
-    conditions: [...getOptionCorrect(data.content)],
+    conditions: [
+      attempt,
+      response,
+      empty,
+      ...getOptionCorrect(data.content),
+      ...getOptionSelected(data.content),
+    ],
     label: {
       message: "global.event.type-answer-submitted",
       hexIcon: calculateHexIcon(data.id),

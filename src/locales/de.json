@@ -87,14 +87,23 @@
   },
   "global": {
     "condition": {
+      "attempt": "Versuch",
       "boolean": {
         "label-correct": "korrekt",
         "label-equal": "=",
         "label-false": "falsch",
         "label-incorrect": "inkorrekt",
         "label-is": "ist",
-        "label-true": "wahr"
+        "label-is-not": "ist nicht",
+        "label-true": "wahr",
+        "label-unequal": "!="
       },
+      "empty": "Antwort",
+      "empty-correct": "leer",
+      "empty-incorrect": "nicht leer",
+      "empty-preview": "Antwort (leer)",
+      "is": "ist",
+      "is-not": "ist nicht",
       "number": {
         "label-equal": "=",
         "label-greater": ">",
@@ -102,12 +111,23 @@
         "label-smaller": "<",
         "label-smaller-equal": "<="
       },
+      "response": "Antwort",
+      "response-correct": "richtig",
+      "response-incorrect": "falsch",
+      "response-preview": "Antwort (korrekt)",
       "single-choice": {
         "answer-option-correct": "{index}. Distraktor",
         "answer-option-correct-equal": "ist",
         "answer-option-correct-false": "inkorrekt",
-        "answer-option-correct-preview": "{index}. Distraktor (Korrektheit)",
+        "answer-option-correct-preview": "{index}. Distraktor (korrekt)",
         "answer-option-correct-true": "korrekt",
+        "answer-option-correct-unequal": "ist nicht",
+        "answer-option-selected": "{index}. Distraktor",
+        "answer-option-selected-equal": "ist",
+        "answer-option-selected-false": "nicht ausgewählt",
+        "answer-option-selected-preview": "{index}. Distraktor (ausgewählt)",
+        "answer-option-selected-true": "ausgewählt",
+        "answer-option-selected-unequal": "ist nicht",
         "response-correct": "Antwort korrekt",
         "response-incorrect": "Antwort inkorrekt"
       }
@@ -134,8 +154,8 @@
     "button-rotate-player": "Ansicht drehen"
   },
   "statistics": {
-    "tab-events-conditions": "Auswertbare Bedingungen",
     "tab-events-data": "Zusätzliche Informationen",
+    "tab-events-facts": "Auswertbare Fakten",
     "tab-events-placeholder": "Kein Ereignis ausgewählt",
     "tab-events-timestamp": "Zeitstempel",
     "tab-events-type": "Ereignistyp",

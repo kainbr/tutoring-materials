@@ -4,11 +4,8 @@
   <!-- Existing feedbacks -->
   <div v-for="(feedback, index) in triggerFeedbacks" :key="feedback.id">
     <span
-      class="cursor-default inline-flex flex-nowrap items-center mx-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
-      @mouseenter="editor.commands.addActiveFeedback(feedback)"
-      @mouseleave="editor.commands.removeActiveFeedback(feedback)"
+      class="cursor-default inline-flex flex-nowrap items-center mx-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
     >
-      <!-- eslint-disable vue/no-v-html -->
       <LabelComponent :label="feedback.label" />
 
       <!-- Remove button -->
@@ -60,10 +57,8 @@
         <li
           :class="[
             active ? 'bg-amber-100 text-amber-900' : 'text-gray-900',
-            'flex flex-row w-full cursor-default select-none py-2 pl-3',
+            'flex flex-row w-full cursor-default select-none py-2 px-3',
           ]"
-          @mouseenter="editor.commands.addActiveFeedback(feedback)"
-          @mouseleave="editor.commands.removeActiveFeedback(feedback)"
         >
           <LabelComponent
             :label="feedback.label"

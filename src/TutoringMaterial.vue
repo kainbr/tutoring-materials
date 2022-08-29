@@ -131,14 +131,17 @@ export default defineComponent({
 
     onMounted(() => {
       editor.storage.document.eventBus().emit("document-created", {
-        label: {
-          message: "global.event.type-document-created",
-        },
+        type: "document-created",
+        parent: null,
+        facts: {},
         data: {
           startTimestamp: startTimestamp,
           endTimestamp: Date.now(),
           receivedContent: receivedContent,
           receivedState: receivedState,
+        },
+        label: {
+          message: "global.event.type-document-created",
         },
       });
     });
@@ -223,7 +226,7 @@ export default defineComponent({
       context.emit("event", {
         type: type,
         ts: Date.now(),
-        conditions: e.conditions,
+        facts: e.facts,
         data: e.data,
         label: e.label,
       } as EmittedEvent);
@@ -279,27 +282,6 @@ export default defineComponent({
             tasks: states,
             feedbacks: feedbacks,
           });
-          /*
-          console.log("watch taskStates and active triggered", editor.isEditable);
-          console.log(
-            "truth",
-            !isEqual(states, oldStates),
-            !isEqual(feedbacks, oldFeedbacks),
-            !isEqual(states, oldStates) || !isEqual(feedbacks, oldFeedbacks)
-          );
-          console.log("states", states, oldStates);
-          console.log("states", JSON.stringify(states), JSON.stringify(oldStates));
-          console.log("feedbacks", feedbacks, oldFeedbacks);
-          console.log("feedbacks", JSON.stringify(feedbacks), JSON.stringify(oldFeedbacks));
-          console.log("emit new state", {
-            tasks: states,
-            feedbacks: feedbacks,
-          });
-          context.emit("update:state", {
-            tasks: states,
-            feedbacks: feedbacks,
-          });
-           */
 
           editor.setOptions({
             editorProps: {

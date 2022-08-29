@@ -136,7 +136,7 @@ import IconArrowUp from "@/helpers/icons/IconArrowUp.vue";
 import IconShuffle from "@/helpers/icons/IconShuffle.vue";
 import IconTrash from "@/helpers/icons/IconTrash.vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
-import TaskScaffold from "@/extensions/task/base/TaskScaffold.vue";
+import TaskScaffold from "@/extensions/task/helpers/TaskScaffold.vue";
 import OptionsDefaults from "@/helpers/tasks/OptionsDefaults.vue";
 import OptionsFormEnum from "@/helpers/tasks/OptionsFormEnum.vue";
 

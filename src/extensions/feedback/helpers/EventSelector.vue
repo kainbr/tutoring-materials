@@ -18,7 +18,7 @@
       <ComboboxButton class="cursor-pointer">
         <span
           v-if="selectedEvent"
-          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+          class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
         >
           <LabelComponent :label="selectedEvent.label" />
         </span>

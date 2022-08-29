@@ -39,6 +39,10 @@ export interface NumberEventRule extends EventRule {
   value: number;
 }
 
+export type EventFacts = {
+  [key: string]: unknown;
+};
+
 /**
  * An EventOption can be selected as the 'event' for an event trigger.
  */
@@ -67,6 +71,7 @@ export type BooleanConditionOptions = {
   trueLabel?: string;
   falseLabel?: string;
   equalLabel?: string;
+  unequalLabel?: string;
 };
 
 export type NumberConditionOptions = {

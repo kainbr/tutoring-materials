@@ -5,6 +5,6 @@ export async function evaluate(taskType: string, config: TaskEvaluation, state: 
   const functions = await import(`./${taskType}/evaluate.ts`);
   return {
     response: functions.evaluate(config, state),
-    conditions: functions.formatConditions(config, state),
+    facts: functions.getFacts(config, state),
   };
 }

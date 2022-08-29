@@ -86,7 +86,6 @@ export default defineComponent({
       this.editor.commands.addEventTrigger({ ...trigger, id: uuid() });
     },
     updateEvent($event: { name: string; parent: string }) {
-      console.log("updateEvent", $event);
       this.editor.commands.updateEventTrigger(this.trigger, {
         ...this.trigger,
         event: $event.name,

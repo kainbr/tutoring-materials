@@ -1,15 +1,16 @@
+// noinspection JSUnusedGlobalSymbols
+
 import { fileURLToPath, URL } from "node:url";
 
 import path from "path";
 import vue from "@vitejs/plugin-vue";
 import viteCompression from "vite-plugin-compression";
 import { defineConfig } from "vite";
-import { visualizer } from "rollup-plugin-visualizer";
+// import { visualizer } from "rollup-plugin-visualizer";
 
 // https://vitejs.dev/config/
-// noinspection JSUnusedGlobalSymbols
 export default defineConfig({
-  plugins: [vue(), viteCompression(), visualizer()],
+  plugins: [vue(), viteCompression()], // , visualizer()
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -19,6 +20,7 @@ export default defineConfig({
     __VUE_I18N_FULL_INSTALL__: true,
     __VUE_I18N_LEGACY_API__: false,
     __INTLIFY_PROD_DEVTOOLS__: false,
+    "process.env": {},
   },
   build: {
     lib: {

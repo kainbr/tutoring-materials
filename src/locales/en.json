@@ -87,14 +87,23 @@
   },
   "global": {
     "condition": {
+      "attempt": "Attempt",
       "boolean": {
         "label-correct": "correct",
         "label-equal": "=",
         "label-false": "false",
         "label-incorrect": "incorrect",
         "label-is": "is",
-        "label-true": "true"
+        "label-is-not": "is not",
+        "label-true": "true",
+        "label-unequal": "!="
       },
+      "empty": "Response",
+      "empty-correct": "empty",
+      "empty-incorrect": "not empty",
+      "empty-preview": "Response (empty)",
+      "is": "is",
+      "is-not": "is not",
       "number": {
         "label-equal": "=",
         "label-greater": ">",
@@ -102,12 +111,23 @@
         "label-smaller": "<",
         "label-smaller-equal": "<="
       },
+      "response": "Response",
+      "response-correct": "correct",
+      "response-incorrect": "incorrect",
+      "response-preview": "Response (correct)",
       "single-choice": {
         "answer-option-correct": "{index}. Option",
         "answer-option-correct-equal": "is",
         "answer-option-correct-false": "incorrect",
-        "answer-option-correct-preview": "{index}. Option (correctness)",
+        "answer-option-correct-preview": "{index}. Option (correct)",
         "answer-option-correct-true": "correct",
+        "answer-option-correct-unequal": "is not",
+        "answer-option-selected": "{index}. Option",
+        "answer-option-selected-equal": "is",
+        "answer-option-selected-false": "not selected",
+        "answer-option-selected-preview": "{index}. Option (selected)",
+        "answer-option-selected-true": "selected",
+        "answer-option-selected-unequal": "is not",
         "response-correct": "Response correct",
         "response-incorrect": "Response incorrect"
       }
@@ -134,8 +154,8 @@
     "button-rotate-player": "Rotate screen"
   },
   "statistics": {
-    "tab-events-conditions": "Conditions",
     "tab-events-data": "Additional information",
+    "tab-events-facts": "Facts",
     "tab-events-placeholder": "No event selected",
     "tab-events-timestamp": "Timestamp",
     "tab-events-type": "Event type",
