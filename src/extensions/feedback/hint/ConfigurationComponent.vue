@@ -1,6 +1,7 @@
 <template>
   <feedback-configuration-component :editor="editor" :feedback="feedback">
     <template #default>
+      <span class="ml-4 w-32 flex-auto truncate"> >> {{ getText(feedback.config.content) }} </span>
       <button
         type="button"
         class="mx-3 flex-shrink-0 text-sm text-blue-600 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -76,13 +77,16 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import FeedbackConfigurationComponent from "@/extensions/feedback/FeedbackConfigurationComponent.vue";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
+import { getText } from "@tiptap/vue-3";
+import { Node } from "prosemirror-model";
+import FeedbackConfigurationComponent from "@/extensions/feedback/FeedbackConfigurationComponent.vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
 
 import type { Editor } from "@tiptap/vue-3";
 import type { HintFeedback } from "@/extensions/feedback/hint/types";
 import type { PropType } from "vue";
+import type { JSONContent } from "@tiptap/vue-3";
 
 export default defineComponent({
   name: "FeedbackHintConfigurationComponent",
@@ -132,6 +136,9 @@ export default defineComponent({
     removeHintFeedback() {
       this.editor.commands.removeFeedback(this.feedback);
       this.open = false;
+    },
+    getText(content: JSONContent) {
+      return getText(Node.fromJSON(this.editor.schema, content));
     },
   },
 });

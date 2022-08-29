@@ -1,6 +1,7 @@
 <template>
   <feedback-configuration-component :editor="editor" :feedback="feedback">
     <template #default>
+      <span class="ml-4 w-32 flex-auto truncate"> >> {{ getText(feedback.config.content) }} </span>
       <button
         type="button"
         class="mx-3 flex-shrink-0 text-sm text-blue-600 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -65,11 +66,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { getText } from "@tiptap/vue-3";
+import { Node } from "prosemirror-model";
 import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } from "@headlessui/vue";
 import FeedbackConfigurationComponent from "@/extensions/feedback/FeedbackConfigurationComponent.vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
 
-import type { Editor } from "@tiptap/vue-3";
+import type { Editor, JSONContent } from "@tiptap/vue-3";
 import type { NotificationFeedback } from "@/extensions/feedback/notification/types";
 import type { PropType } from "vue";
 
@@ -116,6 +119,9 @@ export default defineComponent({
       });
 
       this.isOpen = false;
+    },
+    getText(content: JSONContent) {
+      return getText(Node.fromJSON(this.editor.schema, content));
     },
   },
 });

@@ -5,16 +5,16 @@
       class="flex flex-row gap-2 items-center cursor-pointer"
       @click="toggleActiveFeedback"
     >
-      <span class="text-sm" :class="{ 'font-semibold': isActive }">
+      <span class="flex-none text-sm" :class="{ 'font-semibold': isActive }">
         <LabelComponent :label="feedback.label" />
       </span>
     </div>
 
     <div class="flex grow flex-row items-center justify-end">
-      <div class="flex grow gap-0.5 px-1 justify-end">
+      <div class="flex flex-auto gap-0.5 px-1 justify-end">
         <slot name="default"></slot>
       </div>
-      <div class="flex gap-0.5 ml-3">
+      <div class="flex flex-none gap-0.5 ml-3">
         <EditorMenuButton v-tippy="$t('editor.menu.feedback-copy-tooltip')" @click="copy">
           <IconCopy />
         </EditorMenuButton>
