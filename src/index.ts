@@ -2,6 +2,7 @@
 
 import { createI18n } from "vue-i18n";
 import { directive } from "vue-tippy";
+import { version } from "../package.json";
 import TutoringMaterial from "@/TutoringMaterial.vue";
 import TutoringMaterialEditor from "@/TutoringMaterialEditor.vue";
 import TutoringMaterialPlayer from "@/TutoringMaterialPlayer.vue";
@@ -39,4 +40,5 @@ export default {
     app.component("TutoringMaterialPreview", TutoringMaterialPreview);
     app.component("TutoringMaterialStatistics", TutoringMaterialStatistics);
   },
+  version: version,
 };

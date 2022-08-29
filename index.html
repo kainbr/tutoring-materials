@@ -15,6 +15,10 @@
             {{ $t('index.headline-editor') }}
           </h1>
           <div class="flex flex-row">
+            <div class="p-1.5 mr-1 text-sm">
+             v{{packageVersion}}
+
+            </div>
             <div
               class="h-8 inline-flex p-1 items-center rounded-l-md border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
             >
@@ -141,6 +145,7 @@
             playerEvents: [],
             previewKey: 0,
             isReloading: false,
+            packageVersion: TutoringMaterials.version
           };
         },
 
@@ -162,6 +167,7 @@
       });
 
       app.use(TutoringMaterials);
+
 
       app.mount("#app");
     </script>
