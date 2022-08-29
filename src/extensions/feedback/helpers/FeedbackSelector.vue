@@ -28,59 +28,81 @@
     nullable
     @update:model-value="$emit('update:feedbacks', $event)"
   >
-    <ComboboxButton class="cursor-pointer">
-      <span
-        v-if="trigger.feedbacks.length === 0"
-        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-      >
-        {{ $t("editor.trigger.builder-select-feedback") }}
-      </span>
-      <span
-        v-else
-        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-      >
-        +
-      </span>
-    </ComboboxButton>
-
-    <ComboboxOptions
-      class="absolute z-50 max-h-60 w-fit overflow-auto rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-    >
-      <!--suppress JSValidateTypes -->
-      <ComboboxOption
-        v-for="feedback in filteredFeedbacks"
-        v-slot="{ active, selected }"
-        :key="feedback.id"
-        :value="feedback.id"
-        as="template"
-      >
-        <li
-          :class="[
-            active ? 'bg-amber-100 text-amber-900' : 'text-gray-900',
-            'flex flex-row w-full cursor-default select-none py-2 px-3',
-          ]"
+    <span>
+      <ComboboxButton class="cursor-pointer">
+        <span
+          v-if="trigger.feedbacks.length === 0"
+          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
         >
-          <LabelComponent
-            :label="feedback.label"
-            :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']"
-          />
-        </li>
-      </ComboboxOption>
-      <li
-        v-if="filteredFeedbacks.length === 0"
-        class="text-gray-900 w-full cursor-default select-none py-2 pl-4 pr-4"
+          {{ $t("editor.trigger.builder-select-feedback") }}
+        </span>
+        <span
+          v-else
+          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+        >
+          +
+        </span>
+      </ComboboxButton>
+
+      <!-- Dropdown -->
+      <transition
+        leave-active-class="transition duration-100 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
       >
-        <span class="font-normal text-xs block truncate">{{
-          $t("editor.footer.trigger-empty-list")
-        }}</span>
-      </li>
-    </ComboboxOptions>
+        <ComboboxOptions
+          class="absolute z-50 max-h-60 w-fit overflow-auto rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+        >
+          <div class="p-1">
+            <ComboboxInput
+              class="w-full w-52 border-none py-2 pl-3 text-xs leading-5 text-gray-900 focus:ring-0"
+              @change="feedbacksQuery = $event.target.value"
+            />
+          </div>
+
+          <!--suppress JSValidateTypes -->
+          <ComboboxOption
+            v-for="feedback in filteredFeedbacks"
+            v-slot="{ active, selected }"
+            :key="feedback.id"
+            :value="feedback.id"
+            as="template"
+          >
+            <li
+              :class="[
+                active ? 'bg-amber-100 text-amber-900' : 'text-gray-900',
+                'relative w-full cursor-default select-none py-2 px-3',
+              ]"
+            >
+              <LabelComponent
+                :label="feedback.label"
+                :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']"
+              />
+            </li>
+          </ComboboxOption>
+          <li
+            v-if="filteredFeedbacks.length === 0"
+            class="text-gray-900 w-full cursor-default select-none py-2 pl-4 pr-4"
+          >
+            <span class="font-normal text-xs block truncate">{{
+              $t("editor.footer.trigger-empty-list")
+            }}</span>
+          </li>
+        </ComboboxOptions>
+      </transition>
+    </span>
   </Combobox>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { Combobox, ComboboxButton, ComboboxOption, ComboboxOptions } from "@headlessui/vue";
+import {
+  Combobox,
+  ComboboxButton,
+  ComboboxInput,
+  ComboboxOption,
+  ComboboxOptions,
+} from "@headlessui/vue";
 import IconClose from "@/helpers/icons/IconClose.vue";
 import LabelComponent from "@/helpers/LabelComponent.vue";
 
@@ -96,6 +118,7 @@ export default defineComponent({
     IconClose,
     Combobox,
     ComboboxButton,
+    ComboboxInput,
     ComboboxOptions,
     ComboboxOption,
   },

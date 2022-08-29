@@ -2,7 +2,7 @@
   <span class="px-1">
     <select
       :value="rule.operation"
-      class="bg-transparent cursor-pointer appearance-none"
+      class="bg-transparent cursor-pointer appearance-none max-w-fit"
       @change="updateOperation"
     >
       <option value="equal">

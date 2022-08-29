@@ -30,25 +30,23 @@
 
   <!-- Dropdown -->
   <Combobox v-if="conditions.length > 0" :model-value="conditions" class="pr-2">
-    <div>
-      <div class="flex gap-1">
-        <ComboboxButton class="cursor-pointer">
-          <div class="pl-2">
-            <span
-              v-if="trigger.rules.length === 0"
-              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-            >
-              Select condition
-            </span>
-          </div>
+    <span>
+      <ComboboxButton class="cursor-pointer">
+        <div class="pl-2">
           <span
-            v-if="trigger.rules.length > 0"
+            v-if="trigger.rules.length === 0"
             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
           >
-            +
+            Select condition
           </span>
-        </ComboboxButton>
-      </div>
+        </div>
+        <span
+          v-if="trigger.rules.length > 0"
+          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+        >
+          +
+        </span>
+      </ComboboxButton>
 
       <transition
         leave-active-class="transition duration-100 ease-in"
@@ -58,8 +56,15 @@
         <ComboboxOptions
           class="absolute z-50 max-h-60 w-fit overflow-auto rounded-md bg-white py-1 text-sm shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
         >
+          <div class="p-1">
+            <ComboboxInput
+              class="w-full w-52 border-none py-2 pl-3 text-xs leading-5 text-gray-900 focus:ring-0"
+              @change="factsQuery = $event.target.value"
+            />
+          </div>
+
           <ComboboxOption
-            v-for="condition in conditions"
+            v-for="condition in filteredConditions"
             :key="condition.fact"
             v-slot="{ active, selected }"
             as="template"
@@ -80,13 +85,19 @@
           </ComboboxOption>
         </ComboboxOptions>
       </transition>
-    </div>
+    </span>
   </Combobox>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { Combobox, ComboboxButton, ComboboxOption, ComboboxOptions } from "@headlessui/vue";
+import {
+  Combobox,
+  ComboboxButton,
+  ComboboxInput,
+  ComboboxOption,
+  ComboboxOptions,
+} from "@headlessui/vue";
 import { isEqual } from "lodash-es";
 import { v4 as uuid } from "uuid";
 import LabelComponent from "@/helpers/LabelComponent.vue";
@@ -103,6 +114,7 @@ export default defineComponent({
     LabelComponent,
     Combobox,
     ComboboxButton,
+    ComboboxInput,
     ComboboxOptions,
     ComboboxOption,
   },
@@ -119,6 +131,25 @@ export default defineComponent({
   },
 
   emits: ["update:rules"],
+
+  data() {
+    return {
+      factsQuery: "",
+    };
+  },
+
+  computed: {
+    filteredConditions() {
+      return this.factsQuery === ""
+        ? this.conditions
+        : this.conditions.filter((condition: EventCondition) =>
+            (!!condition.label?.message ? this.$t(condition.label?.message) : condition.fact)
+              .toLowerCase()
+              .replace(/\s+/g, "")
+              .includes(this.factsQuery.toLowerCase().replace(/\s+/g, ""))
+          );
+    },
+  },
 
   watch: {
     conditions(newConditions) {
