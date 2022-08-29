@@ -58,7 +58,7 @@ export const FeedbackMark = Mark.create({
           styles.push(`font-weight: var(--${attrs.ref}-font-weight,inherit)`);
 
           // Italic
-          styles.push(`font-style: var(--${attrs.ref}-font-style,normal)`);
+          styles.push(`font-style: var(--${attrs.ref}-font-style,inherit)`);
 
           // Underline
           styles.push(`text-decoration-line: var(--${attrs.ref}-text-decoration-line,none)`);
