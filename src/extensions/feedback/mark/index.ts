@@ -164,21 +164,24 @@ export const FeedbackMark = Mark.create({
     return {
       setFeedbackMark:
         (attributes) =>
-        ({ commands }) => {
-          const uid = uuid();
-          const feedback = {
-            id: uid,
-            type: this.name,
-            label: {
-              message: "global.feedback.type-feedback-mark",
-              hexIcon: calculateHexIcon(uid),
-            },
-            parent: null,
-            config: { ...attributes, ref: uuid() },
-          };
-          commands.addFeedback(feedback);
-          commands.setMark(this.name, feedback.config);
-          return true;
+        ({ commands, state }) => {
+          if (!state.selection.empty) {
+            const uid = uuid();
+            const feedback = {
+              id: uid,
+              type: this.name,
+              label: {
+                message: "global.feedback.type-feedback-mark",
+                hexIcon: calculateHexIcon(uid),
+              },
+              parent: null,
+              config: { ...attributes, ref: uuid() },
+            };
+            commands.addFeedback(feedback);
+            commands.setMark(this.name, feedback.config);
+            return true;
+          }
+          return false;
         },
       unsetFeedbackMark:
         () =>

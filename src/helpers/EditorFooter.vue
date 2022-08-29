@@ -38,11 +38,6 @@
                 :editor="editor"
                 :feedbacks="editor.getAttributes('document').feedbacks"
               />
-              <!--
-                :create-feedback="editor.commands.addFeedback"
-                :update-feedback="editor.commands.updateFeedback"
-                :remove-feedback="editor.commands.removeFeedback"
-              -->
             </div>
           </DisclosurePanel>
         </Disclosure>
