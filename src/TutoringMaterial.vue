@@ -72,6 +72,7 @@ import { FeedbackNotification } from "@/extensions/feedback/notification";
 import type { PropType } from "vue";
 import type { JSONContent } from "@tiptap/vue-3";
 import type { DocumentState, EmittedEvent, Event } from "@/extensions/document/types";
+import { findChildren } from "@tiptap/core";
 
 export default defineComponent({
   components: {
@@ -130,20 +131,33 @@ export default defineComponent({
     const receivedState = props.state;
 
     onMounted(() => {
-      editor.storage.document.eventBus().emit("document-created", {
-        type: "document-created",
-        parent: null,
-        facts: {},
-        data: {
-          startTimestamp: startTimestamp,
-          endTimestamp: Date.now(),
-          receivedContent: receivedContent,
-          receivedState: receivedState,
-        },
-        label: {
-          message: "global.event.type-document-created",
-        },
-      });
+      if (!editor.isEditable) {
+        editor.storage.document.eventBus().emit("document-created", {
+          type: "document-created",
+          parent: null,
+          facts: {},
+          data: {
+            startTimestamp: startTimestamp,
+            endTimestamp: Date.now(),
+            receivedContent: receivedContent,
+            receivedState: receivedState,
+          },
+          label: {
+            message: "global.event.type-document-created",
+          },
+        });
+      }
+    });
+
+    onBeforeUnmount(() => {
+      // Since the storage is shared, filter out rendered tasks from storage
+      // before unmounting to emit created events again on recreate / refresh.
+      const taskIds = findChildren(editor.state.doc, (n) => n.type.name === "task").map(
+        (n) => n.node.attrs.id
+      );
+      editor.storage.tasks.rendered = editor.storage.tasks.rendered.filter(
+        (taskId: string) => !taskIds.includes(taskId)
+      );
     });
 
     // Editor

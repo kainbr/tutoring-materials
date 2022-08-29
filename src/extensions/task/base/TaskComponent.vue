@@ -157,21 +157,32 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      props.editor.storage.document.eventBus().emit("task-created", {
-        parent: props.node.attrs.id,
-        label: {
-          message: "global.event.type-task-created",
-          hexIcon: calculateHexIcon(props.node.attrs.id),
-        },
-        data: {
-          id: props.node.attrs.id,
-          content: props.node.attrs.content,
-          evaluation: props.node.attrs.evaluation,
-          feedbacks: props.node.attrs.feedbacks,
-          options: props.node.attrs.options,
-          state: props.node.attrs.state,
-        },
-      });
+      if (
+        !props.editor.storage.tasks.rendered.includes(props.node.attrs.id) &&
+        !props.editor.isEditable
+      ) {
+        props.editor.storage.document.eventBus().emit("task-created", {
+          parent: props.node.attrs.id,
+          label: {
+            message: "global.event.type-task-created",
+            hexIcon: calculateHexIcon(props.node.attrs.id),
+          },
+          data: {
+            id: props.node.attrs.id,
+            content: props.node.attrs.content,
+            evaluation: props.node.attrs.evaluation,
+            feedbacks: props.node.attrs.feedbacks,
+            options: props.node.attrs.options,
+            state: props.node.attrs.state,
+          },
+        });
+
+        // eslint-disable-next-line vue/no-mutating-props
+        props.editor.storage.tasks.rendered = [
+          ...props.editor.storage.tasks.rendered,
+          props.node.attrs.id,
+        ];
+      }
     });
 
     return {

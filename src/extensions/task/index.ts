@@ -37,6 +37,7 @@ export const Task = Extension.create<unknown, TaskExtensionStorage>({
   addStorage() {
     return {
       taskStates: [],
+      rendered: [], // Track rendered tasks by id to avoid multiple
     };
   },
 
