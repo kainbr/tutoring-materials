@@ -187,7 +187,7 @@ export default defineComponent({
 </script>
 
 <!--suppress CssUnusedSymbol -->
-<style>
+<style scoped>
 .v-enter-active,
 .v-leave-active {
   transition: opacity 1s ease;

@@ -272,14 +272,15 @@ export default defineComponent({
     );
 
     watch(
-      () => props.state,
-      (state) => {
-        if (!isEqual(state?.tasks, editor.storage.tasks.taskStates)) {
-          editor.storage.tasks.taskStates = !!state?.tasks ? state?.tasks : [];
+      [() => props.state.tasks, () => props.state.feedbacks],
+      ([tasks, feedbacks]) => {
+        if (!isEqual(tasks, editor.storage.tasks.taskStates)) {
+          editor.storage.tasks.taskStates = tasks;
         }
-        if (!isEqual(state?.feedbacks, editor.storage.feedbacks.active)) {
-          editor.storage.feedbacks.active = !!state?.feedbacks ? state.feedbacks : [];
+        if (!isEqual(feedbacks, editor.storage.feedbacks.active)) {
+          editor.storage.feedbacks.active = feedbacks;
         }
+        editor.view.dispatch(editor.state.tr);
       },
       { deep: true }
     );
@@ -307,7 +308,7 @@ export default defineComponent({
           });
         }
       },
-      { deep: true }
+      { deep: true, immediate: true }
     );
 
     // Content sizing
