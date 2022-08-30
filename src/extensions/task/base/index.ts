@@ -11,6 +11,8 @@ export const BaseTask = Node.create({
 
   draggable: true,
 
+  selectable: false,
+
   addAttributes() {
     return {
       id: { default: null },

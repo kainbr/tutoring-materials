@@ -139,6 +139,7 @@
       "type-answer-changed": "Answer changed",
       "type-answer-submitted": "Answer submitted",
       "type-document-created": "Document created",
+      "type-feedback-presented": "Feedback presented",
       "type-task-created": "Task created"
     },
     "feedback": {

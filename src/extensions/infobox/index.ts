@@ -24,6 +24,8 @@ export const Infobox = Node.create({
 
   draggable: true,
 
+  selectable: false,
+
   addAttributes() {
     return {
       color: {

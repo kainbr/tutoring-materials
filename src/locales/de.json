@@ -139,6 +139,7 @@
       "type-answer-changed": "Antwort geändert",
       "type-answer-submitted": "Antwort abgeschickt",
       "type-document-created": "Dokument erstellt",
+      "type-feedback-presented": "Rückmeldung angezeigt",
       "type-task-created": "Aufgabe erstellt"
     },
     "feedback": {

@@ -36,6 +36,7 @@
 <script lang="ts">
 // Vue imports
 import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { findChildren } from "@tiptap/core";
 import { useI18n } from "vue-i18n";
 import { isEqual } from "lodash-es";
 import EditorMenu from "@/helpers/EditorMenu.vue";
@@ -72,7 +73,7 @@ import { FeedbackNotification } from "@/extensions/feedback/notification";
 import type { PropType } from "vue";
 import type { JSONContent } from "@tiptap/vue-3";
 import type { DocumentState, EmittedEvent, Event } from "@/extensions/document/types";
-import { findChildren } from "@tiptap/core";
+import type { Feedback } from "@/extensions/feedback/types";
 
 export default defineComponent({
   components: {
@@ -278,9 +279,19 @@ export default defineComponent({
           editor.storage.tasks.taskStates = tasks;
         }
         if (!isEqual(feedbacks, editor.storage.feedbacks.active)) {
-          editor.storage.feedbacks.active = feedbacks;
+          // editor.storage.feedbacks.active = feedbacks;
+          const feedbackIds = feedbacks.map((feedback: Feedback) => feedback.id);
+
+          editor.storage.feedbacks.active
+            .filter((feedback: Feedback) => !feedbackIds.includes(feedback.id))
+            .forEach((feedback: Feedback) => {
+              editor.commands.removeActiveFeedback(feedback);
+            });
+
+          feedbacks.forEach((feedback: Feedback) => {
+            editor.commands.addActiveFeedback(feedback);
+          });
         }
-        editor.view.dispatch(editor.state.tr);
       },
       { deep: true }
     );

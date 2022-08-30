@@ -11,9 +11,11 @@
         v-if="editor.isEditable"
         class="flex flex-row items-center pb-2 mb-2 border-b-2 border-slate-300"
         contenteditable="false"
-        data-drag-handle
-        draggable="true"
       >
+        <!-- Drag Handle -->
+        <div contenteditable="false" data-drag-handle draggable="true" class="cursor-grab">
+          <IconDragMove />
+        </div>
         <div class="flex flex-row grow items-center justify-center gap-4">
           <!-- Icon -->
           <div class="flex flex-row items-center">
@@ -241,9 +243,11 @@ import { NodeViewContent, NodeViewWrapper } from "@tiptap/vue-3";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/vue";
 import type { PropType } from "vue";
 import type { NodeViewProps } from "@tiptap/core";
+import IconDragMove from "@/helpers/icons/IconDragMove.vue";
 
 export default defineComponent({
   components: {
+    IconDragMove,
     NodeViewWrapper,
     NodeViewContent,
     Listbox,

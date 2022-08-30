@@ -12,12 +12,12 @@
         v-if="editor.isEditable"
         class="flex flex-row items-center pb-2 mb-2 border-b-2 border-slate-300"
         contenteditable="false"
-        data-drag-handle
-        draggable="true"
       >
         <div class="flex flex-row grow items-center gap-4">
           <!-- eslint-disable vue/no-v-html -->
-          <span class="pl-2 pr-3" v-html="calculateHexIcon(node.attrs.id)" />
+          <div data-drag-handle contenteditable="false" draggable="true" style="cursor: grab">
+            <span class="pl-2 pr-3" v-html="calculateHexIcon(node.attrs.id)" />
+          </div>
           <div class="flex w-full justify-center">
             <span>{{ $t("editor.task.type-" + node.attrs.type) }}</span>
           </div>

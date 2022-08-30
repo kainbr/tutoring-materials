@@ -15,6 +15,7 @@ import type { NodeWithPos } from "@tiptap/vue-3";
 import { Plugin, PluginKey } from "prosemirror-state";
 import type { EventRule } from "@/extensions/feedback/types";
 import { checkRules } from "@/extensions/feedback/helpers/checkRules";
+import { calculateHexIcon } from "@/helpers/util";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -312,19 +313,23 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
           return false;
         }
 
-        const activeFeedback = this.storage.active.find(
-          (f: Feedback) =>
-            f.type === feedback.type &&
-            f.parent === feedback.parent &&
-            isEqual(f.config, feedback.config)
-        );
+        const activeFeedback = this.storage.active.find((f: Feedback) => f.id === feedback.id);
 
         // Do not add the feedback if there already exists this feedback
-        if (!!activeFeedback) {
-          return false;
-        }
+        if (!activeFeedback) {
+          this.storage.active = [...this.storage.active, feedback];
 
-        this.storage.active = [...this.storage.active, feedback];
+          this.editor.storage.document.eventBus().emit("feedback-presented", {
+            type: "feedback-presented",
+            parent: feedback.parent,
+            facts: {},
+            data: feedback,
+            label: {
+              message: "global.event.type-feedback-presented",
+              hexIcon: !!feedback.parent ? calculateHexIcon(feedback.parent) : undefined,
+            },
+          });
+        }
 
         return true;
       },
