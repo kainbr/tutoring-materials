@@ -76,6 +76,8 @@ import type { EventOption } from "@/extensions/feedback/types";
 import type { NodeViewProps } from "@tiptap/core";
 import type { PropType } from "vue";
 import type { TaskContent, TaskEvaluation, TaskOptions, TaskState } from "@/extensions/task/types";
+import type { Emitter } from "mitt";
+import type { Events } from "@/helpers/useEventBus";
 
 export default defineComponent({
   components: {
@@ -122,6 +124,8 @@ export default defineComponent({
   },
 
   setup: function (props) {
+    const eventBus: Emitter<Events> | undefined = inject("eventBus");
+
     const state: Ref<TaskState> = computed(() => {
       return props.editor.storage.tasks.taskStates.find(
         (taskState: TaskState) => taskState.id === props.node.attrs.id
@@ -161,21 +165,25 @@ export default defineComponent({
         !props.editor.storage.tasks.rendered.includes(props.node.attrs.id) &&
         !props.editor.isEditable
       ) {
-        props.editor.storage.document.eventBus().emit("task-created", {
-          parent: props.node.attrs.id,
-          label: {
-            message: "global.event.type-task-created",
-            hexIcon: calculateHexIcon(props.node.attrs.id),
-          },
-          data: {
-            id: props.node.attrs.id,
-            content: props.node.attrs.content,
-            evaluation: props.node.attrs.evaluation,
-            feedbacks: props.node.attrs.feedbacks,
-            options: props.node.attrs.options,
-            state: props.node.attrs.state,
-          },
-        });
+        if (!!eventBus) {
+          eventBus.emit("interaction", {
+            type: "task-created",
+            parent: props.node.attrs.id,
+            facts: {},
+            label: {
+              message: "global.event.type-task-created",
+              hexIcon: calculateHexIcon(props.node.attrs.id),
+            },
+            data: {
+              id: props.node.attrs.id,
+              content: props.node.attrs.content,
+              evaluation: props.node.attrs.evaluation,
+              feedbacks: props.node.attrs.feedbacks,
+              options: props.node.attrs.options,
+              state: props.node.attrs.state,
+            },
+          });
+        }
 
         // eslint-disable-next-line vue/no-mutating-props
         props.editor.storage.tasks.rendered = [

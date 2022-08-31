@@ -3,7 +3,6 @@
 import { Extension, findChildren } from "@tiptap/core";
 import { isEqual } from "lodash-es";
 
-import type { Event } from "@/extensions/document/types";
 import type {
   EventCondition,
   EventOption,
@@ -13,9 +12,6 @@ import type {
 import type { MarkFeedback } from "@/extensions/feedback/mark/types";
 import type { NodeWithPos } from "@tiptap/vue-3";
 import { Plugin, PluginKey } from "prosemirror-state";
-import type { EventRule } from "@/extensions/feedback/types";
-import { checkRules } from "@/extensions/feedback/helpers/checkRules";
-import { calculateHexIcon } from "@/helpers/util";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -133,37 +129,6 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
         },
       },
     ];
-  },
-
-  onBeforeCreate() {
-    // Listen to all events that are emitted
-    this.editor.storage.document.eventBus().on("*", (type: string, event: Event) => {
-      const triggers: EventTrigger[] = this.editor.getAttributes("document").triggers;
-      const feedbacks: Feedback[] = this.editor.getAttributes("document").feedbacks;
-
-      // Filter the stored triggers for events that match type and parent
-      const eventTriggerWithType = triggers.filter(
-        (trigger: EventTrigger) => trigger.event === type && trigger.parent === event.parent
-      );
-
-      // For each event trigger in the filtered list, check if the rules are fulfilled.
-      // If this holds add them to the state store of active feedbacks.
-      eventTriggerWithType.forEach((trigger: EventTrigger) => {
-        if (
-          trigger.rules.every((rule: EventRule) => {
-            return checkRules(rule, event.facts);
-          })
-        ) {
-          // console.log("activate feedbacks");
-          trigger.feedbacks.forEach((id: string) => {
-            const feedback = feedbacks.find((f: Feedback) => f.id === id);
-            if (feedback) {
-              this.editor.commands.addActiveFeedback(feedback);
-            }
-          });
-        }
-      });
-    });
   },
 
   addProseMirrorPlugins() {
@@ -319,6 +284,7 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
         if (!activeFeedback) {
           this.storage.active = [...this.storage.active, feedback];
 
+          /*
           this.editor.storage.document.eventBus().emit("feedback-presented", {
             type: "feedback-presented",
             parent: feedback.parent,
@@ -329,6 +295,7 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
               hexIcon: !!feedback.parent ? calculateHexIcon(feedback.parent) : undefined,
             },
           });
+           */
         }
 
         return true;

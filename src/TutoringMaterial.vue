@@ -1,3 +1,4 @@
+<!--suppress JSUnusedGlobalSymbols -->
 <template>
   <!-- Use an extra div to register ResizeObserver after mounting, but when the editor component is not mounted yet. -->
   <div ref="container" class="h-full w-full">
@@ -35,46 +36,24 @@
 
 <script lang="ts">
 // Vue imports
-import { defineComponent, onBeforeUnmount, onMounted, provide, ref, watch } from "vue";
+import { defineComponent, onBeforeUnmount, onMounted, watch } from "vue";
 import { findChildren } from "@tiptap/core";
-import { useI18n } from "vue-i18n";
 import { isEqual } from "lodash-es";
 import EditorMenu from "@/helpers/EditorMenu.vue";
 
-// Editor imports
-import { Editor, EditorContent } from "@tiptap/vue-3";
-import { Document as BaseDocument } from "@tiptap/extension-document";
-import StarterKit from "@tiptap/starter-kit";
-import { Color } from "@tiptap/extension-color";
-import { Placeholder } from "@tiptap/extension-placeholder";
-import { Subscript } from "@tiptap/extension-subscript";
-import { Superscript } from "@tiptap/extension-superscript";
-import { TextAlign } from "@tiptap/extension-text-align";
-import { TextStyle } from "@tiptap/extension-text-style";
-import { Typography } from "@tiptap/extension-typography";
-import { Underline } from "@tiptap/extension-underline";
-
-// Custom editor extensions
-import { Document } from "@/extensions/document";
-import { Indent } from "@/extensions/indent";
-import { Infobox } from "@/extensions/infobox";
-import { CustomImage } from "@/extensions/image";
+import { EditorContent } from "@tiptap/vue-3";
 import EditorFooter from "@/helpers/EditorFooter.vue";
 import NotificationContainerComponent from "@/extensions/feedback/notification/NotificationContainerComponent.vue";
 
-import { Task } from "@/extensions/task";
-import { SingleChoiceTask } from "@/extensions/task/single-choice";
-
-import { FeedbackExtension } from "@/extensions/feedback";
-import { FeedbackHint } from "@/extensions/feedback/hint";
-import { FeedbackMark } from "@/extensions/feedback/mark";
-import { FeedbackNotification } from "@/extensions/feedback/notification";
-
-import type { DocumentState, EmittedEvent, Event } from "@/extensions/document/types";
+import type { DocumentState } from "@/extensions/document/types";
 import type { Feedback } from "@/extensions/feedback/types";
 import type { JSONContent } from "@tiptap/vue-3";
 import type { PropType } from "vue";
 import type { TaskOptions } from "@/extensions/task/types";
+import useEditor from "@/helpers/useEditor";
+import useDefaults from "@/helpers/useDefaults";
+import useContainerSizing from "@/helpers/useContainerSizing";
+import useEventBus from "@/helpers/useEventBus";
 
 export default defineComponent({
   components: {
@@ -135,6 +114,11 @@ export default defineComponent({
   emits: ["update:content", "update:state", "event"],
 
   setup(props, context) {
+    useDefaults(props);
+    const { editor } = useEditor(props, context);
+    const { eventBus } = useEventBus(editor, context);
+    const { container, width, height, editorContainerClasses } = useContainerSizing(props);
+
     // Meta information
     const startTimestamp: number = Date.now();
     // eslint-disable-next-line vue/no-setup-props-destructure
@@ -143,22 +127,20 @@ export default defineComponent({
     const receivedState = props.state;
 
     onMounted(() => {
-      if (!editor.isEditable) {
-        editor.storage.document.eventBus().emit("document-created", {
-          type: "document-created",
-          parent: null,
-          facts: {},
-          data: {
-            startTimestamp: startTimestamp,
-            endTimestamp: Date.now(),
-            receivedContent: receivedContent,
-            receivedState: receivedState,
-          },
-          label: {
-            message: "global.event.type-document-created",
-          },
-        });
-      }
+      eventBus.emit("interaction", {
+        type: "document-created",
+        parent: null,
+        facts: {},
+        data: {
+          startTimestamp: startTimestamp,
+          endTimestamp: Date.now(),
+          receivedContent: receivedContent,
+          receivedState: receivedState,
+        },
+        label: {
+          message: "global.event.type-document-created",
+        },
+      });
     });
 
     onBeforeUnmount(() => {
@@ -170,108 +152,6 @@ export default defineComponent({
       editor.storage.tasks.rendered = editor.storage.tasks.rendered.filter(
         (taskId: string) => !taskIds.includes(taskId)
       );
-    });
-
-    const { t, locale } = useI18n();
-
-    // Editor
-    const editor: Editor = new Editor({
-      editorProps: {
-        attributes: {
-          // Keep this class here to make the full area of the editor clickable
-          class: "h-full",
-        },
-      },
-      extensions: [
-        // Basic setup
-        BaseDocument.extend({
-          content: "document",
-        }),
-        Document.configure({
-          isEditor: props.isEditor,
-        }),
-        StarterKit.configure({
-          document: false,
-          dropcursor: {
-            color: "#ff0000",
-            width: 2,
-          },
-          heading: {
-            levels: [1, 2, 3],
-          },
-        }),
-        Color,
-        Subscript,
-        Superscript,
-        TextStyle,
-        Typography,
-        Underline,
-        Placeholder.configure({
-          includeChildren: true,
-          placeholder: () => t("editor.placeholder-text"),
-        }),
-        TextAlign.configure({
-          types: ["heading", "paragraph", "image"],
-        }),
-
-        // Custom Extensions
-        Indent,
-        CustomImage,
-        Infobox,
-        FeedbackExtension,
-        FeedbackHint,
-        FeedbackNotification,
-        FeedbackMark.configure({ showOutline: props.isEditor }),
-        Task,
-        SingleChoiceTask,
-      ],
-      content: props.content,
-      autofocus: false,
-      editable: props.isEditor,
-      injectCSS: true,
-      onCreate: () => {
-        if (props.isEditor) {
-          context.emit("update:content", editor.getJSON());
-        }
-      },
-      onUpdate: () => {
-        if (props.isEditor) {
-          context.emit("update:content", editor.getJSON());
-        }
-      },
-    });
-
-    // Watch locale change to trigger an event view update
-    // https://github.com/ueberdosis/tiptap/issues/1935
-    watch(locale, () => {
-      editor.view.dispatch(editor.state.tr);
-    });
-
-    // Set default task options with respect to the provided options
-    // If the instance is a player, only set
-    provide("defaultTaskOptions", {
-      allowEmptyAnswerSubmission: false,
-      hasMaxAttempts: true,
-      maxAttempts: 2,
-      textSubmitButton: t("global.options.text-submit-button"),
-      titleCorrectAnswer: t("global.options.title-correct-answer"),
-      textCorrectAnswer: t("global.options.text-correct-answer"),
-      titleIncorrectAnswer: t("global.options.title-incorrect-answer"),
-      textIncorrectAnswer: t("global.options.text-incorrect-answer"),
-      titleFinalIncorrectAnswer: t("global.options.title-final-incorrect-answer"),
-      textFinalIncorrectAnswer: t("global.options.text-final-incorrect-answer"),
-      ...props.taskOptions,
-    });
-
-    // Register event bus
-    editor.storage.document.eventBus().on("*", (type: string, e: Event) => {
-      context.emit("event", {
-        type: type,
-        ts: Date.now(),
-        facts: e.facts,
-        data: e.data,
-        label: e.label,
-      } as EmittedEvent);
     });
 
     watch(
@@ -323,10 +203,6 @@ export default defineComponent({
       { deep: true }
     );
 
-    onBeforeUnmount(() => {
-      editor.destroy();
-    });
-
     onMounted(() => {
       context.emit("update:state", {
         tasks: editor.storage.tasks.taskStates,
@@ -356,34 +232,7 @@ export default defineComponent({
       { deep: true }
     );
 
-    // Content sizing
-    const container = ref<HTMLInputElement | null>(null);
-    const width = ref(0);
-    const height = ref(0);
-    const editorContainerClasses = ref([props.isEditor ? "overflow-y-auto h-full" : ""]);
-
-    provide("height", height);
-    provide("width", width);
-
-    onMounted(() => {
-      const ro = new ResizeObserver(() => {
-        height.value = container?.value?.clientHeight || 0;
-        width.value = container?.value?.clientWidth || 0;
-
-        editorContainerClasses.value = [
-          props.isEditor ? "overflow-y-auto h-full" : "",
-          width.value < 500 ? "prose-sm" : "",
-          width.value >= 500 && width.value < 900 ? "prose-base" : "",
-          width.value >= 900 ? "prose-lg" : "",
-        ];
-      });
-      if (container.value) {
-        ro.observe(container.value);
-      }
-    });
-
     return {
-      t,
       editor,
       container,
       editorContainerClasses,

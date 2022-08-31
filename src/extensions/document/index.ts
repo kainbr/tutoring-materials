@@ -1,15 +1,7 @@
 // noinspection JSUnusedGlobalSymbols
 
-import mitt from "mitt";
 import { mergeAttributes, Node } from "@tiptap/core";
 import { saveAs } from "file-saver";
-
-import type { Emitter } from "mitt";
-import type { Event } from "@/extensions/document/types";
-
-export interface DocumentStorage {
-  eventBus: () => Emitter<Event> | null;
-}
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -27,18 +19,12 @@ declare module "@tiptap/core" {
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export const Document = Node.create<{}, DocumentStorage>({
+export const Document = Node.create({
   name: "document",
 
   group: "block",
 
   content: "block+",
-
-  addStorage() {
-    return {
-      eventBus: () => null,
-    };
-  },
 
   parseHTML() {
     return [{ tag: "div" }];
@@ -46,13 +32,6 @@ export const Document = Node.create<{}, DocumentStorage>({
 
   renderHTML({ HTMLAttributes }) {
     return ["div", mergeAttributes(HTMLAttributes), 0];
-  },
-
-  onBeforeCreate() {
-    const eventBus = mitt<Event>();
-    this.storage.eventBus = () => {
-      return eventBus;
-    };
   },
 
   onCreate() {

@@ -131,7 +131,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, inject } from "vue";
 
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import IconAdd from "@/helpers/icons/IconAdd.vue";
@@ -154,6 +154,7 @@ import {
   formatEvaluation,
   evaluationOptions,
 } from "@/extensions/task/single-choice/format/evaluation";
+import { isEqual } from "lodash-es";
 import { useTask } from "@/extensions/task/helpers";
 import { v4 as uuid } from "uuid";
 
@@ -168,9 +169,10 @@ import type {
   SCProps,
   SCEmits,
 } from "@/extensions/task/single-choice/types";
-import { isEqual } from "lodash-es";
 import type { Editor } from "@tiptap/vue-3";
 import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
+import type { Emitter } from "mitt";
+import type { Events } from "@/helpers/useEventBus";
 
 export default defineComponent({
   name: "TaskSingleChoice",
@@ -227,6 +229,8 @@ export default defineComponent({
   emits: ["update", "submit"],
 
   setup(props, { emit }) {
+    const eventBus: Emitter<Events> | undefined = inject("eventBus");
+
     const { update } = useTask<SCProps, SCEmits, SCOptions, SCOption[], SCEvaluation, SCState>(
       props,
       emit,
@@ -311,18 +315,22 @@ export default defineComponent({
             },
           });
 
-          props.editor.storage.document.eventBus().emit("answer-changed", {
-            parent: props.id,
-            label: {
-              message: "global.event.type-answer-changed",
-              hexIcon: calculateHexIcon(props.id),
-            },
-            data: {
-              ...props.state,
-              answer: newAnswer,
-              oldAnswer: oldAnswer,
-            },
-          });
+          if (!!eventBus) {
+            eventBus.emit("interaction", {
+              type: "answer-changed",
+              parent: props.id,
+              facts: {},
+              label: {
+                message: "global.event.type-answer-changed",
+                hexIcon: calculateHexIcon(props.id),
+              },
+              data: {
+                ...props.state,
+                answer: newAnswer,
+                oldAnswer: oldAnswer,
+              },
+            });
+          }
         }
       }
     };

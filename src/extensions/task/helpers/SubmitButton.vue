@@ -49,10 +49,12 @@ import { evaluate } from "@/extensions/task/evaluate";
 import { calculateHexIcon } from "@/helpers/util";
 import InlineEditor from "@/helpers/InlineEditor.vue";
 
-import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
-import type { TaskEvaluation, TaskOptions, TaskState } from "@/extensions/task/types";
+import type { Emitter } from "mitt";
+import type { Events } from "@/helpers/useEventBus";
 import type { Feedback } from "@/extensions/feedback/types";
+import type { PropType } from "vue";
+import type { TaskEvaluation, TaskOptions, TaskState } from "@/extensions/task/types";
 
 export default defineComponent({
   name: "SubmitButton",
@@ -87,6 +89,8 @@ export default defineComponent({
   },
 
   setup(props) {
+    const eventBus: Emitter<Events> | undefined = inject("eventBus");
+
     const hints = computed(() => {
       return (
         props.editor.storage.feedbacks.active.filter(
@@ -155,24 +159,26 @@ export default defineComponent({
       const { response, facts } = await evaluate(props.type, props.evaluation, props.state);
 
       // Emit event
-      props.editor.storage.document.eventBus().emit("answer-submitted", {
-        type: props.type,
-        parent: props.state.id,
-        facts: {
-          attempt: props.state.attempt,
-          empty: props.state.empty,
-          response,
-          ...facts,
-        },
-        data: {
-          ...props.state,
-          response,
-        },
-        label: {
-          message: "global.event.type-answer-submitted",
-          hexIcon: calculateHexIcon(props.state.id),
-        },
-      });
+      if (!!eventBus) {
+        eventBus.emit("interaction", {
+          type: "answer-submitted",
+          parent: props.state.id,
+          facts: {
+            attempt: props.state.attempt,
+            empty: props.state.empty,
+            response,
+            ...facts,
+          },
+          data: {
+            ...props.state,
+            response,
+          },
+          label: {
+            message: "global.event.type-answer-submitted",
+            hexIcon: calculateHexIcon(props.state.id),
+          },
+        });
+      }
 
       // Set the next state depending on the result and the configuration of the task
       if (response) {
