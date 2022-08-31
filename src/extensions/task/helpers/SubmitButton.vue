@@ -44,22 +44,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent, inject } from "vue";
 import { evaluate } from "@/extensions/task/evaluate";
 import { calculateHexIcon } from "@/helpers/util";
+import InlineEditor from "@/helpers/InlineEditor.vue";
 
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
 import type { TaskEvaluation, TaskOptions, TaskState } from "@/extensions/task/types";
 import type { Feedback } from "@/extensions/feedback/types";
-import InlineEditor from "@/helpers/InlineEditor.vue";
 
 export default defineComponent({
   name: "SubmitButton",
 
   components: { InlineEditor },
-
-  inject: ["height", "width"],
 
   props: {
     editor: {
@@ -88,109 +86,123 @@ export default defineComponent({
     },
   },
 
-  computed: {
-    hints() {
+  setup(props) {
+    const hints = computed(() => {
       return (
-        this.editor.storage.feedbacks.active.filter(
-          (s: Feedback) => s.type === "feedback-hint" && s.parent === this.id
+        props.editor.storage.feedbacks.active.filter(
+          (s: Feedback) => s.type === "feedback-hint" && s.parent === props.id
         ) || []
       );
-    },
-    backgroundColor() {
+    });
+
+    const backgroundColor = computed(() => {
       return {
-        "p-3": this.state.state !== "init",
-        "bg-green-50": this.state.state === "correct",
-        "bg-yellow-50": this.state.state === "incorrect",
-        "bg-red-50": this.state.state === "final-incorrect",
+        "p-3": props.state.state !== "init",
+        "bg-green-50": props.state.state === "correct",
+        "bg-yellow-50": props.state.state === "incorrect",
+        "bg-red-50": props.state.state === "final-incorrect",
       };
-    },
-    title() {
-      switch (this.state.state) {
+    });
+
+    const title = computed(() => {
+      switch (props.state.state) {
         case "correct":
-          return this.options.titleCorrectAnswer;
+          return props.options.titleCorrectAnswer;
         case "incorrect":
-          return this.options.titleIncorrectAnswer;
+          return props.options.titleIncorrectAnswer;
         case "final-incorrect":
-          return this.options.titleFinalIncorrectAnswer;
+          return props.options.titleFinalIncorrectAnswer;
         default:
           return "title-correct-answer";
       }
-    },
-    titleColor() {
+    });
+
+    const titleColor = computed(() => {
       return {
-        "text-green-800": this.state.state === "correct",
-        "text-yellow-800": this.state.state === "incorrect",
-        "text-red-800": this.state.state === "final-incorrect",
+        "text-green-800": props.state.state === "correct",
+        "text-yellow-800": props.state.state === "incorrect",
+        "text-red-800": props.state.state === "final-incorrect",
       };
-    },
-    text() {
-      switch (this.state.state) {
+    });
+
+    const text = computed(() => {
+      switch (props.state.state) {
         case "correct":
-          return this.options.textCorrectAnswer;
+          return props.options.textCorrectAnswer;
         case "incorrect":
-          return this.options.textIncorrectAnswer;
+          return props.options.textIncorrectAnswer;
         case "final-incorrect":
-          return this.options.textFinalIncorrectAnswer;
+          return props.options.textFinalIncorrectAnswer;
         default:
           return "text-correct-answer";
       }
-    },
-    fontColor() {
-      return {
-        "text-green-700": this.state.state === "correct",
-        "text-yellow-700": this.state.state === "incorrect",
-        "text-red-700": this.state.state === "final-incorrect",
-      };
-    },
-  },
+    });
 
-  methods: {
+    const fontColor = computed(() => {
+      return {
+        "text-green-700": props.state.state === "correct",
+        "text-yellow-700": props.state.state === "incorrect",
+        "text-red-700": props.state.state === "final-incorrect",
+      };
+    });
+
     /**
      * Evaluate the response and determine the next state of the task
      * Possible values are: correct, incorrect and final-incorrect
      */
-    async submit() {
+    const submit = async () => {
       // Evaluate answer
-      const { response, facts } = await evaluate(this.type, this.evaluation, this.state);
+      const { response, facts } = await evaluate(props.type, props.evaluation, props.state);
 
       // Emit event
-      this.editor.storage.document.eventBus().emit("answer-submitted", {
-        type: this.type,
-        parent: this.state.id,
+      props.editor.storage.document.eventBus().emit("answer-submitted", {
+        type: props.type,
+        parent: props.state.id,
         facts: {
-          attempt: this.state.attempt,
-          empty: this.state.empty,
+          attempt: props.state.attempt,
+          empty: props.state.empty,
           response,
           ...facts,
         },
         data: {
-          ...this.state,
+          ...props.state,
           response,
         },
         label: {
           message: "global.event.type-answer-submitted",
-          hexIcon: calculateHexIcon(this.state.id),
+          hexIcon: calculateHexIcon(props.state.id),
         },
       });
 
       // Set the next state depending on the result and the configuration of the task
       if (response) {
-        this.editor.commands.updateTaskState(this.state, { ...this.state, state: "correct" });
+        props.editor.commands.updateTaskState(props.state, { ...props.state, state: "correct" });
       } else {
-        if (this.options.hasMaxAttempts && this.state.attempt >= this.options.maxAttempts) {
-          this.editor.commands.updateTaskState(this.state, {
-            ...this.state,
+        if (props.options.hasMaxAttempts && props.state.attempt >= props.options.maxAttempts) {
+          props.editor.commands.updateTaskState(props.state, {
+            ...props.state,
             state: "final-incorrect",
           });
         } else {
-          this.editor.commands.updateTaskState(this.state, {
-            ...this.state,
+          props.editor.commands.updateTaskState(props.state, {
+            ...props.state,
             state: "incorrect",
-            attempt: this.state.attempt + 1,
+            attempt: props.state.attempt + 1,
           });
         }
       }
-    },
+    };
+
+    return {
+      hints,
+      backgroundColor,
+      title,
+      titleColor,
+      text,
+      fontColor,
+      submit,
+      width: inject("width") as number,
+    };
   },
 });
 </script>
