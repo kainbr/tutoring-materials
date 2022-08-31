@@ -194,12 +194,12 @@ export default defineComponent({
     };
 
     return {
-      hints,
       backgroundColor,
+      fontColor,
+      hints,
       title,
       titleColor,
       text,
-      fontColor,
       submit,
       width: inject("width") as number,
     };
