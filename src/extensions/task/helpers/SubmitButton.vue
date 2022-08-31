@@ -55,6 +55,7 @@ import type { Events } from "@/helpers/useEventBus";
 import type { Feedback } from "@/extensions/feedback/types";
 import type { PropType } from "vue";
 import type { TaskEvaluation, TaskOptions, TaskState } from "@/extensions/task/types";
+import type { ProvidedTaskStates } from "@/helpers/useTasks";
 
 export default defineComponent({
   name: "SubmitButton",
@@ -89,7 +90,8 @@ export default defineComponent({
   },
 
   setup(props) {
-    const eventBus: Emitter<Events> | undefined = inject("eventBus");
+    const eventBus = inject("eventBus") as Emitter<Events>;
+    const { updateTaskState } = inject("tasks") as ProvidedTaskStates;
 
     const hints = computed(() => {
       return (
@@ -159,38 +161,36 @@ export default defineComponent({
       const { response, facts } = await evaluate(props.type, props.evaluation, props.state);
 
       // Emit event
-      if (!!eventBus) {
-        eventBus.emit("interaction", {
-          type: "answer-submitted",
-          parent: props.state.id,
-          facts: {
-            attempt: props.state.attempt,
-            empty: props.state.empty,
-            response,
-            ...facts,
-          },
-          data: {
-            ...props.state,
-            response,
-          },
-          label: {
-            message: "global.event.type-answer-submitted",
-            hexIcon: calculateHexIcon(props.state.id),
-          },
-        });
-      }
+      eventBus.emit("interaction", {
+        type: "answer-submitted",
+        parent: props.state.id,
+        facts: {
+          attempt: props.state.attempt,
+          empty: props.state.empty,
+          response,
+          ...facts,
+        },
+        data: {
+          ...props.state,
+          response,
+        },
+        label: {
+          message: "global.event.type-answer-submitted",
+          hexIcon: calculateHexIcon(props.state.id),
+        },
+      });
 
       // Set the next state depending on the result and the configuration of the task
       if (response) {
-        props.editor.commands.updateTaskState(props.state, { ...props.state, state: "correct" });
+        updateTaskState(props.state, { ...props.state, state: "correct" });
       } else {
         if (props.options.hasMaxAttempts && props.state.attempt >= props.options.maxAttempts) {
-          props.editor.commands.updateTaskState(props.state, {
+          updateTaskState(props.state, {
             ...props.state,
             state: "final-incorrect",
           });
         } else {
-          props.editor.commands.updateTaskState(props.state, {
+          updateTaskState(props.state, {
             ...props.state,
             state: "incorrect",
             attempt: props.state.attempt + 1,

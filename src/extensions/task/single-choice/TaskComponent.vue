@@ -142,8 +142,8 @@ import IconShuffle from "@/helpers/icons/IconShuffle.vue";
 import IconTrash from "@/helpers/icons/IconTrash.vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
 import TaskScaffold from "@/extensions/task/helpers/TaskScaffold.vue";
-import OptionsDefaults from "@/helpers/tasks/OptionsDefaults.vue";
-import OptionsFormEnum from "@/helpers/tasks/OptionsFormEnum.vue";
+import OptionsDefaults from "@/extensions/task/helpers/OptionsDefaults.vue";
+import OptionsFormEnum from "@/extensions/task/helpers/OptionsFormEnum.vue";
 
 import { calculateHexIcon } from "@/helpers/util";
 import { formatOptions } from "@/extensions/task/single-choice/format/options";

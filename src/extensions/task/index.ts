@@ -28,7 +28,7 @@ declare module "@tiptap/core" {
 }
 
 export interface TaskExtensionStorage {
-  taskStates: TaskState[];
+  // taskStates: TaskState[];
   rendered: string[];
 }
 
@@ -37,13 +37,14 @@ export const Task = Extension.create<unknown, TaskExtensionStorage>({
 
   addStorage() {
     return {
-      taskStates: [],
+      // taskStates: [],
       rendered: [], // Track rendered tasks by id to avoid multiple
     };
   },
 
   addCommands() {
     return {
+      /*
       addTaskState:
         (taskState) =>
         ({}) => {
@@ -84,6 +85,7 @@ export const Task = Extension.create<unknown, TaskExtensionStorage>({
 
           return true;
         },
+       */
     };
   },
 

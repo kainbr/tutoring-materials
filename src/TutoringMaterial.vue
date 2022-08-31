@@ -36,9 +36,8 @@
 
 <script lang="ts">
 // Vue imports
-import { defineComponent, onBeforeUnmount, onMounted, watch } from "vue";
+import { defineComponent, onBeforeUnmount, onMounted } from "vue";
 import { findChildren } from "@tiptap/core";
-import { isEqual } from "lodash-es";
 import EditorMenu from "@/helpers/EditorMenu.vue";
 
 import { EditorContent } from "@tiptap/vue-3";
@@ -46,7 +45,6 @@ import EditorFooter from "@/helpers/EditorFooter.vue";
 import NotificationContainerComponent from "@/extensions/feedback/notification/NotificationContainerComponent.vue";
 
 import type { DocumentState } from "@/extensions/document/types";
-import type { Feedback } from "@/extensions/feedback/types";
 import type { JSONContent } from "@tiptap/vue-3";
 import type { PropType } from "vue";
 import type { TaskOptions } from "@/extensions/task/types";
@@ -54,6 +52,8 @@ import useEditor from "@/helpers/useEditor";
 import useDefaults from "@/helpers/useDefaults";
 import useContainerSizing from "@/helpers/useContainerSizing";
 import useEventBus from "@/helpers/useEventBus";
+import useTasks from "@/helpers/useTasks";
+import useProps from "@/helpers/useProps";
 
 export default defineComponent({
   components: {
@@ -115,9 +115,11 @@ export default defineComponent({
 
   setup(props, context) {
     useDefaults(props);
+    const { container, width, height, editorContainerClasses } = useContainerSizing(props);
     const { editor } = useEditor(props, context);
     const { eventBus } = useEventBus(editor, context);
-    const { container, width, height, editorContainerClasses } = useContainerSizing(props);
+    const { taskStates } = useTasks();
+    useProps(editor, taskStates, props, context);
 
     // Meta information
     const startTimestamp: number = Date.now();
@@ -153,84 +155,6 @@ export default defineComponent({
         (taskId: string) => !taskIds.includes(taskId)
       );
     });
-
-    watch(
-      () => props.content,
-      (content) => {
-        if (!isEqual(content, editor.getJSON())) {
-          if (!content) {
-            content = {
-              type: "doc",
-              content: [
-                {
-                  type: "document",
-                  content: [
-                    {
-                      type: "paragraph",
-                    },
-                  ],
-                },
-              ],
-            };
-          }
-          editor.commands.setContent(content, true);
-        }
-      },
-      { deep: true }
-    );
-
-    watch(
-      [() => props.state.tasks, () => props.state.feedbacks],
-      ([tasks, feedbacks]) => {
-        if (!isEqual(tasks, editor.storage.tasks.taskStates)) {
-          editor.storage.tasks.taskStates = tasks;
-        }
-        if (!isEqual(feedbacks, editor.storage.feedbacks.active)) {
-          // editor.storage.feedbacks.active = feedbacks;
-          const feedbackIds = feedbacks.map((feedback: Feedback) => feedback.id);
-
-          editor.storage.feedbacks.active
-            .filter((feedback: Feedback) => !feedbackIds.includes(feedback.id))
-            .forEach((feedback: Feedback) => {
-              editor.commands.removeActiveFeedback(feedback);
-            });
-
-          feedbacks.forEach((feedback: Feedback) => {
-            editor.commands.addActiveFeedback(feedback);
-          });
-        }
-      },
-      { deep: true }
-    );
-
-    onMounted(() => {
-      context.emit("update:state", {
-        tasks: editor.storage.tasks.taskStates,
-        feedbacks: editor.storage.feedbacks.active,
-      });
-    });
-
-    watch(
-      [() => editor.storage.tasks.taskStates, () => editor.storage.feedbacks.active],
-      ([states, feedbacks], [oldStates, oldFeedbacks]) => {
-        if (!isEqual(states, oldStates) || !isEqual(feedbacks, oldFeedbacks)) {
-          context.emit("update:state", {
-            tasks: states,
-            feedbacks: feedbacks,
-          });
-
-          editor.setOptions({
-            editorProps: {
-              attributes: {
-                style: editor.storage["feedback-mark"].getStyleVariables(),
-                class: "h-full",
-              },
-            },
-          });
-        }
-      },
-      { deep: true }
-    );
 
     return {
       editor,

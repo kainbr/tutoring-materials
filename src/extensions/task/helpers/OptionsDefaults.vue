@@ -114,9 +114,9 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import OptionsFormBoolean from "@/helpers/tasks/OptionsFormBoolean.vue";
-import OptionsFormNumber from "@/helpers/tasks/OptionsFormNumber.vue";
-import OptionsFormString from "@/helpers/tasks/OptionsFormString.vue";
+import OptionsFormBoolean from "@/extensions/task/helpers/OptionsFormBoolean.vue";
+import OptionsFormNumber from "@/extensions/task/helpers/OptionsFormNumber.vue";
+import OptionsFormString from "@/extensions/task/helpers/OptionsFormString.vue";
 
 export default defineComponent({
   name: "OptionsDefaults",
