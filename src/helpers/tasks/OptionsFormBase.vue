@@ -2,11 +2,7 @@
   <div class="grid grid-cols-2 gap-4 items-center">
     <div class="flex flex-row items-center">
       <div class="pr-1.5 w-7">
-        <IconQuestion
-          v-if="description !== ''"
-          v-tippy="tippyConfig"
-          class="w-5 h-5"
-        ></IconQuestion>
+        <IconQuestionMark v-if="description !== ''" v-tippy="tippyConfig" class="w-5 h-5" />
       </div>
       <label :for="name" class="block text-sm font-medium text-gray-700">{{ label }}</label>
     </div>
@@ -20,12 +16,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import IconQuestion from "@/helpers/icons/IconQuestion.vue";
+import IconQuestionMark from "@/helpers/icons/IconQuestionMark.vue";
 
 export default defineComponent({
   name: "OptionsFormBase",
 
-  components: { IconQuestion },
+  components: { IconQuestionMark },
 
   props: {
     name: {

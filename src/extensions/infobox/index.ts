@@ -8,7 +8,7 @@ declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     infobox: {
       /**
-       *
+       * Adds an infobox to the current document.
        */
       setInfobox: () => ReturnType;
     };
@@ -32,7 +32,7 @@ export const Infobox = Node.create({
         default: "blue",
       },
       icon: {
-        default: "error-warning-line",
+        default: "icon-exclamation-mark",
       },
     };
   },

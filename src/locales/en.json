@@ -19,16 +19,16 @@
     },
     "infobox": {
       "color-description": "Color",
+      "color-label-amber": "Amber",
       "color-label-blue": "Blue",
       "color-label-green": "Green",
       "color-label-red": "Red",
-      "color-label-yellow": "Yellow",
       "icon-description": "Icon",
-      "icon-label-error-warning-fill": "Exclamation Mark (filled)",
-      "icon-label-error-warning-line": "Exclamation Mark",
-      "icon-label-question-fill": "Question Mark (filled)",
-      "icon-label-question-line": "Question Mark",
-      "icon-label-rainbow-line": "Rainbow"
+      "label-icon-alarm": "Alarm",
+      "label-icon-check": "Check",
+      "label-icon-exclamation-mark": "Exclamation Mark",
+      "label-icon-light-bulb": "Light-bulb",
+      "label-icon-question-mark": "Question Mark"
     },
     "menu": {
       "feedback-copy-tooltip": "Copy feedback",

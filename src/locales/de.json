@@ -19,16 +19,16 @@
     },
     "infobox": {
       "color-description": "Farbe",
+      "color-label-amber": "Bernstein",
       "color-label-blue": "Blau",
       "color-label-green": "Grün",
       "color-label-red": "Rot",
-      "color-label-yellow": "Gelb",
       "icon-description": "Symbol",
-      "icon-label-error-warning-fill": "Ausrufezeichen (gefüllt)",
-      "icon-label-error-warning-line": "Ausrufezeichen",
-      "icon-label-question-fill": "Fragezeichen (gefüllt)",
-      "icon-label-question-line": "Fragezeichen",
-      "icon-label-rainbow-line": "Regenbogen"
+      "label-icon-alarm": "Sirene",
+      "label-icon-check": "Haken",
+      "label-icon-exclamation-mark": "Ausrufezeichen",
+      "label-icon-light-bulb": "Glühlampe",
+      "label-icon-question-mark": "Fragezeichen"
     },
     "menu": {
       "feedback-copy-tooltip": "Rückmeldung kopieren",
