@@ -2,8 +2,8 @@
   "editor": {
     "feedback": {
       "hint-modal-edit-button": "Inhalt bearbeiten",
-      "hint-modal-edit-title": "Tipp bearbeiten",
-      "hint-modal-remove-button": "Tipp entfernen",
+      "hint-modal-edit-title": "Hinweis bearbeiten",
+      "hint-modal-remove-button": "Hinweis entfernen",
       "hint-modal-save-button": "Speichern",
       "notification-modal-description": "Benachrichtigung",
       "notification-modal-edit-button": "Inhalt bearbeiten",
@@ -69,7 +69,7 @@
       "config-label-title-incorrect-answer": "Überschrift falsche Antwort",
       "evaluation-label-type": "Art",
       "single-choice": {
-        "evaluation-all-match": "Alle Distraktoren sind korrekt aus-/abgewählt"
+        "evaluation-all-match": "Alle Antwortoptionen sind korrekt aus-/abgewählt"
       },
       "title-evaluation": "Auswertung",
       "title-feedbacks": "Rückmeldungen",
@@ -83,6 +83,7 @@
       "builder-and": "und",
       "builder-filter-feedbacks": "Filter Rückmeldungen",
       "builder-if": "Wenn",
+      "builder-select-condition": "Bedingung auswählen",
       "builder-select-event": "Ereignis auswählen",
       "builder-select-feedback": "Rückmeldung auswählen",
       "builder-then": "dann"
@@ -119,16 +120,10 @@
       "response-incorrect": "falsch",
       "response-preview": "Antwort (korrekt)",
       "single-choice": {
-        "answer-option-correct": "{index}. Distraktor",
-        "answer-option-correct-equal": "ist",
-        "answer-option-correct-false": "inkorrekt",
-        "answer-option-correct-preview": "{index}. Distraktor (korrekt)",
-        "answer-option-correct-true": "korrekt",
-        "answer-option-correct-unequal": "ist nicht",
-        "answer-option-selected": "{index}. Distraktor",
+        "answer-option-selected": "{index}. Antwortoption",
         "answer-option-selected-equal": "ist",
         "answer-option-selected-false": "nicht ausgewählt",
-        "answer-option-selected-preview": "{index}. Distraktor (ausgewählt)",
+        "answer-option-selected-preview": "{index}. Antwortoption (ausgewählt)",
         "answer-option-selected-true": "ausgewählt",
         "answer-option-selected-unequal": "ist nicht",
         "response-correct": "Antwort korrekt",
@@ -143,7 +138,7 @@
       "type-task-created": "Aufgabe erstellt"
     },
     "feedback": {
-      "type-feedback-hint": "Tipp",
+      "type-feedback-hint": "Hinweis",
       "type-feedback-mark": "Textformatierung ändern",
       "type-feedback-notification": "Zeige Benachrichtigung"
     },
@@ -164,7 +159,8 @@
   },
   "preview": {
     "button-reset-task": "Aufgabe zurücksetzen",
-    "button-rotate-player": "Ansicht drehen"
+    "button-rotate-player": "Ansicht drehen",
+    "button-send-notification": "Benachrichtung schicken"
   },
   "statistics": {
     "tab-events-data": "Zusätzliche Informationen",

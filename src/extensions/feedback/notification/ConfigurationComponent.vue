@@ -1,7 +1,8 @@
 <template>
   <feedback-configuration-component :editor="editor" :feedback="feedback" has-preview>
     <template #default>
-      <span class="ml-4 w-32 flex-auto truncate"> >> {{ getText(feedback.config.content) }} </span>
+      <IconArrowRight class="w-5 h-5 fill-slate-500" />
+      <span class="w-32 flex-auto truncate"> {{ getText(feedback.config.content) }} </span>
       <button
         type="button"
         class="mx-3 flex-shrink-0 text-sm text-blue-600 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -80,6 +81,7 @@ import InlineEditor from "@/helpers/InlineEditor.vue";
 import type { Editor, JSONContent } from "@tiptap/vue-3";
 import type { NotificationFeedback } from "@/extensions/feedback/notification/types";
 import type { PropType } from "vue";
+import IconArrowRight from "@/helpers/icons/IconArrowRight.vue";
 
 export default defineComponent({
   name: "FeedbackNotificationConfigurationComponent",
@@ -90,6 +92,7 @@ export default defineComponent({
     DialogPanel,
     DialogTitle,
     FeedbackConfigurationComponent,
+    IconArrowRight,
     InlineEditor,
     TransitionChild,
     TransitionRoot,

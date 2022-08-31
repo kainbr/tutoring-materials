@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-row flex-wrap container rounded-lg items-center" :class="backgroundColor">
+  <div class="flex flex-row flex-wrap container rounded-lg" :class="backgroundColor">
     <!-- Headline -->
-    <div class="flex flex-col justify-between basis-3/4">
+    <div class="flex flex-col basis-full" :class="{ 'basis-3/5': width > 500 }">
       <Transition appear>
         <span
           v-if="['correct', 'incorrect', 'final-incorrect'].includes(state.state)"
@@ -11,23 +11,28 @@
         >
       </Transition>
       <Transition appear>
-        <div v-if="['correct', 'incorrect', 'final-incorrect'].includes(state.state)" class="mt-1">
-          <span class="text-sm" :class="fontColor">{{ text }}</span>
+        <div v-if="['incorrect'].includes(state.state)">
+          <div
+            v-for="hint in hints"
+            :key="hint"
+            :class="fontColor"
+            class="not-prose text-sm mt-0.5"
+          >
+            <InlineEditor :content="hint.config.content"></InlineEditor>
+          </div>
         </div>
       </Transition>
       <Transition appear>
-        <div v-if="['incorrect'].includes(state.state)">
-          <span v-for="hint in hints" :key="hint" :class="fontColor" class="not-prose">
-            <InlineEditor :content="hint.config.content"></InlineEditor>
-          </span>
+        <div v-if="['correct', 'incorrect', 'final-incorrect'].includes(state.state)" class="">
+          <span class="text-sm" :class="fontColor">{{ text }}</span>
         </div>
       </Transition>
     </div>
 
-    <div class="grow w-36">
+    <div class="flex items-center basis-full" :class="{ 'basis-2/5 px-2': width > 500 }">
       <button
         v-if="['init', 'incorrect'].includes(state.state)"
-        class="inline-flex items-center mt-3 px-3 py-2 w-full justify-center border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        class="inline-flex items-center w-full mt-3 px-3 py-2 justify-center border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         type="button"
         :disabled="!options.allowEmptyAnswerSubmission && state.empty"
         @click="submit"
@@ -51,7 +56,11 @@ import InlineEditor from "@/helpers/InlineEditor.vue";
 
 export default defineComponent({
   name: "SubmitButton",
+
   components: { InlineEditor },
+
+  inject: ["height", "width"],
+
   props: {
     editor: {
       type: Object as PropType<Editor>,

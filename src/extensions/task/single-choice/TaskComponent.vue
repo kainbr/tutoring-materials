@@ -4,17 +4,18 @@
     <template #render>
       <div v-for="index in state?.order" :key="index" class="gap-2 items-center cursor-default">
         <div
-          class="flex flex-row pl-2"
+          class="flex flex-row pl-2 items-center"
           :class="{
-            'bg-green-50': !!content ? showCorrectAnswerOption(content[index]) : false,
-            'bg-red-50': !!content ? showIncorrectAnswerOption(content[index]) : false,
+            'bg-green-50': showCorrectAnswerOption(content[index]),
+            'bg-red-50': showIncorrectAnswerOption(content[index]),
           }"
-          @click="!!content ? changeAnswerOptionValue(content[index]) : () => {}"
+          @click="changeAnswerOptionValue(content[index])"
         >
           <input
             type="radio"
             class="mr-2"
-            :checked="!!content ? isOptionChecked(content[index]) : false"
+            :checked="isOptionChecked(content[index])"
+            :disabled="['correct', 'final-incorrect'].includes(state.state)"
           />
           <div style="flex-grow: 1" class="py-1">
             <InlineEditor :content="!!content ? content[index].content : undefined" />
@@ -30,10 +31,10 @@
         :key="option.id"
         class="flex flex-row gap-2 items-center"
       >
-        <div>
-          <span class="px-1"> ({{ index + 1 }}) </span>
+        <div class="flex flex-row min-w-fit items-center">
+          <span class="px-2"> ({{ index + 1 }}) </span>
           <input
-            :checked="evaluation?.solution.find((s) => s.id === option.id)?.value || false"
+            :checked="evaluation.solution.find((s) => s.id === option.id)?.value || false"
             type="radio"
             @input="updateAnswerOptionValue(option)"
           />
@@ -47,7 +48,7 @@
           />
         </div>
 
-        <div>
+        <div class="min-w-fit">
           <EditorMenuButton
             :disabled="index === 0"
             tabindex="-1"
@@ -392,9 +393,9 @@ export default defineComponent({
         rules: [
           {
             id: uuid(),
-            fact: reference + "-correct",
+            fact: reference + "-selected",
             operation: "equal",
-            value: false,
+            value: !props.evaluation.solution.find((option) => option.id === reference)?.value,
           },
         ],
         feedbacks: [uid],

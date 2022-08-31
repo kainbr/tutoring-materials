@@ -1,7 +1,8 @@
 <template>
   <feedback-configuration-component :editor="editor" :feedback="feedback">
     <template #default>
-      <span class="ml-4 w-32 flex-auto truncate"> >> {{ getText(feedback.config.content) }} </span>
+      <IconArrowRight class="w-5 h-5 fill-slate-500" />
+      <span class="w-32 flex-auto truncate"> {{ getText(feedback.config.content) }} </span>
       <button
         type="button"
         class="mx-3 flex-shrink-0 text-sm text-blue-600 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -89,6 +90,7 @@ import type { Editor } from "@tiptap/vue-3";
 import type { HintFeedback } from "@/extensions/feedback/hint/types";
 import type { PropType } from "vue";
 import type { JSONContent } from "@tiptap/vue-3";
+import IconArrowRight from "@/helpers/icons/IconArrowRight.vue";
 
 export default defineComponent({
   name: "FeedbackHintConfigurationComponent",
@@ -99,6 +101,7 @@ export default defineComponent({
     DialogPanel,
     DialogTitle,
     FeedbackConfigurationComponent,
+    IconArrowRight,
     InlineEditor,
     TransitionChild,
     TransitionRoot,

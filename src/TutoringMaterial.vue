@@ -258,8 +258,8 @@ export default defineComponent({
       textCorrectAnswer: t("global.options.text-correct-answer"),
       titleIncorrectAnswer: t("global.options.title-incorrect-answer"),
       textIncorrectAnswer: t("global.options.text-incorrect-answer"),
-      titleFinalIncorrectAnswer: t("global.options.text-final-incorrect-answer"),
-      textFinalIncorrectAnswer: t("global.options.title-final-incorrect-answer"),
+      titleFinalIncorrectAnswer: t("global.options.title-final-incorrect-answer"),
+      textFinalIncorrectAnswer: t("global.options.text-final-incorrect-answer"),
       ...props.taskOptions,
     });
 
@@ -361,6 +361,9 @@ export default defineComponent({
     const width = ref(0);
     const height = ref(0);
     const editorContainerClasses = ref([props.isEditor ? "overflow-y-auto h-full" : ""]);
+
+    provide("height", height);
+    provide("width", width);
 
     onMounted(() => {
       const ro = new ResizeObserver(() => {

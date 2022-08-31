@@ -83,6 +83,7 @@
       "builder-and": "and",
       "builder-filter-feedbacks": "Filter feedbacks",
       "builder-if": "If",
+      "builder-select-condition": "Select condition",
       "builder-select-event": "Select event",
       "builder-select-feedback": "Select feedback",
       "builder-then": "then"
@@ -119,12 +120,6 @@
       "response-incorrect": "incorrect",
       "response-preview": "Response (correct)",
       "single-choice": {
-        "answer-option-correct": "{index}. Option",
-        "answer-option-correct-equal": "is",
-        "answer-option-correct-false": "incorrect",
-        "answer-option-correct-preview": "{index}. Option (correct)",
-        "answer-option-correct-true": "correct",
-        "answer-option-correct-unequal": "is not",
         "answer-option-selected": "{index}. Option",
         "answer-option-selected-equal": "is",
         "answer-option-selected-false": "not selected",
@@ -164,7 +159,8 @@
   },
   "preview": {
     "button-reset-task": "Reset Task",
-    "button-rotate-player": "Rotate screen"
+    "button-rotate-player": "Rotate screen",
+    "button-send-notification": "Send notification"
   },
   "statistics": {
     "tab-events-data": "Additional information",

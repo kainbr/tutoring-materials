@@ -22,37 +22,23 @@
           type="button"
           @click="rotatePortrait"
         >
-          <svg
-            class="-ml-1 mr-1 h-4 w-4 text-gray-400"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M0 0h24v24H0z" fill="none" />
-            <path
-              d="M11 9h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H11a1 1 0 0 1-1-1V10a1 1 0 0 1 1-1zm1 2v8h8v-8h-8zm-6-.414l1.828-1.829 1.415 1.415L5 14.414.757 10.172l1.415-1.415L4 10.586V8a5 5 0 0 1 5-5h4v2H9a3 3 0 0 0-3 3v2.586z"
-            />
-          </svg>
+          <IconRotateLeft class="-ml-1 mr-1 h-4 w-4 text-gray-400" />
           {{ $t("preview.button-rotate-player") }}
+        </button>
+        <button
+          class="relative inline-flex items-center px-3 py-1.5 border-y border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+          type="button"
+          @click="sendNotification"
+        >
+          <IconMessage class="-ml-1 mr-1 h-4 w-4 text-gray-400" />
+          {{ $t("preview.button-send-notification") }}
         </button>
         <button
           class="-ml-px relative inline-flex items-center px-3 py-1.5 rounded-r-md border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
           type="button"
           @click="resetPlayer"
         >
-          <svg
-            class="-ml-1 mr-1 h-4 w-4 text-gray-400"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M0 0h24v24H0z" fill="none" />
-            <path
-              d="M5.463 4.433A9.961 9.961 0 0 1 12 2c5.523 0 10 4.477 10 10 0 2.136-.67 4.116-1.81 5.74L17 12h3A8 8 0 0 0 6.46 6.228l-.997-1.795zm13.074 15.134A9.961 9.961 0 0 1 12 22C6.477 22 2 17.523 2 12c0-2.136.67-4.116 1.81-5.74L7 12H4a8 8 0 0 0 13.54 5.772l.997 1.795z"
-            />
-          </svg>
+          <IconRefresh class="-ml-1 mr-1 h-4 w-4 text-gray-400" />
           {{ $t("preview.button-reset-task") }}
         </button>
       </span>
@@ -84,11 +70,17 @@ import type { PropType } from "vue";
 import type { DocumentState } from "@/extensions/document/types";
 import type { TaskState } from "@/extensions/task/types";
 import type { Feedback } from "@/extensions/feedback/types";
+import IconRotateLeft from "@/helpers/icons/IconRotateLeft.vue";
+import IconRefresh from "@/helpers/icons/IconRefresh.vue";
+import IconMessage from "@/helpers/icons/IconMessage.vue";
 
 export default defineComponent({
   name: "TutoringMaterialPreview",
 
   components: {
+    IconMessage,
+    IconRefresh,
+    IconRotateLeft,
     TutoringMaterialPlayer,
   },
 
@@ -172,6 +164,35 @@ export default defineComponent({
     },
     updateState($event: { tasks: TaskState[]; feedbacks: Feedback[] }) {
       this.$emit("update:state", $event);
+    },
+    sendNotification() {
+      this.$emit("update:state", {
+        tasks: this.state?.tasks,
+        feedbacks: [
+          ...this.state?.feedbacks,
+          {
+            id: "test",
+            type: "feedback-notification",
+            parent: null,
+            config: {
+              content: {
+                type: "doc",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [
+                      {
+                        type: "text",
+                        text: "This is a test message.",
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      });
     },
   },
 });

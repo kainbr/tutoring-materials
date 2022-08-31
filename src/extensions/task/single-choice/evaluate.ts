@@ -13,14 +13,6 @@ export const evaluate = function (config: SCEvaluation, state: SCState): boolean
 export const getFacts = function (config: SCEvaluation, state: SCState): object {
   return {
     // option values
-    ...state.answer.reduce((a, o) => ({ ...a, [o.id + "-value"]: o.value }), {}),
-    // option correctness
-    ...state.answer.reduce(
-      (a, o) => ({
-        ...a,
-        [o.id + "-correct"]: o.value === config.solution.find((a) => a.id === o.id)?.value,
-      }),
-      {}
-    ),
+    ...state.answer.reduce((a, o) => ({ ...a, [o.id + "-selected"]: o.value }), {}),
   };
 };

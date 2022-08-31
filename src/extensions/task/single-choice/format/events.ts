@@ -52,31 +52,6 @@ const empty: EventCondition = {
 };
 
 export const formatEvents: SCFormatFunction = function (data) {
-  const getOptionCorrect = (content: SCOption[]): EventCondition[] => {
-    return content.map((option, index) => {
-      return {
-        fact: option.id + "-correct",
-        label: {
-          message: "global.condition.single-choice.answer-option-correct",
-          data: { index: index + 1 },
-        },
-        previewLabel: {
-          message: "global.condition.single-choice.answer-option-correct-preview",
-          data: { index: index + 1 },
-        },
-        type: "boolean",
-        defaultOperation: "equal",
-        defaultValue: false,
-        options: {
-          trueLabel: "global.condition.single-choice.answer-option-correct-true",
-          falseLabel: "global.condition.single-choice.answer-option-correct-false",
-          equalLabel: "global.condition.single-choice.answer-option-correct-equal",
-          unequalLabel: "global.condition.single-choice.answer-option-correct-unequal",
-        },
-      };
-    });
-  };
-
   const getOptionSelected = (content: SCOption[]): EventCondition[] => {
     return content.map((option, index) => {
       return {
@@ -105,13 +80,7 @@ export const formatEvents: SCFormatFunction = function (data) {
   const eventOption: EventOption = {
     name: "answer-submitted",
     parent: data.id,
-    conditions: [
-      attempt,
-      response,
-      empty,
-      ...getOptionCorrect(data.content),
-      ...getOptionSelected(data.content),
-    ],
+    conditions: [attempt, response, empty, ...getOptionSelected(data.content)],
     label: {
       message: "global.event.type-answer-submitted",
       hexIcon: calculateHexIcon(data.id),
