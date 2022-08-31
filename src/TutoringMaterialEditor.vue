@@ -4,6 +4,7 @@
     :state="state"
     :is-editor="isEditor"
     :task-limit="taskLimit"
+    :task-options="taskOptions"
     @update:content="$emit('update:content', $event)"
     @update:state="updateState"
   ></TutoringMaterial>
@@ -16,6 +17,7 @@ import type { PropType } from "vue";
 import type { JSONContent } from "@tiptap/vue-3";
 import type { TaskState } from "@/extensions/task/types";
 import type { Feedback } from "@/extensions/feedback/types";
+import type { TaskOptions } from "@/extensions/task/types";
 
 export default defineComponent({
   name: "TutoringMaterialEditor",
@@ -52,6 +54,13 @@ export default defineComponent({
     taskLimit: {
       type: Number,
       default: -1,
+    },
+
+    taskOptions: {
+      type: Object as PropType<Partial<TaskOptions>>,
+      default() {
+        return {};
+      },
     },
   },
 

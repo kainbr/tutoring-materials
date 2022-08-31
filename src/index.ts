@@ -24,6 +24,7 @@ export default {
     app.use(
       createI18n({
         locale: navigator.language.split("-")[0],
+        legacy: false,
         fallbackLocale: "en",
         messages: {
           en: en,

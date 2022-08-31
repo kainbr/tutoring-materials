@@ -40,7 +40,7 @@
         :is="node.attrs.type"
         :id="node.attrs.id"
         :editor="editor"
-        :options="node.attrs.options"
+        :options="optionsWithDefaults"
         :content="node.attrs.content"
         :evaluation="node.attrs.evaluation"
         :state="state"
@@ -51,7 +51,7 @@
         <SubmitButton
           :id="node.attrs.id"
           :type="node.attrs.type"
-          :options="node.attrs.options"
+          :options="optionsWithDefaults"
           :evaluation="node.attrs.evaluation"
           :state="state"
           :editor="editor"
@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted } from "vue";
+import { computed, defineComponent, inject, onMounted } from "vue";
 import { Editor, NodeViewContent, NodeViewWrapper } from "@tiptap/vue-3";
 import { calculateHexIcon } from "@/helpers/util";
 import IconClose from "@/helpers/icons/IconClose.vue";
@@ -185,11 +185,16 @@ export default defineComponent({
       }
     });
 
-    return {
-      state,
-      calculateHexIcon,
-      update,
-    };
+    const defaultTaskOptions: Partial<TaskOptions | undefined> = inject("defaultTaskOptions");
+
+    const optionsWithDefaults = computed(() => {
+      return {
+        ...(defaultTaskOptions ? defaultTaskOptions : {}),
+        ...props.node.attrs.options,
+      };
+    });
+
+    return { state, calculateHexIcon, update, optionsWithDefaults };
   },
 });
 </script>

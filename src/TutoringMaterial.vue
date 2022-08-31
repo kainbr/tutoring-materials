@@ -35,7 +35,7 @@
 
 <script lang="ts">
 // Vue imports
-import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { defineComponent, onBeforeUnmount, onMounted, provide, ref, watch } from "vue";
 import { findChildren } from "@tiptap/core";
 import { useI18n } from "vue-i18n";
 import { isEqual } from "lodash-es";
@@ -70,10 +70,11 @@ import { FeedbackHint } from "@/extensions/feedback/hint";
 import { FeedbackMark } from "@/extensions/feedback/mark";
 import { FeedbackNotification } from "@/extensions/feedback/notification";
 
-import type { PropType } from "vue";
-import type { JSONContent } from "@tiptap/vue-3";
 import type { DocumentState, EmittedEvent, Event } from "@/extensions/document/types";
 import type { Feedback } from "@/extensions/feedback/types";
+import type { JSONContent } from "@tiptap/vue-3";
+import type { PropType } from "vue";
+import type { TaskOptions } from "@/extensions/task/types";
 
 export default defineComponent({
   components: {
@@ -118,6 +119,16 @@ export default defineComponent({
     taskLimit: {
       type: Number,
       default: -1,
+      validator(value: number) {
+        return value >= -1 && Number.isInteger(value);
+      },
+    },
+
+    taskOptions: {
+      type: Object as PropType<Partial<TaskOptions>>,
+      default() {
+        return {};
+      },
     },
   },
 
@@ -161,9 +172,9 @@ export default defineComponent({
       );
     });
 
-    // Editor
     const { t, locale } = useI18n();
 
+    // Editor
     const editor: Editor = new Editor({
       editorProps: {
         attributes: {
@@ -234,6 +245,22 @@ export default defineComponent({
     // https://github.com/ueberdosis/tiptap/issues/1935
     watch(locale, () => {
       editor.view.dispatch(editor.state.tr);
+    });
+
+    // Set default task options with respect to the provided options
+    // If the instance is a player, only set
+    provide("defaultTaskOptions", {
+      allowEmptyAnswerSubmission: false,
+      hasMaxAttempts: true,
+      maxAttempts: 2,
+      textSubmitButton: t("global.options.text-submit-button"),
+      titleCorrectAnswer: t("global.options.title-correct-answer"),
+      textCorrectAnswer: t("global.options.text-correct-answer"),
+      titleIncorrectAnswer: t("global.options.title-incorrect-answer"),
+      textIncorrectAnswer: t("global.options.text-incorrect-answer"),
+      titleFinalIncorrectAnswer: t("global.options.text-final-incorrect-answer"),
+      textFinalIncorrectAnswer: t("global.options.title-final-incorrect-answer"),
+      ...props.taskOptions,
     });
 
     // Register event bus

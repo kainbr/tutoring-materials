@@ -147,7 +147,16 @@
       "type-feedback-mark": "Textformatierung ändern",
       "type-feedback-notification": "Zeige Benachrichtigung"
     },
-    "missing-label": "Keine Beschriftung vorhanden"
+    "missing-label": "Keine Beschriftung vorhanden",
+    "options": {
+      "text-correct-answer": "Gute Arbeit!",
+      "text-final-incorrect-answer": "Sieh dir die richtige Antwort an.",
+      "text-incorrect-answer": "Überprüfe deine Antwort noch einmal und versuche es erneut.",
+      "text-submit-button": "Prüfen",
+      "title-correct-answer": "Richtige Antwort",
+      "title-final-incorrect-answer": "Falsche Antwort",
+      "title-incorrect-answer": "Falsche Antwort"
+    }
   },
   "index": {
     "headline-editor": "Editor",

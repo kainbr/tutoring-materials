@@ -147,7 +147,16 @@
       "type-feedback-mark": "Change Text Style",
       "type-feedback-notification": "Show Notification"
     },
-    "missing-label": "Label is missing"
+    "missing-label": "Label is missing",
+    "options": {
+      "text-correct-answer": "Good job!",
+      "text-final-incorrect-answer": "Have a look at the correct answer.",
+      "text-incorrect-answer": "Check your answer and try again.",
+      "text-submit-button": "Check",
+      "title-correct-answer": "Correct answer",
+      "title-final-incorrect-answer": "Incorrect answer",
+      "title-incorrect-answer": "Incorrect answer"
+    }
   },
   "index": {
     "headline-editor": "Editor",
