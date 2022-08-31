@@ -36,8 +36,7 @@
 
 <script lang="ts">
 // Vue imports
-import { defineComponent, onBeforeUnmount, onMounted } from "vue";
-import { findChildren } from "@tiptap/core";
+import { defineComponent, onMounted } from "vue";
 import EditorMenu from "@/helpers/EditorMenu.vue";
 
 import { EditorContent } from "@tiptap/vue-3";
@@ -118,7 +117,7 @@ export default defineComponent({
     const { container, width, height, editorContainerClasses } = useContainerSizing(props);
     const { editor } = useEditor(props, context);
     const { eventBus } = useEventBus(editor, context);
-    const { taskStates } = useTasks();
+    const { taskStates } = useTasks(editor);
     useProps(editor, taskStates, props, context);
 
     // Meta information
@@ -143,17 +142,6 @@ export default defineComponent({
           message: "global.event.type-document-created",
         },
       });
-    });
-
-    onBeforeUnmount(() => {
-      // Since the storage is shared, filter out rendered tasks from storage
-      // before unmounting to emit created events again on recreate / refresh.
-      const taskIds = findChildren(editor.state.doc, (n) => n.type.name === "task").map(
-        (n) => n.node.attrs.id
-      );
-      editor.storage.tasks.rendered = editor.storage.tasks.rendered.filter(
-        (taskId: string) => !taskIds.includes(taskId)
-      );
     });
 
     return {

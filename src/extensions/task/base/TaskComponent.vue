@@ -126,7 +126,9 @@ export default defineComponent({
 
   setup: function (props) {
     const eventBus = inject("eventBus") as Emitter<Events>;
-    const { taskStates, addTaskState, updateTaskState } = inject("tasks") as ProvidedTaskStates;
+    const { taskStates, renderedTasks, addTaskState, updateTaskState } = inject(
+      "tasks"
+    ) as ProvidedTaskStates;
 
     const taskState: Ref<TaskState | undefined> = computed(() => {
       return taskStates.value.find((taskState: TaskState) => taskState.id === props.node.attrs.id);
@@ -161,10 +163,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      if (
-        !props.editor.storage.tasks.rendered.includes(props.node.attrs.id) &&
-        !props.editor.isEditable
-      ) {
+      if (!renderedTasks.value.includes(props.node.attrs.id) && !props.editor.isEditable) {
         eventBus.emit("interaction", {
           type: "task-created",
           parent: props.node.attrs.id,
@@ -184,10 +183,7 @@ export default defineComponent({
         });
 
         // eslint-disable-next-line vue/no-mutating-props
-        props.editor.storage.tasks.rendered = [
-          ...props.editor.storage.tasks.rendered,
-          props.node.attrs.id,
-        ];
+        renderedTasks.value = [...renderedTasks.value, props.node.attrs.id];
       }
     });
 
