@@ -327,6 +327,13 @@ export default defineComponent({
       editor.destroy();
     });
 
+    onMounted(() => {
+      context.emit("update:state", {
+        tasks: editor.storage.tasks.taskStates,
+        feedbacks: editor.storage.feedbacks.active,
+      });
+    });
+
     watch(
       [() => editor.storage.tasks.taskStates, () => editor.storage.feedbacks.active],
       ([states, feedbacks], [oldStates, oldFeedbacks]) => {
@@ -346,7 +353,7 @@ export default defineComponent({
           });
         }
       },
-      { deep: true, immediate: true }
+      { deep: true }
     );
 
     // Content sizing
