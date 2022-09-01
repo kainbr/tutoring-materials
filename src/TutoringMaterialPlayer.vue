@@ -10,6 +10,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import TutoringMaterial from "@/TutoringMaterial.vue";
+
 import type { PropType } from "vue";
 import type { JSONContent } from "@tiptap/vue-3";
 import type { DocumentState } from "@/extensions/document/types";
@@ -46,7 +47,10 @@ export default defineComponent({
     state: {
       type: Object as PropType<DocumentState>,
       default() {
-        return {};
+        return {
+          tasks: [],
+          feedbacks: [],
+        };
       },
     },
   },

@@ -1,16 +1,13 @@
 <template>
   <!-- Use an extra div to register ResizeObserver after mounting, but when the editor component is not mounted yet. -->
   <div ref="container" class="h-full w-full">
-    <!-- Main container-->
     <div
       v-if="editor"
       :class="{ 'border-2 shadow rounded-lg': isEditor }"
       class="flex flex-col h-full w-full"
     >
-      <!-- Conditional menu -->
       <EditorMenu v-if="isEditor" :editor="editor" />
 
-      <!-- Main content -->
       <EditorContent
         :class="editorContainerClasses"
         :editor="editor"
@@ -18,10 +15,8 @@
       >
       </EditorContent>
 
-      <!-- Conditional footer -->
       <EditorFooter v-if="isEditor" :editor="editor" class="border-t-2" />
 
-      <!-- Feedback notification container -->
       <div
         :class="{ 'mt-[5.5rem]': isEditor }"
         class="absolute z-0 border-0 h-0"

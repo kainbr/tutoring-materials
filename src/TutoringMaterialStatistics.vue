@@ -1,6 +1,7 @@
 <template>
   <div class="flex flex-col h-full border border-2 shadow rounded-lg divide-y divide-gray-200">
     <div>
+      <!-- Hidden tab select -->
       <div class="sm:hidden">
         <label for="tabs" class="sr-only">
           {{ $t("statistics.tab-option-none") }}
@@ -46,7 +47,11 @@
         </div>
       </div>
     </div>
+
+    <!-- Statistics -->
     <div v-if="selectedTab === 'Statistics'" class="p-4">Statistics</div>
+
+    <!-- Events -->
     <div v-if="selectedTab === 'Events'" class="flex flex-row grow overflow-auto">
       <div class="flex flex-col border-r w-68">
         <div class="flex-none p-1.5 bg-slate-50 border-b">
@@ -136,13 +141,16 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import dayjs from "dayjs";
+import LabelComponent from "@/helpers/LabelComponent.vue";
+
 import type { EmittedEvent } from "@/extensions/document/types";
 import type { PropType } from "vue";
-import LabelComponent from "@/helpers/LabelComponent.vue";
 
 export default defineComponent({
   name: "TutoringMaterialStatistics",
+
   components: { LabelComponent },
+
   props: {
     events: {
       type: Array as PropType<EmittedEvent[]>,

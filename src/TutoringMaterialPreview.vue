@@ -1,4 +1,5 @@
 <template>
+  <!-- Player dimension selectable -->
   <div
     v-for="(value, index) in isPortrait
       ? [...playerDimensions].sort((a, b) => b.width - a.width)
@@ -14,7 +15,9 @@
   <div class="absolute left-1/2 transform -translate-x-1/2 z-50 text-sm select-none">
     {{ hoverLabel }}
   </div>
+
   <div class="w-full py-4 mt-3">
+    <!-- Button group -->
     <div class="flex w-full items-center justify-end mb-2 px-2">
       <span class="relative z-0 inline-flex shadow-sm rounded-sm">
         <button
@@ -43,6 +46,7 @@
         </button>
       </span>
     </div>
+    <!-- Main player -->
     <div
       :style="
         'height: ' +
@@ -64,15 +68,16 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
+import IconRotateLeft from "@/helpers/icons/IconRotateLeft.vue";
+import IconRefresh from "@/helpers/icons/IconRefresh.vue";
+import IconMessage from "@/helpers/icons/IconMessage.vue";
 import TutoringMaterialPlayer from "@/TutoringMaterialPlayer.vue";
+
 import type { JSONContent } from "@tiptap/vue-3";
 import type { PropType } from "vue";
 import type { DocumentState } from "@/extensions/document/types";
 import type { TaskState } from "@/extensions/task/types";
 import type { Feedback } from "@/extensions/feedback/types";
-import IconRotateLeft from "@/helpers/icons/IconRotateLeft.vue";
-import IconRefresh from "@/helpers/icons/IconRefresh.vue";
-import IconMessage from "@/helpers/icons/IconMessage.vue";
 
 export default defineComponent({
   name: "TutoringMaterialPreview",
@@ -103,10 +108,14 @@ export default defineComponent({
         };
       },
     },
+
     state: {
       type: Object as PropType<DocumentState>,
       default() {
-        return {};
+        return {
+          tasks: [],
+          feedbacks: [],
+        };
       },
     },
   },

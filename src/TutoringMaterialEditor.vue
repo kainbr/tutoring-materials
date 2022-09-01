@@ -3,7 +3,6 @@
     :content="content"
     :state="state"
     :is-editor="isEditor"
-    :task-limit="taskLimit"
     :task-options="taskOptions"
     @update:content="$emit('update:content', $event)"
     @update:state="updateState"
@@ -13,6 +12,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import TutoringMaterial from "@/TutoringMaterial.vue";
+
 import type { PropType } from "vue";
 import type { JSONContent } from "@tiptap/vue-3";
 import type { TaskState } from "@/extensions/task/types";
@@ -49,11 +49,6 @@ export default defineComponent({
     isEditor: {
       type: Boolean,
       default: false,
-    },
-
-    taskLimit: {
-      type: Number,
-      default: -1,
     },
 
     taskOptions: {
