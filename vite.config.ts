@@ -2,14 +2,15 @@
 
 import { defineConfig } from "vite";
 import { fileURLToPath, URL } from "node:url";
+import { visualizer } from "rollup-plugin-visualizer";
 import path from "path";
 import vue from "@vitejs/plugin-vue";
-// import viteCompression from "vite-plugin-compression";
-// import { visualizer } from "rollup-plugin-visualizer";
+
+import type { PluginOption } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()], // , viteCompression(), visualizer()
+  plugins: [vue(), <PluginOption>visualizer()],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -28,9 +29,6 @@ export default defineConfig({
       fileName: `tutoring-materials`,
     },
     minify: "esbuild",
-    watch: {
-      // https://rollupjs.org/guide/en/#watch-options
-    },
     rollupOptions: {
       external: ["vue"],
       output: {

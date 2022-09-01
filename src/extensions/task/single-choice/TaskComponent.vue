@@ -32,7 +32,7 @@
         class="flex flex-row gap-2 items-center"
       >
         <div class="flex flex-row min-w-fit items-center">
-          <span class="px-2"> ({{ index + 1 }}) </span>
+          <span class="px-2 w-10 min-w-fit"> ({{ index + 1 }}) </span>
           <input
             :checked="evaluation.solution.find((s) => s.id === option.id)?.value || false"
             type="radio"

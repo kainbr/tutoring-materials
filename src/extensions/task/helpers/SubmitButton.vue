@@ -14,7 +14,7 @@
         <div v-if="['incorrect'].includes(state.state)">
           <div
             v-for="hint in hints"
-            :key="hint"
+            :key="hint.id"
             :class="fontColor"
             class="not-prose text-sm mt-0.5"
           >
@@ -51,11 +51,13 @@ import InlineEditor from "@/helpers/InlineEditor.vue";
 
 import type { Editor } from "@tiptap/vue-3";
 import type { Feedback } from "@/extensions/feedback/types";
+import type { HintFeedback } from "@/extensions/feedback/hint/types";
 import type { InjectedContainerDimensions } from "@/helpers/useContainerDimensions";
 import type { InjectedEventBus } from "@/helpers/useEventBus";
 import type { InjectedFeedbacks } from "@/helpers/useFeedbacks";
 import type { InjectedTaskStates } from "@/helpers/useTasks";
 import type { PropType } from "vue";
+import type { Ref } from "vue";
 import type { TaskEvaluation, TaskOptions, TaskState } from "@/extensions/task/types";
 
 export default defineComponent({
@@ -95,13 +97,13 @@ export default defineComponent({
     const { updateTaskState } = inject("tasks") as InjectedTaskStates;
     const { activeFeedbacks } = inject("feedbacks") as InjectedFeedbacks;
 
-    const hints = computed(() => {
+    const hints: Ref<HintFeedback[]> = computed(() => {
       return (
         activeFeedbacks.value.filter(
           (s: Feedback) => s.type === "feedback-hint" && s.parent === props.id
         ) || []
       );
-    });
+    }) as Ref<HintFeedback[]>;
 
     const backgroundColor = computed(() => {
       return {

@@ -21,12 +21,7 @@
           <div class="flex w-full justify-center">
             <span>{{ $t("editor.task.type-" + node.attrs.type) }}</span>
           </div>
-          <IconClose
-            @click="
-              deleteNode();
-              removeTaskState(state);
-            "
-          ></IconClose>
+          <IconClose @click="removeTask"></IconClose>
         </div>
       </div>
 
@@ -126,13 +121,14 @@ export default defineComponent({
   },
 
   setup: function (props) {
+    const { taskOptions } = inject("defaults") as InjectedDefaults;
     const { eventBus } = inject("eventBus") as InjectedEventBus;
     const { eventOptions } = inject("eventOptions") as InjectedEventOptions;
     const { taskStates, renderedTasks, addTaskState, updateTaskState, removeTaskState } = inject(
       "tasks"
     ) as InjectedTaskStates;
 
-    const taskState: Ref<TaskState | undefined> = computed(() => {
+    const state: Ref<TaskState | undefined> = computed(() => {
       return taskStates.value.find((taskState: TaskState) => taskState.id === props.node.attrs.id);
     });
 
@@ -149,10 +145,10 @@ export default defineComponent({
         evaluation: newValues.evaluation,
       });
 
-      if (!taskState.value) {
+      if (!state.value) {
         addTaskState(newValues.state);
       } else {
-        updateTaskState(taskState.value, newValues.state);
+        updateTaskState(state.value, newValues.state);
       }
 
       eventOptions.value = [
@@ -185,8 +181,6 @@ export default defineComponent({
       }
     });
 
-    const { taskOptions } = inject("defaults") as InjectedDefaults;
-
     const optionsWithDefaults = computed(() => {
       return {
         ...taskOptions,
@@ -194,7 +188,14 @@ export default defineComponent({
       };
     });
 
-    return { state: taskState, calculateHexIcon, update, optionsWithDefaults, removeTaskState };
+    const removeTask = () => {
+      props.deleteNode();
+      if (!!state.value) {
+        removeTaskState(state.value);
+      }
+    };
+
+    return { state, calculateHexIcon, update, optionsWithDefaults, removeTask, removeTaskState };
   },
 });
 </script>
