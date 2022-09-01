@@ -1,26 +1,30 @@
 import { Editor } from "@tiptap/vue-3";
-import { Document as BaseDocument } from "@tiptap/extension-document";
-import { Document } from "@/extensions/document";
+import { onBeforeUnmount, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import StarterKit from "@tiptap/starter-kit";
+
+// Standard extensions
 import { Color } from "@tiptap/extension-color";
+import { Document as BaseDocument } from "@tiptap/extension-document";
+import { Placeholder } from "@tiptap/extension-placeholder";
 import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";
+import { TextAlign } from "@tiptap/extension-text-align";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { Typography } from "@tiptap/extension-typography";
 import { Underline } from "@tiptap/extension-underline";
-import { Placeholder } from "@tiptap/extension-placeholder";
-import { TextAlign } from "@tiptap/extension-text-align";
-import { Indent } from "@/extensions/indent";
+
+// Custom extensions
 import { CustomImage } from "@/extensions/image";
-import { Infobox } from "@/extensions/infobox";
+import { Document } from "@/extensions/document";
 import { FeedbackExtension } from "@/extensions/feedback";
 import { FeedbackHint } from "@/extensions/feedback/hint";
-import { FeedbackNotification } from "@/extensions/feedback/notification";
 import { FeedbackMark } from "@/extensions/feedback/mark";
-import { Task } from "@/extensions/task";
+import { FeedbackNotification } from "@/extensions/feedback/notification";
+import { Indent } from "@/extensions/indent";
+import { Infobox } from "@/extensions/infobox";
 import { SingleChoiceTask } from "@/extensions/task/single-choice";
-import { useI18n } from "vue-i18n";
-import { onBeforeUnmount, watch } from "vue";
+import { Task } from "@/extensions/task";
 
 import type { JSONContent } from "@tiptap/vue-3";
 import type { SetupContext } from "vue";
@@ -28,10 +32,9 @@ import type { SetupContext } from "vue";
 export default function (
   props: { isEditor: boolean; content: JSONContent },
   context: SetupContext<("update:content" | "update:state" | "event")[]>
-) {
+): { editor: Editor } {
   const { t, locale } = useI18n();
 
-  // Editor
   const editor: Editor = new Editor({
     editorProps: {
       attributes: {
@@ -40,13 +43,6 @@ export default function (
       },
     },
     extensions: [
-      // Basic setup
-      BaseDocument.extend({
-        content: "document",
-      }),
-      Document.configure({
-        isEditor: props.isEditor,
-      }),
       StarterKit.configure({
         document: false,
         dropcursor: {
@@ -57,30 +53,36 @@ export default function (
           levels: [1, 2, 3],
         },
       }),
+      BaseDocument.extend({
+        content: "document",
+      }),
+      Document.configure({
+        isEditor: props.isEditor,
+      }),
       Color,
-      Subscript,
-      Superscript,
-      TextStyle,
-      Typography,
-      Underline,
       Placeholder.configure({
         includeChildren: true,
         placeholder: () => t("editor.placeholder-text"),
       }),
+      Subscript,
+      Superscript,
       TextAlign.configure({
         types: ["heading", "paragraph", "image"],
       }),
+      TextStyle,
+      Typography,
+      Underline,
 
       // Custom Extensions
-      Indent,
       CustomImage,
-      Infobox,
       FeedbackExtension,
       FeedbackHint,
-      FeedbackNotification,
       FeedbackMark.configure({ showOutline: props.isEditor }),
-      Task,
+      FeedbackNotification,
+      Indent,
+      Infobox,
       SingleChoiceTask,
+      Task,
     ],
     content: props.content,
     autofocus: false,

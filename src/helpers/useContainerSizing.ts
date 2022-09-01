@@ -1,6 +1,13 @@
 import { onMounted, provide, ref } from "vue";
 
-export default function (props: { isEditor: boolean }) {
+import type { Ref } from "vue";
+
+export default function (props: { isEditor: boolean }): {
+  container: Ref<HTMLInputElement | null>;
+  width: Ref<number>;
+  height: Ref<number>;
+  editorContainerClasses: Ref<string[]>;
+} {
   // Content sizing
   const container = ref<HTMLInputElement | null>(null);
   const width = ref(0);

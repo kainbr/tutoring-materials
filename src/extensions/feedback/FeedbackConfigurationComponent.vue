@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import { calculateHexIcon } from "@/helpers/util";
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, inject } from "vue";
 import { isEqual } from "lodash-es";
 import { v4 as uuid } from "uuid";
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
@@ -45,6 +45,7 @@ import LabelComponent from "@/helpers/LabelComponent.vue";
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
 import type { Feedback } from "@/extensions/feedback/types";
+import type { ProvidedFeedbacks } from "@/helpers/useFeedbacks";
 
 export default defineComponent({
   name: "FeedbackConfigurationComponent",
@@ -67,8 +68,12 @@ export default defineComponent({
   },
 
   setup(props) {
+    const { activeFeedbacks, addActiveFeedback, removeActiveFeedback } = inject(
+      "feedbacks"
+    ) as ProvidedFeedbacks;
+
     const isActive = computed(() => {
-      return props.editor.storage.feedbacks.active.find(
+      return activeFeedbacks.value.find(
         (f: Feedback) =>
           f.type === props.feedback.type &&
           f.parent === props.feedback.parent &&
@@ -78,9 +83,9 @@ export default defineComponent({
 
     const toggleActiveFeedback = () => {
       if (isActive.value) {
-        props.editor.commands.removeActiveFeedback(props.feedback);
+        removeActiveFeedback(props.feedback);
       } else {
-        props.editor.commands.addActiveFeedback(props.feedback);
+        addActiveFeedback(props.feedback);
       }
     };
 
@@ -100,7 +105,7 @@ export default defineComponent({
     };
 
     const remove = () => {
-      props.editor.commands.removeActiveFeedback(props.feedback);
+      removeActiveFeedback(props.feedback);
       props.editor.commands.removeFeedback(props.feedback);
     };
 

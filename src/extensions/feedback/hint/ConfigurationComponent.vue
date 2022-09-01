@@ -2,7 +2,7 @@
   <feedback-configuration-component :editor="editor" :feedback="feedback">
     <template #default>
       <IconArrowRight class="w-5 h-5 fill-slate-500" />
-      <span class="w-32 flex-auto truncate"> {{ getText(feedback.config.content) }} </span>
+      <span class="w-32 flex-auto truncate"> {{ extractText(feedback.config.content) }} </span>
       <button
         type="button"
         class="mx-3 flex-shrink-0 text-sm text-blue-600 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -79,18 +79,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, inject, ref } from "vue";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 import { getText } from "@tiptap/vue-3";
 import { Node } from "prosemirror-model";
 import FeedbackConfigurationComponent from "@/extensions/feedback/FeedbackConfigurationComponent.vue";
+import IconArrowRight from "@/helpers/icons/IconArrowRight.vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
 
 import type { Editor } from "@tiptap/vue-3";
 import type { HintFeedback } from "@/extensions/feedback/hint/types";
-import type { PropType } from "vue";
 import type { JSONContent } from "@tiptap/vue-3";
-import IconArrowRight from "@/helpers/icons/IconArrowRight.vue";
+import type { ProvidedFeedbacks } from "@/helpers/useFeedbacks";
+import type { PropType } from "vue";
 
 export default defineComponent({
   name: "FeedbackHintConfigurationComponent",
@@ -118,33 +119,41 @@ export default defineComponent({
     },
   },
 
-  data() {
-    return {
-      open: false,
-      contentCandidate: this.feedback.config.content,
-    };
-  },
+  setup(props) {
+    const { removeActiveFeedback } = inject("feedbacks") as ProvidedFeedbacks;
 
-  methods: {
-    updateHintFeedback() {
-      this.editor.commands.removeActiveFeedback(this.feedback);
+    const open = ref(false);
+    const contentCandidate = ref(props.feedback.config.content);
 
-      this.editor.commands.updateFeedback(this.feedback, {
+    const updateHintFeedback = () => {
+      removeActiveFeedback(props.feedback);
+
+      props.editor.commands.updateFeedback(props.feedback, {
         config: {
-          ...this.feedback.config,
-          content: this.contentCandidate,
+          ...props.feedback.config,
+          content: contentCandidate.value,
         },
       });
 
-      this.open = false;
-    },
-    removeHintFeedback() {
-      this.editor.commands.removeFeedback(this.feedback);
-      this.open = false;
-    },
-    getText(content: JSONContent) {
-      return getText(Node.fromJSON(this.editor.schema, content));
-    },
+      open.value = false;
+    };
+
+    const removeHintFeedback = () => {
+      props.editor.commands.removeFeedback(props.feedback);
+      open.value = false;
+    };
+
+    const extractText = (content: JSONContent) => {
+      return getText(Node.fromJSON(props.editor.schema, content));
+    };
+
+    return {
+      open,
+      contentCandidate,
+      updateHintFeedback,
+      removeHintFeedback,
+      extractText,
+    };
   },
 });
 </script>

@@ -13,7 +13,7 @@ export type ProvidedTaskStates = {
   removeTaskState: (taskState: TaskState) => void;
 };
 
-export default function (editor: Editor) {
+export default function (editor: Editor): ProvidedTaskStates {
   const taskStates: Ref<TaskState[]> = ref([]);
   const renderedTasks: Ref<string[]> = ref([]);
 

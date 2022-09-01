@@ -24,7 +24,7 @@
           <IconClose
             @click="
               deleteNode();
-              editor.commands.removeTaskState(state);
+              removeTaskState(state);
             "
           ></IconClose>
         </div>
@@ -79,6 +79,7 @@ import type { TaskContent, TaskEvaluation, TaskOptions, TaskState } from "@/exte
 import type { Emitter } from "mitt";
 import type { Events } from "@/helpers/useEventBus";
 import type { ProvidedTaskStates } from "@/helpers/useTasks";
+import type { ProvidedDefaults } from "@/helpers/useDefaults";
 
 export default defineComponent({
   components: {
@@ -126,7 +127,7 @@ export default defineComponent({
 
   setup: function (props) {
     const eventBus = inject("eventBus") as Emitter<Events>;
-    const { taskStates, renderedTasks, addTaskState, updateTaskState } = inject(
+    const { taskStates, renderedTasks, addTaskState, updateTaskState, removeTaskState } = inject(
       "tasks"
     ) as ProvidedTaskStates;
 
@@ -187,16 +188,16 @@ export default defineComponent({
       }
     });
 
-    const defaultTaskOptions: Partial<TaskOptions | undefined> = inject("defaultTaskOptions");
+    const { taskOptions } = inject("defaults") as ProvidedDefaults;
 
     const optionsWithDefaults = computed(() => {
       return {
-        ...(defaultTaskOptions ? defaultTaskOptions : {}),
+        ...taskOptions,
         ...props.node.attrs.options,
       };
     });
 
-    return { state: taskState, calculateHexIcon, update, optionsWithDefaults };
+    return { state: taskState, calculateHexIcon, update, optionsWithDefaults, removeTaskState };
   },
 });
 </script>

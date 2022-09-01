@@ -10,14 +10,17 @@ import type { TaskState } from "@/extensions/task/types";
 
 export default function (
   editor: Editor,
-  taskStates: Ref<TaskState[]>,
   props: { isEditor: boolean; content: JSONContent; state: DocumentState },
-  context: SetupContext<("update:content" | "update:state" | "event")[]>
+  context: SetupContext<("update:content" | "update:state" | "event")[]>,
+  taskStates: Ref<TaskState[]>,
+  activeFeedbacks: Ref<Feedback[]>,
+  addActiveFeedback: (feedback: Feedback) => void,
+  removeActiveFeedback: (feedback: Feedback) => void
 ) {
   onMounted(() => {
     context.emit("update:state", {
       tasks: taskStates.value,
-      feedbacks: editor.storage.feedbacks.active,
+      feedbacks: activeFeedbacks.value,
     });
   });
 
@@ -59,18 +62,16 @@ export default function (
   watch(
     () => props.state.feedbacks,
     (feedbacks) => {
-      if (!isEqual(feedbacks, editor.storage.feedbacks.active)) {
+      if (!isEqual(feedbacks, activeFeedbacks.value)) {
         // editor.storage.feedbacks.active = feedbacks;
         const feedbackIds = feedbacks.map((feedback: Feedback) => feedback.id);
 
-        editor.storage.feedbacks.active
+        activeFeedbacks.value
           .filter((feedback: Feedback) => !feedbackIds.includes(feedback.id))
-          .forEach((feedback: Feedback) => {
-            editor.commands.removeActiveFeedback(feedback);
-          });
+          .forEach((feedback: Feedback) => removeActiveFeedback(feedback));
 
         feedbacks.forEach((feedback: Feedback) => {
-          editor.commands.addActiveFeedback(feedback);
+          addActiveFeedback(feedback);
         });
       }
     },
@@ -78,7 +79,7 @@ export default function (
   );
 
   watch(
-    [() => taskStates.value, () => editor.storage.feedbacks.active],
+    [() => taskStates.value, () => activeFeedbacks.value],
     ([states, feedbacks], [oldStates, oldFeedbacks]) => {
       if (!isEqual(states, oldStates) || !isEqual(feedbacks, oldFeedbacks)) {
         context.emit("update:state", {
@@ -89,7 +90,7 @@ export default function (
         editor.setOptions({
           editorProps: {
             attributes: {
-              style: editor.storage["feedback-mark"].getStyleVariables(),
+              style: editor.storage["feedback-mark"].getStyleVariables(activeFeedbacks.value),
               class: "h-full",
             },
           },

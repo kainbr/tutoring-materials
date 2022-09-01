@@ -20,7 +20,7 @@
           <div class="ml-4 flex-shrink-0 flex">
             <button
               class="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              @click="editor.commands.removeActiveFeedback(feedback)"
+              @click="removeActiveFeedback(feedback)"
             >
               <span class="sr-only">Close</span>
               x
@@ -33,12 +33,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, inject } from "vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
 
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
 import type { NotificationFeedback } from "@/extensions/feedback/notification/types";
+import type { ProvidedFeedbacks } from "@/helpers/useFeedbacks";
 
 export default defineComponent({
   name: "NotificationComponent",
@@ -54,6 +55,14 @@ export default defineComponent({
       type: Object as PropType<Editor>,
       required: true,
     },
+  },
+
+  setup() {
+    const { removeActiveFeedback } = inject("feedbacks") as ProvidedFeedbacks;
+
+    return {
+      removeActiveFeedback,
+    };
   },
 });
 </script>

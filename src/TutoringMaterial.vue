@@ -30,6 +30,7 @@
       >
         <NotificationContainerComponent :editor="editor"></NotificationContainerComponent>
       </div>
+      asd {{ editor.storage.feedbacks.active }}
     </div>
   </div>
 </template>
@@ -53,6 +54,7 @@ import useContainerSizing from "@/helpers/useContainerSizing";
 import useEventBus from "@/helpers/useEventBus";
 import useTasks from "@/helpers/useTasks";
 import useProps from "@/helpers/useProps";
+import useFeedbacks from "@/helpers/useFeedbacks";
 
 export default defineComponent({
   components: {
@@ -113,20 +115,26 @@ export default defineComponent({
   emits: ["update:content", "update:state", "event"],
 
   setup(props, context) {
+    const startTimestamp: number = Date.now();
+
+    // Run helpers functions. Order matters!
     useDefaults(props);
     const { container, width, height, editorContainerClasses } = useContainerSizing(props);
     const { editor } = useEditor(props, context);
-    const { eventBus } = useEventBus(editor, context);
     const { taskStates } = useTasks(editor);
-    useProps(editor, taskStates, props, context);
+    const { activeFeedbacks, addActiveFeedback, removeActiveFeedback } = useFeedbacks();
+    const { eventBus } = useEventBus(editor, context, addActiveFeedback);
+    useProps(
+      editor,
+      props,
+      context,
+      taskStates,
+      activeFeedbacks,
+      addActiveFeedback,
+      removeActiveFeedback
+    );
 
-    // Meta information
-    const startTimestamp: number = Date.now();
-    // eslint-disable-next-line vue/no-setup-props-destructure
-    const receivedContent = props.content;
-    // eslint-disable-next-line vue/no-setup-props-destructure
-    const receivedState = props.state;
-
+    // Emit document created event after mounting process finished
     onMounted(() => {
       eventBus.emit("interaction", {
         type: "document-created",
@@ -135,8 +143,6 @@ export default defineComponent({
         data: {
           startTimestamp: startTimestamp,
           endTimestamp: Date.now(),
-          receivedContent: receivedContent,
-          receivedState: receivedState,
         },
         label: {
           message: "global.event.type-document-created",

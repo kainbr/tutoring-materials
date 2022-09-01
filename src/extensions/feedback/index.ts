@@ -4,7 +4,7 @@ import { Extension, findChildren } from "@tiptap/core";
 import { isEqual } from "lodash-es";
 
 import type {
-  EventCondition,
+  // EventCondition,
   EventOption,
   EventTrigger,
   Feedback,
@@ -31,15 +31,15 @@ declare module "@tiptap/core" {
       /**
        * Adds a feedback to the active state feedback store.
        */
-      addActiveFeedback: (feedback: Feedback) => ReturnType;
+      //addActiveFeedback: (feedback: Feedback) => ReturnType;
       /**
        * Updates a feedback in the active state feedback store.
        */
-      updateActiveFeedback: (feedback: Feedback, attributes: Partial<Feedback>) => ReturnType;
+      //updateActiveFeedback: (feedback: Feedback, attributes: Partial<Feedback>) => ReturnType;
       /**
        * Removes a feedback from the active state feedback store.
        */
-      removeActiveFeedback: (feedback: Feedback) => ReturnType;
+      // removeActiveFeedback: (feedback: Feedback) => ReturnType;
       /**
        * Adds a new event option to the global storage.
        */
@@ -51,29 +51,29 @@ declare module "@tiptap/core" {
       /**
        * Adds an EventCondition to an event option which matches the event name and parent.
        * If the event option does not exist, no condition is added.
-       */
       addEventCondition: (
         event: string,
         parent: string | null,
         condition: EventCondition
       ) => ReturnType;
+       */
       /**
        * Updates the condition that matches the event, parent and condition with the provided attributes.
-       */
       updateEventCondition: (
         event: string,
         parent: string,
         condition: EventCondition,
         attributes: Partial<EventCondition>
       ) => ReturnType;
+       */
       /**
        * Removes the condition that also matches the event and parent.
-       */
       removeEventCondition: (
         event: string,
         parent: string,
         condition: EventCondition
       ) => ReturnType;
+       */
       /**
        * Todo: Add method description
        */
@@ -91,7 +91,7 @@ declare module "@tiptap/core" {
 }
 
 export interface FeedbackExtensionStorage {
-  active: Feedback[];
+  //active: Feedback[];
   events: EventOption[];
 }
 
@@ -110,7 +110,7 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
 
   addStorage() {
     return {
-      active: [],
+      // active: [],
       events: [],
     };
   },
@@ -266,25 +266,33 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
             })(),
           });
 
+          /*
           this.storage.active = this.storage.active.filter(
             (f: Feedback) => f.type !== feedback.type || f.parent !== feedback.type
           );
 
+           */
+
           return true;
         },
 
+      /*
       addActiveFeedback: (feedback) => () => {
+        console.log("addActiveFeedback", feedback);
         if (!feedback.type || !feedback.config) {
           return false;
         }
 
         const activeFeedback = this.storage.active.find((f: Feedback) => f.id === feedback.id);
 
+        console.log("addActiveFeedback2", activeFeedback);
         // Do not add the feedback if there already exists this feedback
         if (!activeFeedback) {
           this.storage.active = [...this.storage.active, feedback];
 
-          /*
+
+       */
+      /*
           this.editor.storage.document.eventBus().emit("feedback-presented", {
             type: "feedback-presented",
             parent: feedback.parent,
@@ -296,7 +304,9 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
             },
           });
            */
+      /*
         }
+        console.log("addActiveFeedback3", this.storage.active);
 
         return true;
       },
@@ -331,6 +341,8 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
 
         return true;
       },
+      
+       */
 
       addEventOption: (eventOption) => () => {
         const option = this.storage.events.find(
@@ -351,6 +363,7 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
         return true;
       },
 
+      /*
       addEventCondition: (event, parent, condition) => () => {
         this.storage.events = this.storage.events.map((o: EventOption) => {
           if (
@@ -402,6 +415,8 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
 
         return true;
       },
+
+       */
 
       addEventTrigger:
         (trigger) =>

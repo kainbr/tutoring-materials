@@ -5,6 +5,7 @@
     class="inset-0 flex items-end px-4 py-6 pointer-events-none sm:p-6 sm:items-start"
   >
     <div class="w-full flex flex-col items-center space-y-4 sm:items-end">
+      <!--suppress JSValidateTypes -->
       <notification-component
         v-for="activeNotificationFeedback in activeNotificationFeedbacks"
         :key="activeNotificationFeedback"
@@ -16,12 +17,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent, inject } from "vue";
 import NotificationComponent from "@/extensions/feedback/notification/NotificationComponent.vue";
 
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
 import type { Feedback } from "@/extensions/feedback/types";
+import type { ProvidedFeedbacks } from "@/helpers/useFeedbacks";
 
 export default defineComponent({
   name: "NotificationContainerComponent",
@@ -35,14 +37,18 @@ export default defineComponent({
     },
   },
 
-  computed: {
-    activeNotificationFeedbacks() {
+  setup() {
+    const { activeFeedbacks } = inject("feedbacks") as ProvidedFeedbacks;
+
+    const activeNotificationFeedbacks = computed(() => {
       return (
-        this.editor.storage.feedbacks?.active.filter(
-          (s: Feedback) => s.type === "feedback-notification"
-        ) || []
+        activeFeedbacks.value.filter((s: Feedback) => s.type === "feedback-notification") || []
       );
-    },
+    });
+
+    return {
+      activeNotificationFeedbacks,
+    };
   },
 });
 </script>

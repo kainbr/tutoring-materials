@@ -56,6 +56,7 @@ import type { Feedback } from "@/extensions/feedback/types";
 import type { PropType } from "vue";
 import type { TaskEvaluation, TaskOptions, TaskState } from "@/extensions/task/types";
 import type { ProvidedTaskStates } from "@/helpers/useTasks";
+import type { ProvidedFeedbacks } from "@/helpers/useFeedbacks";
 
 export default defineComponent({
   name: "SubmitButton",
@@ -92,10 +93,11 @@ export default defineComponent({
   setup(props) {
     const eventBus = inject("eventBus") as Emitter<Events>;
     const { updateTaskState } = inject("tasks") as ProvidedTaskStates;
+    const { activeFeedbacks } = inject("feedbacks") as ProvidedFeedbacks;
 
     const hints = computed(() => {
       return (
-        props.editor.storage.feedbacks.active.filter(
+        activeFeedbacks.value.filter(
           (s: Feedback) => s.type === "feedback-hint" && s.parent === props.id
         ) || []
       );
