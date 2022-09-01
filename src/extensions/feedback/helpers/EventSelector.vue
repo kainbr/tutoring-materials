@@ -97,7 +97,7 @@ export default defineComponent({
   },
 
   props: {
-    events: {
+    eventOptions: {
       type: Array as PropType<EventOption[]>,
       required: true,
     },
@@ -118,8 +118,8 @@ export default defineComponent({
   computed: {
     filteredEventOptions(): EventOption[] {
       return this.eventQuery === ""
-        ? this.events
-        : this.events.filter((option: EventOption) =>
+        ? this.eventOptions
+        : this.eventOptions.filter((option: EventOption) =>
             (!!option.label.message ? this.$t(option.label.message) : option.name)
               .toLowerCase()
               .replace(/\s+/g, "")
@@ -127,7 +127,7 @@ export default defineComponent({
           );
     },
     selectedEvent(): EventOption | undefined {
-      return this.events.find((option: EventOption) => option.name === this.trigger.event);
+      return this.eventOptions.find((option: EventOption) => option.name === this.trigger.event);
     },
   },
 

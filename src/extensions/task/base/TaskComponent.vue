@@ -76,10 +76,10 @@ import type { EventOption } from "@/extensions/feedback/types";
 import type { NodeViewProps } from "@tiptap/core";
 import type { PropType } from "vue";
 import type { TaskContent, TaskEvaluation, TaskOptions, TaskState } from "@/extensions/task/types";
-import type { Emitter } from "mitt";
-import type { Events } from "@/helpers/useEventBus";
-import type { ProvidedTaskStates } from "@/helpers/useTasks";
-import type { ProvidedDefaults } from "@/helpers/useDefaults";
+import type { InjectedEventBus } from "@/helpers/useEventBus";
+import type { InjectedTaskStates } from "@/helpers/useTasks";
+import type { InjectedDefaults } from "@/helpers/useDefaults";
+import type { InjectedEventOptions } from "@/helpers/useEventOptions";
 
 export default defineComponent({
   components: {
@@ -126,10 +126,11 @@ export default defineComponent({
   },
 
   setup: function (props) {
-    const eventBus = inject("eventBus") as Emitter<Events>;
+    const { eventBus } = inject("eventBus") as InjectedEventBus;
+    const { eventOptions } = inject("eventOptions") as InjectedEventOptions;
     const { taskStates, renderedTasks, addTaskState, updateTaskState, removeTaskState } = inject(
       "tasks"
-    ) as ProvidedTaskStates;
+    ) as InjectedTaskStates;
 
     const taskState: Ref<TaskState | undefined> = computed(() => {
       return taskStates.value.find((taskState: TaskState) => taskState.id === props.node.attrs.id);
@@ -154,11 +155,8 @@ export default defineComponent({
         updateTaskState(taskState.value, newValues.state);
       }
 
-      // eslint-disable-next-line vue/no-mutating-props
-      props.editor.storage.feedbacks.events = [
-        ...props.editor.storage.feedbacks.events.filter(
-          (e: EventOption) => e.parent !== props.node.attrs.id
-        ),
+      eventOptions.value = [
+        ...eventOptions.value.filter((e: EventOption) => e.parent !== props.node.attrs.id),
         ...(!!newValues.events && Array.isArray(newValues.events) ? newValues.events : []),
       ];
     };
@@ -183,12 +181,11 @@ export default defineComponent({
           },
         });
 
-        // eslint-disable-next-line vue/no-mutating-props
         renderedTasks.value = [...renderedTasks.value, props.node.attrs.id];
       }
     });
 
-    const { taskOptions } = inject("defaults") as ProvidedDefaults;
+    const { taskOptions } = inject("defaults") as InjectedDefaults;
 
     const optionsWithDefaults = computed(() => {
       return {

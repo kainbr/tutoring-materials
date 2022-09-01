@@ -39,7 +39,7 @@ import InlineEditor from "@/helpers/InlineEditor.vue";
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
 import type { NotificationFeedback } from "@/extensions/feedback/notification/types";
-import type { ProvidedFeedbacks } from "@/helpers/useFeedbacks";
+import type { InjectedFeedbacks } from "@/helpers/useFeedbacks";
 
 export default defineComponent({
   name: "NotificationComponent",
@@ -58,7 +58,7 @@ export default defineComponent({
   },
 
   setup() {
-    const { removeActiveFeedback } = inject("feedbacks") as ProvidedFeedbacks;
+    const { removeActiveFeedback } = inject("feedbacks") as InjectedFeedbacks;
 
     return {
       removeActiveFeedback,

@@ -3,11 +3,11 @@ import { useI18n } from "vue-i18n";
 
 import type { TaskOptions } from "@/extensions/task/types";
 
-export type ProvidedDefaults = {
+export type InjectedDefaults = {
   taskOptions: TaskOptions;
 };
 
-export default function (props: { taskOptions: Partial<TaskOptions> }): ProvidedDefaults {
+export default function (props: { taskOptions: Partial<TaskOptions> }): InjectedDefaults {
   const { t } = useI18n();
 
   const taskOptions = {

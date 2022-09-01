@@ -45,7 +45,7 @@ import LabelComponent from "@/helpers/LabelComponent.vue";
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
 import type { Feedback } from "@/extensions/feedback/types";
-import type { ProvidedFeedbacks } from "@/helpers/useFeedbacks";
+import type { InjectedFeedbacks } from "@/helpers/useFeedbacks";
 
 export default defineComponent({
   name: "FeedbackConfigurationComponent",
@@ -70,7 +70,7 @@ export default defineComponent({
   setup(props) {
     const { activeFeedbacks, addActiveFeedback, removeActiveFeedback } = inject(
       "feedbacks"
-    ) as ProvidedFeedbacks;
+    ) as InjectedFeedbacks;
 
     const isActive = computed(() => {
       return activeFeedbacks.value.find(

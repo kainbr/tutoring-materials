@@ -44,19 +44,19 @@
 </template>
 
 <script lang="ts">
+import { calculateHexIcon } from "@/helpers/util";
 import { computed, defineComponent, inject } from "vue";
 import { evaluate } from "@/extensions/task/evaluate";
-import { calculateHexIcon } from "@/helpers/util";
 import InlineEditor from "@/helpers/InlineEditor.vue";
 
 import type { Editor } from "@tiptap/vue-3";
-import type { Emitter } from "mitt";
-import type { Events } from "@/helpers/useEventBus";
 import type { Feedback } from "@/extensions/feedback/types";
+import type { InjectedContainerDimensions } from "@/helpers/useContainerDimensions";
+import type { InjectedEventBus } from "@/helpers/useEventBus";
+import type { InjectedFeedbacks } from "@/helpers/useFeedbacks";
+import type { InjectedTaskStates } from "@/helpers/useTasks";
 import type { PropType } from "vue";
 import type { TaskEvaluation, TaskOptions, TaskState } from "@/extensions/task/types";
-import type { ProvidedTaskStates } from "@/helpers/useTasks";
-import type { ProvidedFeedbacks } from "@/helpers/useFeedbacks";
 
 export default defineComponent({
   name: "SubmitButton",
@@ -91,9 +91,9 @@ export default defineComponent({
   },
 
   setup(props) {
-    const eventBus = inject("eventBus") as Emitter<Events>;
-    const { updateTaskState } = inject("tasks") as ProvidedTaskStates;
-    const { activeFeedbacks } = inject("feedbacks") as ProvidedFeedbacks;
+    const { eventBus } = inject("eventBus") as InjectedEventBus;
+    const { updateTaskState } = inject("tasks") as InjectedTaskStates;
+    const { activeFeedbacks } = inject("feedbacks") as InjectedFeedbacks;
 
     const hints = computed(() => {
       return (
@@ -201,6 +201,8 @@ export default defineComponent({
       }
     };
 
+    const { width } = inject("containerDimensions") as InjectedContainerDimensions;
+
     return {
       backgroundColor,
       fontColor,
@@ -209,7 +211,7 @@ export default defineComponent({
       titleColor,
       text,
       submit,
-      width: inject("width") as number,
+      width,
     };
   },
 });

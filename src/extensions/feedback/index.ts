@@ -2,16 +2,10 @@
 
 import { Extension, findChildren } from "@tiptap/core";
 import { isEqual } from "lodash-es";
-
-import type {
-  // EventCondition,
-  EventOption,
-  EventTrigger,
-  Feedback,
-} from "@/extensions/feedback/types";
-import type { MarkFeedback } from "@/extensions/feedback/mark/types";
-import type { NodeWithPos } from "@tiptap/vue-3";
 import { Plugin, PluginKey } from "prosemirror-state";
+
+import type { EventOption, EventTrigger, Feedback } from "@/extensions/feedback/types";
+import type { MarkFeedback } from "@/extensions/feedback/mark/types";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -28,18 +22,7 @@ declare module "@tiptap/core" {
        * Removes a feedback from the permanent feedback store.
        */
       removeFeedback: (feedback: Feedback, removeEmptyTrigger?: boolean) => ReturnType;
-      /**
-       * Adds a feedback to the active state feedback store.
-       */
-      //addActiveFeedback: (feedback: Feedback) => ReturnType;
-      /**
-       * Updates a feedback in the active state feedback store.
-       */
-      //updateActiveFeedback: (feedback: Feedback, attributes: Partial<Feedback>) => ReturnType;
-      /**
-       * Removes a feedback from the active state feedback store.
-       */
-      // removeActiveFeedback: (feedback: Feedback) => ReturnType;
+
       /**
        * Adds a new event option to the global storage.
        */
@@ -48,32 +31,6 @@ declare module "@tiptap/core" {
        * Remove an event option from the global storage.
        */
       removeEventOption: (eventOption: EventOption) => ReturnType;
-      /**
-       * Adds an EventCondition to an event option which matches the event name and parent.
-       * If the event option does not exist, no condition is added.
-      addEventCondition: (
-        event: string,
-        parent: string | null,
-        condition: EventCondition
-      ) => ReturnType;
-       */
-      /**
-       * Updates the condition that matches the event, parent and condition with the provided attributes.
-      updateEventCondition: (
-        event: string,
-        parent: string,
-        condition: EventCondition,
-        attributes: Partial<EventCondition>
-      ) => ReturnType;
-       */
-      /**
-       * Removes the condition that also matches the event and parent.
-      removeEventCondition: (
-        event: string,
-        parent: string,
-        condition: EventCondition
-      ) => ReturnType;
-       */
       /**
        * Todo: Add method description
        */
@@ -90,30 +47,8 @@ declare module "@tiptap/core" {
   }
 }
 
-export interface FeedbackExtensionStorage {
-  //active: Feedback[];
-  events: EventOption[];
-}
-
-export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStorage>({
-  onUpdate() {
-    // Cleanup events that do not have a valid parent anymore
-    const taskIds = findChildren(this.editor.state.doc, (node) => node.type.name === "task").map(
-      (node: NodeWithPos) => node.node.attrs.id
-    );
-    this.storage.events = this.storage.events.filter(
-      (e: EventOption) => e.parent === null || taskIds.includes(e.parent)
-    );
-  },
-
+export const FeedbackExtension = Extension.create({
   name: "feedbacks",
-
-  addStorage() {
-    return {
-      // active: [],
-      events: [],
-    };
-  },
 
   addGlobalAttributes() {
     return [
@@ -266,157 +201,8 @@ export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStor
             })(),
           });
 
-          /*
-          this.storage.active = this.storage.active.filter(
-            (f: Feedback) => f.type !== feedback.type || f.parent !== feedback.type
-          );
-
-           */
-
           return true;
         },
-
-      /*
-      addActiveFeedback: (feedback) => () => {
-        console.log("addActiveFeedback", feedback);
-        if (!feedback.type || !feedback.config) {
-          return false;
-        }
-
-        const activeFeedback = this.storage.active.find((f: Feedback) => f.id === feedback.id);
-
-        console.log("addActiveFeedback2", activeFeedback);
-        // Do not add the feedback if there already exists this feedback
-        if (!activeFeedback) {
-          this.storage.active = [...this.storage.active, feedback];
-
-
-       */
-      /*
-          this.editor.storage.document.eventBus().emit("feedback-presented", {
-            type: "feedback-presented",
-            parent: feedback.parent,
-            facts: {},
-            data: feedback,
-            label: {
-              message: "global.event.type-feedback-presented",
-              hexIcon: !!feedback.parent ? calculateHexIcon(feedback.parent) : undefined,
-            },
-          });
-           */
-      /*
-        }
-        console.log("addActiveFeedback3", this.storage.active);
-
-        return true;
-      },
-
-      updateActiveFeedback: (feedback, attributes) => () => {
-        this.storage.active = this.storage.active.map((f: Feedback) => {
-          if (
-            f.type === feedback.type &&
-            f.parent === feedback.parent &&
-            isEqual(f.config, feedback.config)
-          ) {
-            return {
-              ...f,
-              ...attributes,
-            };
-          } else {
-            return f;
-          }
-        });
-
-        return true;
-      },
-
-      removeActiveFeedback: (feedback) => () => {
-        this.storage.active = this.storage.active.filter((f: Feedback) => {
-          return !(
-            f.type === feedback.type &&
-            f.parent === feedback.parent &&
-            isEqual(f.config, feedback.config)
-          );
-        });
-
-        return true;
-      },
-      
-       */
-
-      addEventOption: (eventOption) => () => {
-        const option = this.storage.events.find(
-          (o: EventOption) => o.name === eventOption.name && o.parent === eventOption.parent
-        );
-        if (!option) {
-          this.storage.events = [...this.storage.events, eventOption];
-        }
-
-        return true;
-      },
-
-      removeEventOption: (eventOption) => () => {
-        this.storage.events = this.storage.events.filter(
-          (o: EventOption) => o.name !== eventOption.name && o.parent !== eventOption.parent
-        );
-
-        return true;
-      },
-
-      /*
-      addEventCondition: (event, parent, condition) => () => {
-        this.storage.events = this.storage.events.map((o: EventOption) => {
-          if (
-            o.name === event &&
-            o.parent === parent &&
-            !o.conditions.find((c: EventCondition) => isEqual(c, condition))
-          ) {
-            return { ...o, conditions: [...o.conditions, condition] };
-          } else {
-            return o;
-          }
-        });
-
-        return true;
-      },
-
-      updateEventCondition: (event, parent, condition, attributes) => () => {
-        this.storage.events = this.storage.events.map((o: EventOption) => {
-          if (o.name === event && o.parent === parent) {
-            return {
-              ...o,
-              conditions: o.conditions.map((c: EventCondition) => {
-                if (isEqual(c, condition)) {
-                  return { ...c, ...attributes };
-                } else {
-                  return c;
-                }
-              }),
-            };
-          } else {
-            return o;
-          }
-        });
-
-        return true;
-      },
-
-      removeEventCondition: (event, parent, condition) => () => {
-        this.storage.events = this.storage.events.map((o: EventOption) => {
-          if (o.name === event && o.parent === parent) {
-            return {
-              ...o,
-              conditions: o.conditions.filter((c: EventCondition) => !isEqual(c, condition)),
-            };
-          } else {
-            return o;
-          }
-        });
-
-        return true;
-      },
-
-       */
 
       addEventTrigger:
         (trigger) =>

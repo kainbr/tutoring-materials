@@ -2,18 +2,16 @@ import { isEqual } from "lodash-es";
 import { provide, ref } from "vue";
 
 import type { Ref } from "vue";
-import type { EventOption, Feedback } from "@/extensions/feedback/types";
+import type { Feedback } from "@/extensions/feedback/types";
 
-export type ProvidedFeedbacks = {
+export type InjectedFeedbacks = {
   activeFeedbacks: Ref<Feedback[]>;
-  eventOptions: Ref<EventOption[]>;
   addActiveFeedback: (feedback: Feedback) => void;
   removeActiveFeedback: (feedback: Feedback) => void;
 };
 
-export default function (): ProvidedFeedbacks {
+export default function (): InjectedFeedbacks {
   const activeFeedbacks: Ref<Feedback[]> = ref([]);
-  const eventOptions: Ref<EventOption[]> = ref([]);
 
   function addActiveFeedback(feedback: Feedback) {
     const activeFeedback = activeFeedbacks.value.find((f: Feedback) => f.id === feedback.id);
@@ -29,14 +27,12 @@ export default function (): ProvidedFeedbacks {
 
   provide("feedbacks", {
     activeFeedbacks,
-    eventOptions,
     addActiveFeedback,
     removeActiveFeedback,
   });
 
   return {
     activeFeedbacks,
-    eventOptions,
     addActiveFeedback,
     removeActiveFeedback,
   };

@@ -16,7 +16,7 @@ export default function (
   activeFeedbacks: Ref<Feedback[]>,
   addActiveFeedback: (feedback: Feedback) => void,
   removeActiveFeedback: (feedback: Feedback) => void
-) {
+): void {
   onMounted(() => {
     context.emit("update:state", {
       tasks: taskStates.value,
@@ -63,13 +63,10 @@ export default function (
     () => props.state.feedbacks,
     (feedbacks) => {
       if (!isEqual(feedbacks, activeFeedbacks.value)) {
-        // editor.storage.feedbacks.active = feedbacks;
         const feedbackIds = feedbacks.map((feedback: Feedback) => feedback.id);
-
         activeFeedbacks.value
           .filter((feedback: Feedback) => !feedbackIds.includes(feedback.id))
           .forEach((feedback: Feedback) => removeActiveFeedback(feedback));
-
         feedbacks.forEach((feedback: Feedback) => {
           addActiveFeedback(feedback);
         });
@@ -86,7 +83,6 @@ export default function (
           tasks: states,
           feedbacks: feedbacks,
         });
-
         editor.setOptions({
           editorProps: {
             attributes: {

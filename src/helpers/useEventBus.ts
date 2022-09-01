@@ -20,11 +20,15 @@ export type Events = {
   };
 };
 
+export type InjectedEventBus = {
+  eventBus: Emitter<Events>;
+};
+
 export default function (
   editor: Editor,
   context: SetupContext<("update:content" | "update:state" | "event")[]>,
   addActiveFeedback: (feedback: Feedback) => void
-): { eventBus: Emitter<Events> } {
+): InjectedEventBus {
   const eventBus = mitt<Events>();
 
   eventBus.on("interaction", (e: Event) => {
@@ -36,8 +40,6 @@ export default function (
       (trigger: EventTrigger) => trigger.event === e.type && trigger.parent === e.parent
     );
 
-    // console.log("eventTriggerWithType", eventTriggerWithType);
-
     // For each event trigger in the filtered list, check if the rules are fulfilled.
     // If this holds add them to the state store of active feedbacks.
     eventTriggerWithType.forEach((trigger: EventTrigger) => {
@@ -46,7 +48,6 @@ export default function (
           return checkRules(rule, e.facts);
         })
       ) {
-        // console.log("activate feedbacks");
         trigger.feedbacks.forEach((id: string) => {
           const feedback = feedbacks.find((f: Feedback) => f.id === id);
           if (feedback) {
@@ -65,7 +66,7 @@ export default function (
     } as EmittedEvent);
   });
 
-  provide("eventBus", eventBus);
+  provide("eventBus", { eventBus });
 
   return { eventBus };
 }

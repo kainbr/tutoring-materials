@@ -1,4 +1,3 @@
-<!--suppress JSUnusedGlobalSymbols -->
 <template>
   <!-- Use an extra div to register ResizeObserver after mounting, but when the editor component is not mounted yet. -->
   <div ref="container" class="h-full w-full">
@@ -30,18 +29,15 @@
       >
         <NotificationContainerComponent :editor="editor"></NotificationContainerComponent>
       </div>
-      asd {{ editor.storage.feedbacks.active }}
     </div>
   </div>
 </template>
 
 <script lang="ts">
-// Vue imports
 import { defineComponent, onMounted } from "vue";
-import EditorMenu from "@/helpers/EditorMenu.vue";
-
 import { EditorContent } from "@tiptap/vue-3";
 import EditorFooter from "@/helpers/EditorFooter.vue";
+import EditorMenu from "@/helpers/EditorMenu.vue";
 import NotificationContainerComponent from "@/extensions/feedback/notification/NotificationContainerComponent.vue";
 
 import type { DocumentState } from "@/extensions/document/types";
@@ -50,11 +46,12 @@ import type { PropType } from "vue";
 import type { TaskOptions } from "@/extensions/task/types";
 import useEditor from "@/helpers/useEditor";
 import useDefaults from "@/helpers/useDefaults";
-import useContainerSizing from "@/helpers/useContainerSizing";
+import useContainerDimensions from "@/helpers/useContainerDimensions";
 import useEventBus from "@/helpers/useEventBus";
 import useTasks from "@/helpers/useTasks";
 import useProps from "@/helpers/useProps";
 import useFeedbacks from "@/helpers/useFeedbacks";
+import useEventOptions from "@/helpers/useEventOptions";
 
 export default defineComponent({
   components: {
@@ -87,21 +84,16 @@ export default defineComponent({
     state: {
       type: Object as PropType<DocumentState>,
       default() {
-        return {};
+        return {
+          tasks: [],
+          feedbacks: [],
+        };
       },
     },
 
     isEditor: {
       type: Boolean,
       default: false,
-    },
-
-    taskLimit: {
-      type: Number,
-      default: -1,
-      validator(value: number) {
-        return value >= -1 && Number.isInteger(value);
-      },
     },
 
     taskOptions: {
@@ -119,10 +111,11 @@ export default defineComponent({
 
     // Run helpers functions. Order matters!
     useDefaults(props);
-    const { container, width, height, editorContainerClasses } = useContainerSizing(props);
+    const { container, width, height, editorContainerClasses } = useContainerDimensions(props);
     const { editor } = useEditor(props, context);
     const { taskStates } = useTasks(editor);
     const { activeFeedbacks, addActiveFeedback, removeActiveFeedback } = useFeedbacks();
+    const { addEventOption } = useEventOptions(editor);
     const { eventBus } = useEventBus(editor, context, addActiveFeedback);
     useProps(
       editor,
@@ -136,6 +129,13 @@ export default defineComponent({
 
     // Emit document created event after mounting process finished
     onMounted(() => {
+      addEventOption({
+        name: "document-created",
+        parent: null,
+        conditions: [],
+        label: { message: "global.event.type-document-created" },
+      });
+
       eventBus.emit("interaction", {
         type: "document-created",
         parent: null,

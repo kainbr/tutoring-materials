@@ -5,7 +5,7 @@ import type { Editor } from "@tiptap/vue-3";
 import type { Ref } from "vue";
 import type { TaskState } from "@/extensions/task/types";
 
-export type ProvidedTaskStates = {
+export type InjectedTaskStates = {
   taskStates: Ref<TaskState[]>;
   renderedTasks: Ref<string[]>;
   addTaskState: (taskState: TaskState) => void;
@@ -13,27 +13,20 @@ export type ProvidedTaskStates = {
   removeTaskState: (taskState: TaskState) => void;
 };
 
-export default function (editor: Editor): ProvidedTaskStates {
+export default function (editor: Editor): InjectedTaskStates {
   const taskStates: Ref<TaskState[]> = ref([]);
   const renderedTasks: Ref<string[]> = ref([]);
 
   function addTaskState(taskState: TaskState) {
     const state = taskStates.value.find((t: TaskState) => taskState.id === t.id);
-
-    if (!!state) {
-      return false;
+    if (!state) {
+      taskStates.value = [...taskStates.value, taskState];
     }
-
-    taskStates.value = [...taskStates.value, taskState];
   }
 
   function updateTaskState(taskState: TaskState, attributes: Partial<TaskState>) {
     taskStates.value = taskStates.value.map((ts: TaskState) => {
-      if (ts.id !== taskState.id) {
-        return { ...ts };
-      } else {
-        return { ...ts, ...attributes };
-      }
+      return { ...ts, ...(ts.id !== taskState.id ? {} : attributes) };
     });
   }
 

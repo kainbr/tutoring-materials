@@ -90,7 +90,7 @@ import InlineEditor from "@/helpers/InlineEditor.vue";
 import type { Editor } from "@tiptap/vue-3";
 import type { HintFeedback } from "@/extensions/feedback/hint/types";
 import type { JSONContent } from "@tiptap/vue-3";
-import type { ProvidedFeedbacks } from "@/helpers/useFeedbacks";
+import type { InjectedFeedbacks } from "@/helpers/useFeedbacks";
 import type { PropType } from "vue";
 
 export default defineComponent({
@@ -120,7 +120,7 @@ export default defineComponent({
   },
 
   setup(props) {
-    const { removeActiveFeedback } = inject("feedbacks") as ProvidedFeedbacks;
+    const { removeActiveFeedback } = inject("feedbacks") as InjectedFeedbacks;
 
     const open = ref(false);
     const contentCandidate = ref(props.feedback.config.content);

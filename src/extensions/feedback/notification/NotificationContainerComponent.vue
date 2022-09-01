@@ -23,7 +23,7 @@ import NotificationComponent from "@/extensions/feedback/notification/Notificati
 import type { PropType } from "vue";
 import type { Editor } from "@tiptap/vue-3";
 import type { Feedback } from "@/extensions/feedback/types";
-import type { ProvidedFeedbacks } from "@/helpers/useFeedbacks";
+import type { InjectedFeedbacks } from "@/helpers/useFeedbacks";
 
 export default defineComponent({
   name: "NotificationContainerComponent",
@@ -38,7 +38,7 @@ export default defineComponent({
   },
 
   setup() {
-    const { activeFeedbacks } = inject("feedbacks") as ProvidedFeedbacks;
+    const { activeFeedbacks } = inject("feedbacks") as InjectedFeedbacks;
 
     const activeNotificationFeedbacks = computed(() => {
       return (

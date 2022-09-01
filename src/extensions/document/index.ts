@@ -34,15 +34,6 @@ export const Document = Node.create({
     return ["div", mergeAttributes(HTMLAttributes), 0];
   },
 
-  onCreate() {
-    this.editor.commands.addEventOption({
-      name: "document-created",
-      parent: null,
-      conditions: [],
-      label: { message: "global.event.type-document-created" },
-    });
-  },
-
   addCommands() {
     return {
       saveDocument: () => () => {

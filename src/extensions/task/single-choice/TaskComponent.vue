@@ -171,8 +171,7 @@ import type {
 } from "@/extensions/task/single-choice/types";
 import type { Editor } from "@tiptap/vue-3";
 import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
-import type { Emitter } from "mitt";
-import type { Events } from "@/helpers/useEventBus";
+import type { InjectedEventBus } from "@/helpers/useEventBus";
 
 export default defineComponent({
   name: "TaskSingleChoice",
@@ -229,7 +228,7 @@ export default defineComponent({
   emits: ["update", "submit"],
 
   setup(props, { emit }) {
-    const eventBus: Emitter<Events> | undefined = inject("eventBus");
+    const { eventBus } = inject("eventBus") as InjectedEventBus;
 
     const { update } = useTask<SCProps, SCEmits, SCOptions, SCOption[], SCEvaluation, SCState>(
       props,
@@ -315,22 +314,20 @@ export default defineComponent({
             },
           });
 
-          if (!!eventBus) {
-            eventBus.emit("interaction", {
-              type: "answer-changed",
-              parent: props.id,
-              facts: {},
-              label: {
-                message: "global.event.type-answer-changed",
-                hexIcon: calculateHexIcon(props.id),
-              },
-              data: {
-                ...props.state,
-                answer: newAnswer,
-                oldAnswer: oldAnswer,
-              },
-            });
-          }
+          eventBus.emit("interaction", {
+            type: "answer-changed",
+            parent: props.id,
+            facts: {},
+            label: {
+              message: "global.event.type-answer-changed",
+              hexIcon: calculateHexIcon(props.id),
+            },
+            data: {
+              ...props.state,
+              answer: newAnswer,
+              oldAnswer: oldAnswer,
+            },
+          });
         }
       }
     };

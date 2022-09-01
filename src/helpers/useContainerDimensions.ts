@@ -2,20 +2,18 @@ import { onMounted, provide, ref } from "vue";
 
 import type { Ref } from "vue";
 
-export default function (props: { isEditor: boolean }): {
+export type InjectedContainerDimensions = {
   container: Ref<HTMLInputElement | null>;
   width: Ref<number>;
   height: Ref<number>;
   editorContainerClasses: Ref<string[]>;
-} {
-  // Content sizing
+};
+
+export default function (props: { isEditor: boolean }): InjectedContainerDimensions {
   const container = ref<HTMLInputElement | null>(null);
   const width = ref(0);
   const height = ref(0);
   const editorContainerClasses = ref([props.isEditor ? "overflow-y-auto h-full" : ""]);
-
-  provide("height", height);
-  provide("width", width);
 
   onMounted(() => {
     const ro = new ResizeObserver(() => {
@@ -32,6 +30,11 @@ export default function (props: { isEditor: boolean }): {
     if (container.value) {
       ro.observe(container.value);
     }
+  });
+
+  provide("containerDimensions", {
+    height,
+    width,
   });
 
   return {
