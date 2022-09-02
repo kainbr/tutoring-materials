@@ -1,5 +1,5 @@
 <template>
-  <span v-if="!!condition">
+  <span v-if="!!condition" class="flex flex-row gap-1">
     <LabelComponent :label="condition.label" />
     <component
       :is="ruleEditor"

@@ -1,37 +1,52 @@
 <template>
-  <span class="px-1">
-    <select
-      :value="rule.operation"
-      class="bg-transparent cursor-pointer appearance-none max-w-fit"
-      @change="updateOperation"
-    >
-      <option value="equal">
-        {{ equalLabel }}
-      </option>
-      <option value="unequal">
-        {{ unequalLabel }}
-      </option>
-    </select>
-  </span>
+  <div class="flex flex-row gap-1">
+    <Listbox>
+      <ListboxButton>
+        <span v-if="rule.operation === 'equal'">
+          {{ equalLabel }}
+        </span>
+        <span v-if="rule.operation === 'unequal'">
+          {{ unequalLabel }}
+        </span>
+      </ListboxButton>
+      <ListboxOptions
+        class="absolute mt-1 px-2 w-auto overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+      >
+        <ListboxOption class="cursor-pointer select-none" @click="updateOperation('equal')">
+          <span>{{ equalLabel }}</span>
+        </ListboxOption>
+        <ListboxOption class="cursor-pointer select-none" @click="updateOperation('unequal')">
+          <span>{{ unequalLabel }}</span>
+        </ListboxOption>
+      </ListboxOptions>
+    </Listbox>
 
-  <span>
-    <select
-      :value="rule.value"
-      class="bg-transparent cursor-pointer appearance-none"
-      @change="updateValue"
-    >
-      <option :value="true">
-        {{ trueLabel }}
-      </option>
-      <option :value="false">
-        {{ falseLabel }}
-      </option>
-    </select>
-  </span>
+    <Listbox>
+      <ListboxButton>
+        <span v-if="rule.value === true">
+          {{ trueLabel }}
+        </span>
+        <span v-if="rule.value === false">
+          {{ falseLabel }}
+        </span>
+      </ListboxButton>
+      <ListboxOptions
+        class="absolute mt-1 px-2 py-1 w-auto overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+      >
+        <ListboxOption class="cursor-pointer select-none" @click="updateValue(true)">
+          <span>{{ trueLabel }}</span>
+        </ListboxOption>
+        <ListboxOption class="cursor-pointer select-none" @click="updateValue(false)">
+          <span>{{ falseLabel }}</span>
+        </ListboxOption>
+      </ListboxOptions>
+    </Listbox>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
 
 import type { PropType } from "vue";
 import type {
@@ -42,6 +57,13 @@ import type {
 
 export default defineComponent({
   name: "BooleanRuleEditor",
+
+  components: {
+    Listbox,
+    ListboxButton,
+    ListboxOptions,
+    ListboxOption,
+  },
 
   props: {
     rule: {
@@ -84,16 +106,16 @@ export default defineComponent({
   },
 
   methods: {
-    updateOperation($event: Event) {
+    updateOperation(operation: string) {
       this.$emit("update:rule", {
         ...this.rule,
-        operation: ($event.target as HTMLSelectElement).value,
+        operation,
       });
     },
-    updateValue($event: Event) {
+    updateValue(value: boolean) {
       this.$emit("update:rule", {
         ...this.rule,
-        value: ($event.target as HTMLSelectElement).value,
+        value,
       });
     },
   },
