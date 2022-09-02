@@ -13,6 +13,8 @@ import en from "@/locales/en.json";
 
 import "tippy.js/dist/tippy.css";
 import "tippy.js/themes/light-border.css";
+import "@benrbray/prosemirror-math/style/math.css";
+import "katex/dist/katex.min.css";
 import "./index.css";
 
 import type { App } from "vue";

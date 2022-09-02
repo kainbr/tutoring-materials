@@ -139,11 +139,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeUnmount, watch } from "vue";
 import { BubbleMenu, Editor, EditorContent } from "@tiptap/vue-3";
 import { Color } from "@tiptap/extension-color";
+import { defineComponent, onBeforeUnmount, watch } from "vue";
+import { Math } from "@/extensions/math";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 import { Placeholder } from "@tiptap/extension-placeholder";
+import { Subscript } from "@tiptap/extension-subscript";
+import { Superscript } from "@tiptap/extension-superscript";
+import { Underline } from "@tiptap/extension-underline";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { useI18n } from "vue-i18n";
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
@@ -152,14 +156,11 @@ import IconFontColor from "@/helpers/icons/IconFontColor.vue";
 import IconFormatClear from "@/helpers/icons/IconFormatClear.vue";
 import IconItalic from "@/helpers/icons/IconItalic.vue";
 import IconUnderline from "@/helpers/icons/IconUnderline.vue";
+import MenuSectionTypography from "@/helpers/menu/MenuSectionTypography.vue";
 import StarterKit from "@tiptap/starter-kit";
 
 import type { PropType } from "vue";
 import type { JSONContent } from "@tiptap/vue-3";
-import MenuSectionTypography from "@/helpers/menu/MenuSectionTypography.vue";
-import { Subscript } from "@tiptap/extension-subscript";
-import { Superscript } from "@tiptap/extension-superscript";
-import { Underline } from "@tiptap/extension-underline";
 
 export default defineComponent({
   name: "InlineEditor",
@@ -225,6 +226,7 @@ export default defineComponent({
         Subscript,
         Superscript,
         Underline,
+        Math,
       ],
       editable: props.isEditor,
       content: props.content,
