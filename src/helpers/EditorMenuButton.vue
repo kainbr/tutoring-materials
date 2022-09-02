@@ -28,13 +28,15 @@ export default defineComponent({
     },
     onActiveClick: {
       type: Function,
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      default: () => {},
+      default: () => {
+        return;
+      },
     },
     onInactiveClick: {
       type: Function,
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      default: () => {},
+      default: () => {
+        return;
+      },
     },
   },
 });

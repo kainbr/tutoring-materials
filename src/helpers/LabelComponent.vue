@@ -27,10 +27,10 @@ export default defineComponent({
 
   computed: {
     compiledLabel() {
-      if (!!this.label.data) {
-        return this.$t(this.label.message, this.label.data);
-      } else {
+      if (!this.label.data) {
         return this.$t(this.label.message);
+      } else {
+        return this.$t(this.label.message, this.label.data);
       }
     },
   },

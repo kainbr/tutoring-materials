@@ -1,10 +1,9 @@
 <template>
   <div class="gap-0.5">
-    <!--suppress JSUndeclaredVariable -->
-    <EditorMenuButton :on-inactive-click="() => (fileModalOpen = true)">
+    <EditorMenuButton :on-inactive-click="showFileModal">
       <IconUpload />
     </EditorMenuButton>
-    <EditorMenuButton :on-inactive-click="() => editor.commands.saveDocument()">
+    <EditorMenuButton :on-inactive-click="editor.commands.saveDocument">
       <IconSave />
     </EditorMenuButton>
 
@@ -48,6 +47,12 @@ export default defineComponent({
     return {
       fileModalOpen: false,
     };
+  },
+
+  methods: {
+    showFileModal() {
+      this.fileModalOpen = true;
+    },
   },
 });
 </script>
