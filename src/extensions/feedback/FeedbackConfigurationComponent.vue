@@ -89,7 +89,7 @@ export default defineComponent({
       }
     };
 
-    const copy = () => {
+    const copyFeedback = () => {
       // Make a copy of the current feedback and overwrite id and hexIcon
       const uid = uuid();
       props.editor.commands.addFeedback({
@@ -109,7 +109,7 @@ export default defineComponent({
       props.editor.commands.removeFeedback(props.feedback);
     };
 
-    return { isActive, toggleActiveFeedback, copy, remove };
+    return { isActive, toggleActiveFeedback, copy: copyFeedback, remove };
   },
 });
 </script>

@@ -51,32 +51,32 @@ const empty: EventCondition = {
   },
 };
 
-export const formatEvents: SCFormatFunction = function (data) {
-  const getOptionSelected = (content: SCOption[]): EventCondition[] => {
-    return content.map((option, index) => {
-      return {
-        fact: option.id + "-selected",
-        label: {
-          message: "global.condition.single-choice.answer-option-selected",
-          data: { index: index + 1 },
-        },
-        previewLabel: {
-          message: "global.condition.single-choice.answer-option-selected-preview",
-          data: { index: index + 1 },
-        },
-        type: "boolean",
-        defaultOperation: "equal",
-        defaultValue: true,
-        options: {
-          trueLabel: "global.condition.single-choice.answer-option-selected-true",
-          falseLabel: "global.condition.single-choice.answer-option-selected-false",
-          equalLabel: "global.condition.single-choice.answer-option-selected-equal",
-          unequalLabel: "global.condition.single-choice.answer-option-selected-unequal",
-        },
-      };
-    });
-  };
+const getOptionSelected = (content: SCOption[]): EventCondition[] => {
+  return content.map((option, index) => {
+    return {
+      fact: option.id + "-selected",
+      label: {
+        message: "global.condition.single-choice.answer-option-selected",
+        data: { index: index + 1 },
+      },
+      previewLabel: {
+        message: "global.condition.single-choice.answer-option-selected-preview",
+        data: { index: index + 1 },
+      },
+      type: "boolean",
+      defaultOperation: "equal",
+      defaultValue: true,
+      options: {
+        trueLabel: "global.condition.single-choice.answer-option-selected-true",
+        falseLabel: "global.condition.single-choice.answer-option-selected-false",
+        equalLabel: "global.condition.single-choice.answer-option-selected-equal",
+        unequalLabel: "global.condition.single-choice.answer-option-selected-unequal",
+      },
+    };
+  });
+};
 
+export const formatEvents: SCFormatFunction = function (data) {
   const eventOption: EventOption = {
     name: "answer-submitted",
     parent: data.id,

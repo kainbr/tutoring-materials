@@ -16,6 +16,7 @@
         @update:feedbacks="updateFeedbacks"
       />
     </div>
+
     <!-- Standard buttons -->
     <div class="flex gap-0.5 ml-3 h-fit">
       <EditorMenuButton :on-inactive-click="() => addEventTrigger(trigger)">

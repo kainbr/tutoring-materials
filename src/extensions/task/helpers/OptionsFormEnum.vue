@@ -56,8 +56,6 @@ export default defineComponent({
     },
   },
 
-  emits: {
-    "update:value": null,
-  },
+  emits: ["update:value"],
 });
 </script>

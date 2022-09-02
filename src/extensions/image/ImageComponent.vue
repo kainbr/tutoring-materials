@@ -1,5 +1,6 @@
 <template>
   <node-view-wrapper>
+    <!-- Rendered view -->
     <div
       :class="[node.attrs.float !== 'none' ? undefined : 'flex justify-' + alignment]"
       class="mb-4"

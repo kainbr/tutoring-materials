@@ -47,21 +47,6 @@ export default defineComponent({
       type: Array as PropType<Feedback[]>,
       required: true,
     },
-    /*
-    createFeedback: {
-      type: Function,
-      required: true,
-    },
-    updateFeedback: {
-      type: Function,
-      required: true,
-    },
-    removeFeedback: {
-      type: Function,
-      required: true,
-    },
-
-     */
   },
 });
 </script>

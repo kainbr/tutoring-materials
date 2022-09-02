@@ -165,6 +165,7 @@ export default defineComponent({
     getConditionByRule(rule: EventRule) {
       return this.conditions.find((condition: EventCondition) => rule.fact === condition.fact);
     },
+
     addRule(condition: EventCondition) {
       const rule: EventRule = {
         id: uuid(),
@@ -175,12 +176,14 @@ export default defineComponent({
 
       this.$emit("update:rules", [...this.trigger.rules, rule]);
     },
+
     updateRule(rule: EventRule, newRule: EventRule) {
       this.$emit(
         "update:rules",
         this.trigger.rules.map((r: EventRule) => (isEqual(rule, r) ? newRule : r))
       );
     },
+
     removeRule(rule: EventRule) {
       this.$emit(
         "update:rules",

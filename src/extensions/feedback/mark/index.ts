@@ -10,15 +10,15 @@ declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     feedbackMark: {
       /**
-       * Todo: Add method description
+       * Adds a feedback mark to the current selection.
        */
       setFeedbackMark: (attributes: object) => ReturnType;
       /**
-       * Todo: Add method description
+       * Removes the feedback mark to the current selection.
        */
       unsetFeedbackMark: () => ReturnType;
       /**
-       * Todo: Add method description
+       * Removes a feedback mark from the document.
        */
       removeFeedbackMark: (ref: string) => ReturnType;
     };
@@ -183,21 +183,21 @@ export const FeedbackMark = Mark.create({
           }
           return false;
         },
+
       unsetFeedbackMark:
         () =>
         ({ commands }) => {
           commands.unsetMark(this.name);
           return true;
         },
+
       removeFeedbackMark:
         (ref) =>
         ({ chain }) => {
-          const nodes = findChildren(
+          findChildren(
             this.editor.state.doc,
             (node) => !!node.marks.find((m) => m.attrs?.ref === ref)
-          );
-
-          nodes.forEach((node) => {
+          ).forEach((node) => {
             chain()
               .setTextSelection({
                 from: node.pos,

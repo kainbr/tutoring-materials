@@ -153,6 +153,7 @@ export default defineComponent({
           this.feedbacks.find((feedback: Feedback) => feedback.id === feedbackId) as Feedback
       );
     },
+
     filteredFeedbacks() {
       return this.feedbacksQuery === ""
         ? this.feedbacks

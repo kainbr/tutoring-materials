@@ -126,26 +126,10 @@ export default defineComponent({
               .includes(this.eventQuery.toLowerCase().replace(/\s+/g, ""))
           );
     },
+
     selectedEvent(): EventOption | undefined {
       return this.eventOptions.find((option: EventOption) => option.name === this.trigger.event);
     },
   },
-
-  /*
-  watch: {
-    events(newEvents) {
-      const event = newEvents.find(
-        (e: EventOption) => e.name === this.trigger.event && e.parent === this.trigger.parent
-      );
-      if (!event) {
-        this.$emit("update:event", {
-          name: null,
-          parent: null,
-        });
-      }
-    },
-  },
-
-   */
 });
 </script>

@@ -158,7 +158,6 @@ import { isEqual } from "lodash-es";
 import { useTask } from "@/extensions/task/helpers";
 import { v4 as uuid } from "uuid";
 
-// Types
 import type { PropType } from "vue";
 import type { JSONContent } from "@tiptap/vue-3";
 import type {
@@ -424,20 +423,20 @@ export default defineComponent({
     };
 
     return {
-      update,
+      addFeedbackHint,
       addOption,
-      removeOption,
+      changeAnswerOptionValue,
+      evaluationOptions,
+      isOptionChecked,
       moveUpOption,
       moveDownOption,
-      updateAnswerOptionValue,
-      updateAnswerOptionContent,
-      changeAnswerOptionValue,
+      removeOption,
       showCorrectAnswerOption,
       showIncorrectAnswerOption,
-      isOptionChecked,
+      update,
+      updateAnswerOptionContent,
+      updateAnswerOptionValue,
       updateEvaluationName,
-      evaluationOptions,
-      addFeedbackHint,
     };
   },
 });

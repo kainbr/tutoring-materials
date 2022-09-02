@@ -19,7 +19,6 @@ export const formatEvaluation: SCFormatFunction = function (data) {
       };
   }
 
-  // Add the
   data.evaluation.solution = data.content.map((option) => {
     return {
       id: option.id,

@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 import type { SCEvaluation, SCState } from "@/extensions/task/single-choice/types";
 
 export const evaluate = function (config: SCEvaluation, state: SCState): boolean {
@@ -12,7 +14,6 @@ export const evaluate = function (config: SCEvaluation, state: SCState): boolean
 
 export const getFacts = function (config: SCEvaluation, state: SCState): object {
   return {
-    // option values
     ...state.answer.reduce((a, o) => ({ ...a, [o.id + "-selected"]: o.value }), {}),
   };
 };

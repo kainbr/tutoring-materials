@@ -43,17 +43,13 @@ export default defineComponent({
 
   computed: {
     ruleEditor() {
-      if (!!this.condition) {
-        switch (this.condition.type) {
-          case "number":
-            return NumberRuleEditor;
-          case "boolean":
-            return BooleanRuleEditor;
-          default:
-            return null;
-        }
-      } else {
-        return null;
+      switch (this.condition?.type) {
+        case "number":
+          return NumberRuleEditor;
+        case "boolean":
+          return BooleanRuleEditor;
+        default:
+          return null;
       }
     },
   },

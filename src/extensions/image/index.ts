@@ -8,7 +8,7 @@ declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     customImage: {
       /**
-       *
+       * Uploads an image, compresses it and adds it to the document.
        */
       uploadImage: (file: Blob) => ReturnType;
     };
@@ -19,14 +19,6 @@ export const CustomImage = Image.extend({
   name: "image",
 
   selectable: true,
-
-  addOptions() {
-    return {
-      ...Image.options,
-      allowBase64: true,
-      sizes: ["inline", "block", "left", "right"],
-    };
-  },
 
   addAttributes() {
     return {

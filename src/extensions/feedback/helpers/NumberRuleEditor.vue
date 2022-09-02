@@ -82,6 +82,7 @@ export default defineComponent({
         operation: ($event.target as HTMLSelectElement).value,
       });
     },
+
     updateValue($event: Event) {
       this.$emit("update:rule", {
         ...this.rule,

@@ -60,9 +60,7 @@ export default defineComponent({
     },
   },
 
-  emits: {
-    "update:value": null,
-  },
+  emits: ["update:value"],
 
   methods: {
     emitUpdate($event: Event) {

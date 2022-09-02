@@ -3,7 +3,7 @@ import { Extension } from "@tiptap/core";
 import type { Node } from "prosemirror-model";
 import { TextSelection, AllSelection, Transaction } from "prosemirror-state";
 
-type IndentOptions = {
+export type IndentOptions = {
   types: string[];
   indentLevels: number[];
   defaultIndentLevel: number;

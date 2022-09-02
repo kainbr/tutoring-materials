@@ -6,14 +6,14 @@ declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     taskSingleChoice: {
       /**
-       * Todo: Add method description
+       * Adds a single choice task to the document.
        */
       setSingleChoiceTask: () => ReturnType;
     };
   }
 }
 
-export const SingleChoiceTask = BaseTask.extend({
+export const TaskSingleChoice = BaseTask.extend({
   addAttributes() {
     return { ...this.parent?.(), type: "single-choice" };
   },
@@ -22,20 +22,21 @@ export const SingleChoiceTask = BaseTask.extend({
     return {
       setSingleChoiceTask:
         () =>
-        ({ commands }) => {
-          commands.insertContent({
-            type: this.name,
-            content: [
-              {
-                type: "paragraph",
+        ({ chain }) => {
+          chain()
+            .insertContent({
+              type: this.name,
+              content: [
+                {
+                  type: "paragraph",
+                },
+              ],
+              attrs: {
+                type: "single-choice",
               },
-            ],
-            attrs: {
-              type: "single-choice",
-            },
-          });
-
-          commands.focus();
+            })
+            .focus()
+            .run();
 
           return true;
         },

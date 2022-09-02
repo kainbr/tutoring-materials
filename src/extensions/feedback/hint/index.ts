@@ -11,7 +11,7 @@ declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     feedbackHint: {
       /**
-       * Add a default hint feedback to permanent feedback store.
+       * Add a default hint feedback to to the document.
        */
       addFeedbackHint: (
         parent: string,

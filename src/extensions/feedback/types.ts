@@ -1,9 +1,5 @@
 import type { Label } from "@/extensions/document/types";
 
-/**
- * Feedback
- */
-
 export interface Feedback {
   id: string;
   type: string;
@@ -11,10 +7,6 @@ export interface Feedback {
   config: object;
   label?: Label;
 }
-
-/**
- * Triggers
- */
 
 export type EventTrigger = {
   id: string;

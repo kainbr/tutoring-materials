@@ -5,26 +5,14 @@ import StarterKit from "@tiptap/starter-kit";
 
 // Standard extensions
 import { Color } from "@tiptap/extension-color";
-import { Document as BaseDocument } from "@tiptap/extension-document";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";
 import { TextAlign } from "@tiptap/extension-text-align";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { Typography } from "@tiptap/extension-typography";
+import { TutoringMaterial } from "@/extensions/tutoringMaterial";
 import { Underline } from "@tiptap/extension-underline";
-
-// Custom extensions
-import { CustomImage } from "@/extensions/image";
-import { Document } from "@/extensions/document";
-import { FeedbackExtension } from "@/extensions/feedback";
-import { FeedbackHint } from "@/extensions/feedback/hint";
-import { FeedbackMark } from "@/extensions/feedback/mark";
-import { FeedbackNotification } from "@/extensions/feedback/notification";
-import { Indent } from "@/extensions/indent";
-import { Infobox } from "@/extensions/infobox";
-import { SingleChoiceTask } from "@/extensions/task/single-choice";
-import { Task } from "@/extensions/task";
 
 import type { JSONContent } from "@tiptap/vue-3";
 import type { SetupContext } from "vue";
@@ -53,10 +41,7 @@ export default function (
           levels: [1, 2, 3],
         },
       }),
-      BaseDocument.extend({
-        content: "document",
-      }),
-      Document.configure({
+      TutoringMaterial.configure({
         isEditor: props.isEditor,
       }),
       Color,
@@ -72,17 +57,6 @@ export default function (
       TextStyle,
       Typography,
       Underline,
-
-      // Custom Extensions
-      CustomImage,
-      FeedbackExtension,
-      FeedbackHint,
-      FeedbackMark.configure({ showOutline: props.isEditor }),
-      FeedbackNotification,
-      Indent,
-      Infobox,
-      SingleChoiceTask,
-      Task,
     ],
     content: props.content,
     autofocus: false,

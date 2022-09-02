@@ -17,9 +17,6 @@
     :label="$t('editor.task.config-label-has-max-attempts')"
     @update:value="$emit('update:options', { ...options, hasMaxAttempts: $event })"
   ></OptionsFormBoolean>
-  <!--
-    :description="$t('editor.task.config-description-has-max-attempts')"
-  -->
   <OptionsFormNumber
     v-if="hasMaxAttempts"
     name="maxAttempts"
@@ -29,9 +26,6 @@
     :label="$t('editor.task.config-label-max-attempts')"
     @update:value="$emit('update:options', { ...options, maxAttempts: $event })"
   ></OptionsFormNumber>
-  <!--
-    :description="$t('editor.task.config-description-max-attempts')"
-  -->
 
   <!-- Submit Button -->
   <OptionsFormString
@@ -41,9 +35,6 @@
     :label="$t('editor.task.config-label-text-submit-button')"
     @update:value="$emit('update:options', { ...options, textSubmitButton: $event })"
   ></OptionsFormString>
-  <!--
-    :description="$t('editor.task.config-description-text-submit-button')"
-  -->
 
   <!-- Correct State -->
   <OptionsFormString
@@ -53,9 +44,6 @@
     :label="$t('editor.task.config-label-title-correct-answer')"
     @update:value="$emit('update:options', { ...options, titleCorrectAnswer: $event })"
   ></OptionsFormString>
-  <!--
-    :description="$t('editor.task.config-description-title-correct-answer')"
-  -->
   <OptionsFormString
     v-if="hasCorrectState"
     name="textCorrectAnswer"
@@ -63,9 +51,6 @@
     :label="$t('editor.task.config-label-text-correct-answer')"
     @update:value="$emit('update:options', { ...options, textCorrectAnswer: $event })"
   ></OptionsFormString>
-  <!--
-    :description="$t('editor.task.config-description-text-correct-answer')"
-  -->
 
   <!-- Incorrect State -->
   <OptionsFormString
@@ -75,9 +60,6 @@
     :label="$t('editor.task.config-label-title-incorrect-answer')"
     @update:value="$emit('update:options', { ...options, titleIncorrectAnswer: $event })"
   ></OptionsFormString>
-  <!--
-    :description="$t('editor.task.config-description-title-incorrect-answer')"
-  -->
   <OptionsFormString
     v-if="hasIncorrectState"
     name="textIncorrectAnswer"
@@ -85,9 +67,6 @@
     :label="$t('editor.task.config-label-text-incorrect-answer')"
     @update:value="$emit('update:options', { ...options, textIncorrectAnswer: $event })"
   ></OptionsFormString>
-  <!--
-    :description="$t('editor.task.config-description-text-incorrect-answer')"
-  -->
 
   <!-- Final Incorrect State -->
   <OptionsFormString
@@ -97,9 +76,6 @@
     :label="$t('editor.task.config-label-title-final-incorrect-answer')"
     @update:value="$emit('update:options', { ...options, titleFinalIncorrectAnswer: $event })"
   ></OptionsFormString>
-  <!--
-    :description="$t('editor.task.config-description-title-final-incorrect-answer')"
-  -->
   <OptionsFormString
     v-if="hasFinalIncorrectState"
     name="textFinalIncorrectAnswer"
@@ -107,9 +83,6 @@
     :label="$t('editor.task.config-label-text-final-incorrect-answer')"
     @update:value="$emit('update:options', { ...options, textFinalIncorrectAnswer: $event })"
   ></OptionsFormString>
-  <!--
-    :description="$t('editor.task.config-description-text-final-incorrect-answer')"
-  -->
 </template>
 
 <script lang="ts">

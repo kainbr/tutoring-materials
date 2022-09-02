@@ -7,10 +7,6 @@ export interface DocumentState {
   feedbacks: Feedback[];
 }
 
-/**
- * Events
- */
-
 export type Event = {
   type: string;
   parent: string | null;
@@ -26,10 +22,6 @@ export type EmittedEvent = {
   data: object;
   label: Label;
 };
-
-/**
- * Helper
- */
 
 export type Label = {
   message: string;

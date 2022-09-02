@@ -11,7 +11,7 @@ declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     feedbackNotification: {
       /**
-       * Add a default notification feedback to permanent feedback store.
+       * Add a notification feedback to the document..
        */
       addFeedbackNotification: (attributes: Partial<NotificationFeedback>) => ReturnType;
     };

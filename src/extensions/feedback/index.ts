@@ -4,43 +4,34 @@ import { Extension, findChildren } from "@tiptap/core";
 import { isEqual } from "lodash-es";
 import { Plugin, PluginKey } from "prosemirror-state";
 
-import type { EventOption, EventTrigger, Feedback } from "@/extensions/feedback/types";
+import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
 import type { MarkFeedback } from "@/extensions/feedback/mark/types";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     feedback: {
       /**
-       * Adds a feedback to the permanent feedback store.
+       * Adds a feedback to the document.
        */
       addFeedback: (feedback: Feedback) => ReturnType;
       /**
-       * Updates a feedback in the permanent feedback store.
+       * Updates the provided attributes of the feedback in the document.
        */
       updateFeedback: (feedback: Feedback, attributes: Partial<Feedback>) => ReturnType;
       /**
-       * Removes a feedback from the permanent feedback store.
+       * Removes a feedback from the document.
        */
       removeFeedback: (feedback: Feedback, removeEmptyTrigger?: boolean) => ReturnType;
-
       /**
-       * Adds a new event option to the global storage.
-       */
-      addEventOption: (eventOption: EventOption) => ReturnType;
-      /**
-       * Remove an event option from the global storage.
-       */
-      removeEventOption: (eventOption: EventOption) => ReturnType;
-      /**
-       * Todo: Add method description
+       * Adds an event trigger to the document-
        */
       addEventTrigger: (trigger: EventTrigger) => ReturnType;
       /**
-       * Todo: Add method description
+       * Updates the provided attributes of the event trigger in the document.
        */
       updateEventTrigger: (trigger: EventTrigger, attributes: Partial<EventTrigger>) => ReturnType;
       /**
-       * Todo: Add method description
+       * Removes an event trigger from the document.
        */
       removeEventTrigger: (trigger: EventTrigger) => ReturnType;
     };
@@ -146,18 +137,18 @@ export const FeedbackExtension = Extension.create({
       updateFeedback:
         (feedback, attributes) =>
         ({ commands }) => {
-          const feedbacks = this.editor.getAttributes("document").feedbacks.map((s: Feedback) => {
-            if (s.id === feedback.id) {
-              return {
-                ...s,
-                ...attributes,
-              };
-            } else {
-              return s;
-            }
+          commands.updateAttributes("document", {
+            feedbacks: this.editor.getAttributes("document").feedbacks.map((s: Feedback) => {
+              if (s.id === feedback.id) {
+                return {
+                  ...s,
+                  ...attributes,
+                };
+              } else {
+                return s;
+              }
+            }),
           });
-
-          commands.updateAttributes("document", { feedbacks });
 
           return true;
         },
@@ -210,48 +201,30 @@ export const FeedbackExtension = Extension.create({
           commands.updateAttributes("document", {
             triggers: [...this.editor.getAttributes("document").triggers, trigger],
           });
-
           return true;
         },
 
       updateEventTrigger:
         (trigger, attributes) =>
         ({ commands }) => {
-          if (!trigger.id) {
-            return false;
-          }
-
-          const triggers = this.editor.getAttributes("document").triggers;
-          const index = triggers.findIndex((t: EventTrigger) => {
-            return t.id === trigger.id && t.id;
-          });
-
-          if (!index && index !== 0) {
-            return false;
-          }
-
-          triggers[index] = { ...triggers[index], ...attributes };
-
           commands.updateAttributes("document", {
-            triggers: triggers,
+            triggers: this.editor
+              .getAttributes("document")
+              .triggers.map((t: EventTrigger) =>
+                t.id === trigger.id ? { ...t, ...attributes } : t
+              ),
           });
-
           return true;
         },
 
       removeEventTrigger:
         (trigger) =>
         ({ commands }) => {
-          if (!trigger.id) {
-            return false;
-          }
-
           commands.updateAttributes("document", {
             triggers: this.editor
               .getAttributes("document")
               .triggers.filter((t: EventTrigger) => t.id !== trigger.id),
           });
-
           return true;
         },
     };
