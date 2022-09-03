@@ -4,25 +4,25 @@ import { BaseTask } from "@/extensions/task/base";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    taskSingleChoice: {
+    taskMultipleChoice: {
       /**
-       * Adds a single choice task to the document.
+       * Adds a multiple choice task to the document.
        */
-      setSingleChoiceTask: () => ReturnType;
+      setMultipleChoiceTask: () => ReturnType;
     };
   }
 }
 
-export const TaskSingleChoice = BaseTask.extend({
-  name: "task-single-choice",
+export const TaskMultipleChoice = BaseTask.extend({
+  name: "task-multiple-choice",
 
   addAttributes() {
-    return { ...this.parent?.(), type: "single-choice" };
+    return { ...this.parent?.(), type: "multiple-choice" };
   },
 
   addCommands() {
     return {
-      setSingleChoiceTask:
+      setMultipleChoiceTask:
         () =>
         ({ chain }) => {
           chain()
@@ -34,7 +34,7 @@ export const TaskSingleChoice = BaseTask.extend({
                 },
               ],
               attrs: {
-                type: "single-choice",
+                type: "multiple-choice",
               },
             })
             .focus()

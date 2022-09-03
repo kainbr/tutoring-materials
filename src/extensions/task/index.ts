@@ -18,7 +18,7 @@ export const TaskExtension = Extension.create({
           const tr = state.tr;
 
           state.doc.descendants((node, pos) => {
-            if (node.isBlock && node.type.name === "task" && !node.attrs.id) {
+            if (node.isBlock && node.type.name.startsWith("task") && !node.attrs.id) {
               tr.setNodeMarkup(pos, undefined, {
                 ...node.attrs,
                 id: uuid(),

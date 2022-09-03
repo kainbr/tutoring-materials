@@ -13,6 +13,7 @@ import { TaskExtension } from "@/extensions/task";
 import { TaskSingleChoice } from "@/extensions/task/single-choice";
 
 import type { IndentOptions } from "@/extensions/indent";
+import { TaskMultipleChoice } from "@/extensions/task/multiple-choice";
 
 export interface TutoringMaterialOptions {
   isEditor: boolean;
@@ -24,6 +25,7 @@ export interface TutoringMaterialOptions {
   feedbackMark: false;
   feedbackNotification: false;
   taskSingleChoice: false;
+  taskMultipleChoice: false;
 }
 
 export const TutoringMaterial = Extension.create<TutoringMaterialOptions>({
@@ -85,6 +87,10 @@ export const TutoringMaterial = Extension.create<TutoringMaterialOptions>({
     // Tasks
     if (this.options.taskSingleChoice !== false) {
       extensions.push(TaskSingleChoice.configure(this.options?.taskSingleChoice));
+    }
+
+    if (this.options.taskMultipleChoice !== false) {
+      extensions.push(TaskMultipleChoice.configure(this.options?.taskMultipleChoice));
     }
 
     return extensions;

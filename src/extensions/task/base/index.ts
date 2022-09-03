@@ -3,7 +3,7 @@ import { Node, mergeAttributes } from "@tiptap/core";
 import { VueNodeViewRenderer } from "@tiptap/vue-3";
 
 export const BaseTask = Node.create({
-  name: "task",
+  name: "task-",
 
   group: "block",
 

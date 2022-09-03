@@ -41,7 +41,7 @@
             <MenuItem>
               <button
                 class="min-w-max hover:bg-black w-full hover:text-white focus:outline-none font-medium text-sm p-1 text-center inline-flex items-center justify-end px-2"
-                @click="() => {}"
+                @click="editor.commands.setMultipleChoiceTask()"
               >
                 Multiple-Choice
               </button>

@@ -68,6 +68,9 @@
       "config-label-title-final-incorrect-answer": "Title incorrect answer (final)",
       "config-label-title-incorrect-answer": "Title incorrect answer",
       "evaluation-label-type": "Type",
+      "multiple-choice": {
+        "evaluation-all-match": "All options are un-/selected correctly"
+      },
       "single-choice": {
         "evaluation-all-match": "All options are un-/selected correctly"
       },

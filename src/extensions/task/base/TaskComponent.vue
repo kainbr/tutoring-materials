@@ -65,6 +65,7 @@ import IconClose from "@/helpers/icons/IconClose.vue";
 import SubmitButton from "@/extensions/task/helpers/SubmitButton.vue";
 
 import SingleChoice from "@/extensions/task/single-choice/TaskComponent.vue";
+import MultipleChoice from "@/extensions/task/multiple-choice/TaskComponent.vue";
 
 import type { Ref } from "vue";
 import type { EventOption } from "@/extensions/feedback/types";
@@ -83,6 +84,7 @@ export default defineComponent({
     NodeViewWrapper,
     SubmitButton,
     SingleChoice,
+    MultipleChoice,
   },
 
   props: {

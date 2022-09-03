@@ -1,0 +1,440 @@
+<template>
+  <TaskScaffold contenteditable="false" :editor="editor">
+    <!-- Render -->
+    <template #render>
+      <div v-for="index in state?.order" :key="index" class="gap-2 items-center cursor-default">
+        <div
+          class="flex flex-row pl-2 items-center"
+          :class="{
+            'bg-green-50': showCorrectAnswerOption(content[index]),
+            'bg-red-50': showIncorrectAnswerOption(content[index]),
+          }"
+          @click="toggleAnswerOptionValue(content[index])"
+        >
+          <input
+            type="checkbox"
+            class="mr-2"
+            :checked="isOptionChecked(content[index])"
+            :disabled="['correct', 'final-incorrect'].includes(state.state)"
+          />
+          <div style="flex-grow: 1" class="py-1">
+            <InlineEditor :content="!!content ? content[index].content : undefined" />
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- Content -->
+    <template #content>
+      <div
+        v-for="(option, index) in content"
+        :key="option.id"
+        class="flex flex-row gap-2 items-center"
+      >
+        <div class="flex flex-row min-w-fit items-center">
+          <span class="px-2 w-10 min-w-fit"> ({{ index + 1 }}) </span>
+          <input
+            :checked="evaluation.solution.find((s) => s.id === option.id)?.value || false"
+            type="checkbox"
+            @input="toggleEvaluationOptionValue(option)"
+          />
+        </div>
+
+        <div class="grow [&_p]:my-1">
+          <InlineEditor
+            is-editor
+            :content="option.content"
+            @update:content="updateAnswerOptionContent(option, $event)"
+          />
+        </div>
+
+        <div class="min-w-fit">
+          <EditorMenuButton
+            :disabled="index === 0"
+            tabindex="-1"
+            @click="moveUpOption(index, option)"
+          >
+            <IconArrowUp />
+          </EditorMenuButton>
+          <EditorMenuButton
+            :disabled="!content || index === content.length - 1"
+            tabindex="-1"
+            @click="moveDownOption(index, option)"
+          >
+            <IconArrowDown />
+          </EditorMenuButton>
+          <EditorMenuButton tabindex="-1" @click="addFeedbackHint(option.id)">
+            <IconFeedback />
+          </EditorMenuButton>
+          <EditorMenuButton
+            :disabled="!content || content.length <= 1"
+            tabindex="-1"
+            @click="removeOption(index)"
+          >
+            <IconTrash />
+          </EditorMenuButton>
+        </div>
+      </div>
+
+      <!-- Bottom menu pane -->
+      <div>
+        <div style="display: flex; flex-direction: row; justify-content: end">
+          <div style="display: flex; gap: 1px">
+            <EditorMenuButton
+              :active="options?.shuffle"
+              :on-active-click="() => update({ options: { ...options, shuffle: false } })"
+              :on-inactive-click="() => update({ options: { ...options, shuffle: true } })"
+            >
+              <IconShuffle />
+            </EditorMenuButton>
+            <EditorMenuButton @click="addOption">
+              <IconAdd />
+            </EditorMenuButton>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- Evaluation -->
+    <template #evaluation>
+      <!--suppress JSUnresolvedFunction -->
+      <OptionsFormEnum
+        v-if="!!evaluation"
+        name="evaluationName"
+        :value="evaluation.name"
+        :options="
+          evaluationOptions.map((o) => {
+            return { value: o.name, label: o.label };
+          })
+        "
+        :label="$t('editor.task.evaluation-label-type')"
+        @update:value="updateEvaluationName"
+      />
+    </template>
+
+    <!-- Options -->
+    <template #options>
+      <div v-if="options" class="mt-1 flex flex-col gap-2">
+        <OptionsDefaults
+          :options="options"
+          allow-empty-answer-submission
+          has-max-attempts
+          has-submit-button
+          has-correct-state
+          has-incorrect-state
+          has-final-incorrect-state
+          @update:options="update({ options: $event })"
+        />
+      </div>
+    </template>
+  </TaskScaffold>
+</template>
+
+<script lang="ts">
+import { defineComponent, inject } from "vue";
+
+import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
+import IconAdd from "@/helpers/icons/IconAdd.vue";
+import IconFeedback from "@/helpers/icons/IconFeedback.vue";
+import IconArrowDown from "@/helpers/icons/IconArrowDown.vue";
+import IconArrowUp from "@/helpers/icons/IconArrowUp.vue";
+import IconShuffle from "@/helpers/icons/IconShuffle.vue";
+import IconTrash from "@/helpers/icons/IconTrash.vue";
+import InlineEditor from "@/helpers/InlineEditor.vue";
+import TaskScaffold from "@/extensions/task/helpers/TaskScaffold.vue";
+import OptionsDefaults from "@/extensions/task/helpers/OptionsDefaults.vue";
+import OptionsFormEnum from "@/extensions/task/helpers/OptionsFormEnum.vue";
+
+import { calculateHexIcon } from "@/helpers/util";
+import { formatOptions } from "@/extensions/task/multiple-choice/format/options";
+import { formatContent } from "@/extensions/task/multiple-choice/format/content";
+import { formatState } from "@/extensions/task/multiple-choice/format/state";
+import { formatEvents } from "@/extensions/task/multiple-choice/format/events";
+import {
+  formatEvaluation,
+  evaluationOptions,
+} from "@/extensions/task/multiple-choice/format/evaluation";
+import { isEqual } from "lodash-es";
+import { useTask } from "@/extensions/task/helpers";
+import { v4 as uuid } from "uuid";
+
+import type { PropType } from "vue";
+import type { JSONContent } from "@tiptap/vue-3";
+import type {
+  MCOption,
+  MCEvaluation,
+  MCOptions,
+  MCState,
+  MCProps,
+  MCEmits,
+} from "@/extensions/task/multiple-choice/types";
+import type { Editor } from "@tiptap/vue-3";
+import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
+import type { InjectedEventBus } from "@/helpers/useEventBus";
+
+export default defineComponent({
+  name: "TaskMultipleChoice",
+
+  components: {
+    EditorMenuButton,
+    IconAdd,
+    IconFeedback,
+    IconArrowDown,
+    IconArrowUp,
+    IconShuffle,
+    IconTrash,
+    InlineEditor,
+    TaskScaffold,
+    OptionsDefaults,
+    OptionsFormEnum,
+  },
+
+  props: {
+    id: {
+      type: String,
+      required: true,
+    },
+    editor: {
+      type: Object as PropType<Editor>,
+      required: true,
+    },
+    options: {
+      type: Object as PropType<MCOptions>,
+      default() {
+        return {};
+      },
+    },
+    content: {
+      type: Array as PropType<MCOption[]>,
+      default() {
+        return [];
+      },
+    },
+    evaluation: {
+      type: Object as PropType<MCEvaluation>,
+      default() {
+        return {};
+      },
+    },
+    state: {
+      type: Object as PropType<MCState>,
+      default() {
+        return {};
+      },
+    },
+  },
+
+  emits: ["update", "submit"],
+
+  setup(props, { emit }) {
+    const { eventBus } = inject("eventBus") as InjectedEventBus;
+
+    const { update } = useTask<MCProps, MCEmits, MCOptions, MCOption[], MCEvaluation, MCState>(
+      props,
+      emit,
+      [formatOptions, formatContent, formatEvaluation, formatState, formatEvents]
+    );
+
+    const addOption = () => {
+      if (Array.isArray(props.content)) {
+        const contentCopy = props.content;
+        contentCopy.push({
+          id: uuid(),
+          content: { type: "doc", content: [{ type: "paragraph" }] },
+        });
+        update({ content: contentCopy });
+      }
+    };
+
+    const removeOption = (index: number) => {
+      if (Array.isArray(props.content)) {
+        if (props.content.length > 1) {
+          const contentCopy = props.content;
+          contentCopy.splice(index, 1);
+          update({ content: contentCopy });
+        }
+      }
+    };
+
+    const moveUpOption = (index: number, option: MCOption) => {
+      if (Array.isArray(props.content)) {
+        const contentCopy = props.content;
+        contentCopy.splice(index - 1, 0, option);
+        contentCopy.splice(index + 1, 1);
+        update({ content: contentCopy });
+      }
+    };
+
+    const moveDownOption = (index: number, option: MCOption) => {
+      if (Array.isArray(props.content)) {
+        const contentCopy = props.content;
+        contentCopy.splice(index + 2, 0, option);
+        contentCopy.splice(index, 1);
+        update({ content: contentCopy });
+      }
+    };
+
+    const toggleEvaluationOptionValue = (option: MCOption) => {
+      if (!!props.evaluation && Array.isArray(props.evaluation.solution)) {
+        const newSolution = props.evaluation.solution.map((s) => {
+          return s.id === option.id ? { ...s, value: !s.value } : s;
+        });
+        update({ evaluation: { ...props.evaluation, solution: newSolution } });
+      }
+    };
+
+    const updateAnswerOptionContent = (option: MCOption, $event: JSONContent) => {
+      if (Array.isArray(props.content)) {
+        update({
+          content: props.content.map((o) => (option?.id === o.id ? { ...o, content: $event } : o)),
+        });
+      }
+    };
+
+    const toggleAnswerOptionValue = (option: MCOption) => {
+      if (
+        Array.isArray(props.content) &&
+        !!props.state &&
+        !["correct", "final-incorrect"].includes(props.state.state)
+      ) {
+        const oldAnswer = props.state?.answer;
+        const newAnswer = oldAnswer.map((s) => {
+          return s.id === option.id ? { ...s, value: !s.value } : s;
+        });
+
+        if (!isEqual(oldAnswer, newAnswer)) {
+          update({
+            state: {
+              ...props.state,
+              answer: newAnswer,
+            },
+          });
+
+          eventBus.emit("interaction", {
+            type: "answer-changed",
+            parent: props.id,
+            facts: {},
+            label: {
+              message: "global.event.type-answer-changed",
+              hexIcon: calculateHexIcon(props.id),
+            },
+            data: {
+              ...props.state,
+              answer: newAnswer,
+              oldAnswer: oldAnswer,
+            },
+          });
+        }
+      }
+    };
+
+    const showCorrectAnswerOption = (option: MCOption) => {
+      const state = props.state?.state;
+
+      if (!!option.id && !!state && ["correct", "final-incorrect"].includes(state)) {
+        return !!props.evaluation?.solution.find((s) => s.id === option.id)?.value;
+      } else {
+        return false;
+      }
+    };
+
+    const showIncorrectAnswerOption = (option: MCOption) => {
+      const state = props.state?.state;
+
+      if (!!option.id && !!state && ["correct", "final-incorrect"].includes(state)) {
+        return !props.evaluation?.solution.find((s) => s.id === option.id)?.value;
+      } else {
+        return false;
+      }
+    };
+
+    const isOptionChecked = (option: MCOption) => {
+      const answers = props.state?.answer;
+
+      if (!!answers) {
+        return !!answers.find((o) => o.id === option.id)?.value;
+      } else {
+        return false;
+      }
+    };
+
+    const addFeedbackHint = (reference: string) => {
+      const uid = uuid();
+      const hintFeedback: Feedback = {
+        id: uid,
+        parent: props.id,
+        type: "feedback-hint",
+        label: {
+          message: "global.feedback.type-feedback-hint",
+          hexIcon: calculateHexIcon(uid),
+        },
+        config: {
+          reference: reference,
+          content: {
+            type: "doc",
+            content: [
+              {
+                type: "paragraph",
+                content: [
+                  {
+                    type: "text",
+                    text: "Hello world!",
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      };
+
+      const trigger: EventTrigger = {
+        id: uuid(),
+        event: "answer-submitted",
+        parent: props.id,
+        rules: [
+          {
+            id: uuid(),
+            fact: reference + "-selected",
+            operation: "equal",
+            value: !props.evaluation.solution.find((option) => option.id === reference)?.value,
+          },
+        ],
+        feedbacks: [uid],
+      };
+
+      props.editor.chain().addFeedback(hintFeedback).addEventTrigger(trigger).run();
+    };
+
+    const updateEvaluationName = (newName: string) => {
+      switch (newName) {
+        case "all-match":
+        default:
+          update({
+            evaluation: {
+              name: newName,
+              solution:
+                !!props.evaluation && !!props.evaluation.solution ? props.evaluation.solution : [],
+            },
+          });
+      }
+    };
+
+    return {
+      addFeedbackHint,
+      addOption,
+      toggleAnswerOptionValue,
+      evaluationOptions,
+      isOptionChecked,
+      moveUpOption,
+      moveDownOption,
+      removeOption,
+      showCorrectAnswerOption,
+      showIncorrectAnswerOption,
+      update,
+      updateAnswerOptionContent,
+      toggleEvaluationOptionValue,
+      updateEvaluationName,
+    };
+  },
+});
+</script>
