@@ -35,7 +35,7 @@
                 class="min-w-max hover:bg-black w-full hover:text-white focus:outline-none rounded-t-md font-medium text-sm p-1 text-center inline-flex items-center justify-end px-2"
                 @click="editor.commands.setSingleChoiceTask()"
               >
-                Single-Choice
+                {{ $t("editor.task.type-single-choice") }}
               </button>
             </MenuItem>
             <MenuItem>
@@ -43,47 +43,47 @@
                 class="min-w-max hover:bg-black w-full hover:text-white focus:outline-none font-medium text-sm p-1 text-center inline-flex items-center justify-end px-2"
                 @click="editor.commands.setMultipleChoiceTask()"
               >
-                Multiple-Choice
+                {{ $t("editor.task.type-multiple-choice") }}
               </button>
             </MenuItem>
             <MenuItem>
               <button
                 class="min-w-max hover:bg-black w-full hover:text-white focus:outline-none font-medium text-sm p-1 text-center inline-flex items-center justify-end px-2"
-                @click="() => {}"
+                @click="editor.commands.setTrueFalseTask()"
               >
-                True-False
+                {{ $t("editor.task.type-true-false") }}
               </button>
             </MenuItem>
             <MenuItem>
               <button
                 class="min-w-max hover:bg-black w-full hover:text-white focus:outline-none font-medium text-sm p-1 text-center inline-flex items-center justify-end px-2"
-                @click="() => {}"
+                @click="editor.commands.setFillTheBlankTask()"
               >
-                Fill-in-the-blank
+                {{ $t("editor.task.type-fill-the-blank") }}
               </button>
             </MenuItem>
             <MenuItem>
               <button
                 class="min-w-max hover:bg-black w-full hover:text-white focus:outline-none font-medium text-sm p-1 text-center inline-flex items-center justify-end px-2"
-                @click="() => {}"
+                @click="editor.commands.setFindHotspotsTask()"
               >
-                Mark-on-picture
+                {{ $t("editor.task.type-find-hotspots") }}
               </button>
             </MenuItem>
             <MenuItem>
               <button
                 class="min-w-max hover:bg-black w-full hover:text-white focus:outline-none font-medium text-sm p-1 text-center inline-flex items-center justify-end px-2"
-                @click="() => {}"
+                @click="editor.commands.setMappingTask()"
               >
-                Mapping (Arrows)
+                {{ $t("editor.task.type-mapping") }}
               </button>
             </MenuItem>
             <MenuItem>
               <button
                 class="min-w-max hover:bg-black w-full hover:text-white focus:outline-none rounded-b-md font-medium text-sm p-1 text-center inline-flex items-center justify-end px-2"
-                @click="() => {}"
+                @click="editor.commands.setDragAndDropTask()"
               >
-                Mapping (DnD)
+                {{ $t("editor.task.type-drag-and-drop") }}
               </button>
             </MenuItem>
           </MenuItems>

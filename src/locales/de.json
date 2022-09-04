@@ -79,8 +79,13 @@
       "title-options": "Optionen",
       "title-triggers": "Ereignisauslöser",
       "type-description": "Aufgabentyp",
+      "type-drag-and-drop": "Drag-and-drop",
+      "type-fill-the-blank": "Lückentext",
+      "type-find-hotspots": "Bildmarkierung(en)",
+      "type-mapping": "Zuordnung",
       "type-multiple-choice": "Multiple-Choice",
-      "type-single-choice": "Single-Choice"
+      "type-single-choice": "Single-Choice",
+      "type-true-false": "Richtig-Falsch"
     },
     "trigger": {
       "builder-and": "und",

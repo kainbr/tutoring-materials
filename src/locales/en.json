@@ -79,8 +79,13 @@
       "title-options": "Options",
       "title-triggers": "Event Trigger",
       "type-description": "Task Type",
+      "type-drag-and-drop": "Drag-and-drop",
+      "type-fill-the-blank": "Fill in the blank",
+      "type-find-hotspots": "Find hotspot(s)",
+      "type-mapping": "Mapping",
       "type-multiple-choice": "Multiple-Choice",
-      "type-single-choice": "Single-Choice"
+      "type-single-choice": "Single-Choice",
+      "type-true-false": "True-False"
     },
     "trigger": {
       "builder-and": "and",

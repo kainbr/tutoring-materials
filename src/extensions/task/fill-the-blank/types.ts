@@ -1,0 +1,69 @@
+import type {
+  TaskEvaluation,
+  TaskEvaluationOption,
+  TaskOptions,
+  TaskState,
+} from "@/extensions/task/types";
+import type { JSONContent } from "@tiptap/vue-3";
+import type { propsInterface } from "@/extensions/task/helpers";
+import type { Editor } from "@tiptap/vue-3";
+import type { EventOption } from "@/extensions/feedback/types";
+
+export interface FTBProps {
+  id: string;
+  editor: Editor;
+  options: FTBOptions;
+  content: FTBOption[];
+  evaluation: FTBEvaluation;
+  state: FTBState;
+}
+
+export interface FTBEmits {
+  (
+    e: "update",
+    task: {
+      options: FTBOptions;
+      content: FTBOption[];
+      evaluation: FTBEvaluation;
+      state: FTBState;
+      events: EventOption[];
+    }
+  ): void;
+  (e: "submit"): void;
+}
+
+// Content
+export interface FTBOption {
+  id: string;
+  content: JSONContent;
+}
+
+// Evaluation
+export interface FTBEvaluation extends TaskEvaluation {
+  solution: {
+    id: string;
+    value: boolean;
+  }[];
+}
+
+export type FTBEvaluationOption = TaskEvaluationOption;
+
+// Option
+export interface FTBOptions extends TaskOptions {
+  shuffle: boolean;
+}
+
+// State
+export interface FTBState extends TaskState {
+  answer: FTBOptionAnswer[];
+  order: number[];
+}
+
+export interface FTBOptionAnswer {
+  id: string;
+  value: boolean;
+}
+
+export type FTBFormatFunction = (
+  data: propsInterface<FTBOptions, FTBOption[], FTBEvaluation, FTBState>
+) => propsInterface<FTBOptions, FTBOption[], FTBEvaluation, FTBState>;

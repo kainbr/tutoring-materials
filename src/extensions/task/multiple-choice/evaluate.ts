@@ -1,8 +1,8 @@
 // noinspection JSUnusedGlobalSymbols
 
-import type { SCEvaluation, SCState } from "@/extensions/task/single-choice/types";
+import type { MCEvaluation, MCState } from "@/extensions/task/multiple-choice/types";
 
-export const evaluate = function (config: SCEvaluation, state: SCState): boolean {
+export const evaluate = function (config: MCEvaluation, state: MCState): boolean {
   switch (config.name) {
     case "all-match":
       return config.solution.every((option) => {
@@ -12,7 +12,7 @@ export const evaluate = function (config: SCEvaluation, state: SCState): boolean
   return false;
 };
 
-export const getFacts = function (config: SCEvaluation, state: SCState): object {
+export const getFacts = function (config: MCEvaluation, state: MCState): object {
   return {
     ...state.answer.reduce((a, o) => ({ ...a, [o.id + "-selected"]: o.value }), {}),
   };

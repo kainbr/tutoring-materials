@@ -11,9 +11,14 @@ import { Infobox } from "@/extensions/infobox";
 import { Math } from "@/extensions/math";
 import { TaskExtension } from "@/extensions/task";
 import { TaskSingleChoice } from "@/extensions/task/single-choice";
+import { TaskMultipleChoice } from "@/extensions/task/multiple-choice";
+import { TaskTrueFalse } from "@/extensions/task/true-false";
+import { TaskFillTheBlank } from "@/extensions/task/fill-the-blank";
 
 import type { IndentOptions } from "@/extensions/indent";
-import { TaskMultipleChoice } from "@/extensions/task/multiple-choice";
+import { TaskFindHotspots } from "@/extensions/task/find-hotspots";
+import { TaskDragAndDrop } from "@/extensions/task/drag-and-drop";
+import { TaskMapping } from "@/extensions/task/mapping";
 
 export interface TutoringMaterialOptions {
   isEditor: boolean;
@@ -26,6 +31,11 @@ export interface TutoringMaterialOptions {
   feedbackNotification: false;
   taskSingleChoice: false;
   taskMultipleChoice: false;
+  taskTrueFalse: false;
+  taskFillTheBlank: false;
+  taskFindHotspots: false;
+  taskMapping: false;
+  taskDragAndDrop: false;
 }
 
 export const TutoringMaterial = Extension.create<TutoringMaterialOptions>({
@@ -91,6 +101,26 @@ export const TutoringMaterial = Extension.create<TutoringMaterialOptions>({
 
     if (this.options.taskMultipleChoice !== false) {
       extensions.push(TaskMultipleChoice.configure(this.options?.taskMultipleChoice));
+    }
+
+    if (this.options.taskTrueFalse !== false) {
+      extensions.push(TaskTrueFalse.configure(this.options?.taskTrueFalse));
+    }
+
+    if (this.options.taskFillTheBlank !== false) {
+      extensions.push(TaskFillTheBlank.configure(this.options?.taskFillTheBlank));
+    }
+
+    if (this.options.taskFindHotspots !== false) {
+      extensions.push(TaskFindHotspots.configure(this.options?.taskFindHotspots));
+    }
+
+    if (this.options.taskMapping !== false) {
+      extensions.push(TaskMapping.configure(this.options?.taskMapping));
+    }
+
+    if (this.options.taskDragAndDrop !== false) {
+      extensions.push(TaskDragAndDrop.configure(this.options?.taskDragAndDrop));
     }
 
     return extensions;
