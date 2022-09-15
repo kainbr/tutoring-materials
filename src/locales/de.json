@@ -78,6 +78,11 @@
       "title-feedbacks": "Rückmeldungen",
       "title-options": "Optionen",
       "title-triggers": "Ereignisauslöser",
+      "true-false": {
+        "evaluation-all-match": "Alle Antwortoptionen sind korrekt aus-/abgewählt",
+        "label-false": "Falsch Beschriftung",
+        "label-true": "Richtig Beschriftung"
+      },
       "type-description": "Aufgabentyp",
       "type-drag-and-drop": "Drag-and-drop",
       "type-fill-the-blank": "Lückentext",
@@ -116,6 +121,16 @@
       "empty-preview": "Antwort (leer)",
       "is": "ist",
       "is-not": "ist nicht",
+      "multiple-choice": {
+        "answer-option-selected": "{index}. Antwortoption",
+        "answer-option-selected-equal": "ist",
+        "answer-option-selected-false": "nicht ausgewählt",
+        "answer-option-selected-preview": "{index}. Antwortoption (ausgewählt)",
+        "answer-option-selected-true": "ausgewählt",
+        "answer-option-selected-unequal": "ist nicht",
+        "response-correct": "Antwort korrekt",
+        "response-incorrect": "Antwort inkorrekt"
+      },
       "number": {
         "label-equal": "=",
         "label-greater": ">",
@@ -136,6 +151,16 @@
         "answer-option-selected-unequal": "ist nicht",
         "response-correct": "Antwort korrekt",
         "response-incorrect": "Antwort inkorrekt"
+      },
+      "true-false": {
+        "answer-option-selected": "{index}. Antwortoption",
+        "answer-option-selected-equal": "ist",
+        "answer-option-selected-false": "nicht als korrekt ausgewählt",
+        "answer-option-selected-preview": "{index}. Antwortoption (ausgewählt)",
+        "answer-option-selected-true": "als korrekt ausgewählt",
+        "answer-option-selected-unequal": "ist nicht",
+        "response-correct": "Antwort korrekt",
+        "response-incorrect": "Antwort inkorrekt"
       }
     },
     "event": {
@@ -153,9 +178,11 @@
     "missing-label": "Keine Beschriftung vorhanden",
     "options": {
       "text-correct-answer": "Gute Arbeit!",
+      "text-false-label": "Inkorrekt",
       "text-final-incorrect-answer": "Sieh dir die richtige Antwort an.",
       "text-incorrect-answer": "Überprüfe deine Antwort noch einmal und versuche es erneut.",
       "text-submit-button": "Prüfen",
+      "text-true-label": "Korrekt",
       "title-correct-answer": "Richtige Antwort",
       "title-final-incorrect-answer": "Falsche Antwort",
       "title-incorrect-answer": "Falsche Antwort"

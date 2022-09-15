@@ -78,6 +78,11 @@
       "title-feedbacks": "Feedbacks",
       "title-options": "Options",
       "title-triggers": "Event Trigger",
+      "true-false": {
+        "evaluation-all-match": "All options are un-/selected correctly",
+        "label-false": "False Label",
+        "label-true": "True Label"
+      },
       "type-description": "Task Type",
       "type-drag-and-drop": "Drag-and-drop",
       "type-fill-the-blank": "Fill in the blank",
@@ -116,6 +121,16 @@
       "empty-preview": "Response (empty)",
       "is": "is",
       "is-not": "is not",
+      "multiple-choice": {
+        "answer-option-selected": "{index}. Option",
+        "answer-option-selected-equal": "is",
+        "answer-option-selected-false": "not selected",
+        "answer-option-selected-preview": "{index}. Option (selected)",
+        "answer-option-selected-true": "selected",
+        "answer-option-selected-unequal": "is not",
+        "response-correct": "Response correct",
+        "response-incorrect": "Response incorrect"
+      },
       "number": {
         "label-equal": "=",
         "label-greater": ">",
@@ -136,6 +151,16 @@
         "answer-option-selected-unequal": "is not",
         "response-correct": "Response correct",
         "response-incorrect": "Response incorrect"
+      },
+      "true-false": {
+        "answer-option-selected": "{index}. Option",
+        "answer-option-selected-equal": "is",
+        "answer-option-selected-false": "not selected as correct",
+        "answer-option-selected-preview": "{index}. Option (selected)",
+        "answer-option-selected-true": "selected as correct",
+        "answer-option-selected-unequal": "is not",
+        "response-correct": "Response correct",
+        "response-incorrect": "Response incorrect"
       }
     },
     "event": {
@@ -153,9 +178,11 @@
     "missing-label": "Label is missing",
     "options": {
       "text-correct-answer": "Good job!",
+      "text-false-label": "Incorrect",
       "text-final-incorrect-answer": "Have a look at the correct answer.",
       "text-incorrect-answer": "Check your answer and try again.",
       "text-submit-button": "Check",
+      "text-true-label": "Correct",
       "title-correct-answer": "Correct answer",
       "title-final-incorrect-answer": "Incorrect answer",
       "title-incorrect-answer": "Incorrect answer"

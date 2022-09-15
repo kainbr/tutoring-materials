@@ -4,10 +4,10 @@ import type {
   TaskOptions,
   TaskState,
 } from "@/extensions/task/types";
-import type { JSONContent } from "@tiptap/vue-3";
 import type { propsInterface } from "@/extensions/task/helpers";
 import type { Editor } from "@tiptap/vue-3";
 import type { EventOption } from "@/extensions/feedback/types";
+import type { ListOption } from "@/extensions/task/helpers/listOptions";
 
 export interface SCProps {
   id: string;
@@ -33,10 +33,7 @@ export interface SCEmits {
 }
 
 // Content
-export interface SCOption {
-  id: string;
-  content: JSONContent;
-}
+export type SCOption = ListOption;
 
 // Evaluation
 export interface SCEvaluation extends TaskEvaluation {

@@ -46,7 +46,6 @@ import useEventBus from "@/helpers/useEventBus";
 import useTasks from "@/helpers/useTasks";
 import useProps from "@/helpers/useProps";
 import useFeedbacks from "@/helpers/useFeedbacks";
-import useEventOptions from "@/helpers/useEventOptions";
 
 export default defineComponent({
   components: {
@@ -110,7 +109,6 @@ export default defineComponent({
     const { editor } = useEditor(props, context);
     const { taskStates } = useTasks(editor);
     const { activeFeedbacks, addActiveFeedback, removeActiveFeedback } = useFeedbacks();
-    const { addEventOption } = useEventOptions(editor);
     const { eventBus } = useEventBus(editor, context, addActiveFeedback);
     useProps(
       editor,
@@ -124,7 +122,7 @@ export default defineComponent({
 
     // Emit document created event after mounting process finished
     onMounted(() => {
-      addEventOption({
+      editor.commands.addEventOption({
         name: "document-created",
         parent: null,
         conditions: [],

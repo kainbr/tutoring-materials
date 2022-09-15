@@ -1,6 +1,4 @@
 // noinspection JSUnusedGlobalSymbols
-
-import { createI18n } from "vue-i18n";
 import { directive } from "vue-tippy";
 import { version } from "../package.json";
 import TutoringMaterial from "@/TutoringMaterial.vue";
@@ -8,8 +6,7 @@ import TutoringMaterialEditor from "@/TutoringMaterialEditor.vue";
 import TutoringMaterialPlayer from "@/TutoringMaterialPlayer.vue";
 import TutoringMaterialPreview from "@/TutoringMaterialPreview.vue";
 import TutoringMaterialStatistics from "@/TutoringMaterialStatistics.vue";
-import de from "@/locales/de.json";
-import en from "@/locales/en.json";
+import i18n from "@/i18n";
 
 import "tippy.js/dist/tippy.css";
 import "tippy.js/themes/light-border.css";
@@ -23,17 +20,7 @@ export default {
   install: (app: App) => {
     app.config.unwrapInjectedRef = true;
 
-    app.use(
-      createI18n({
-        locale: navigator.language.split("-")[0],
-        legacy: false,
-        fallbackLocale: "en",
-        messages: {
-          en: en,
-          de: de,
-        },
-      })
-    );
+    app.use(i18n);
 
     app.directive("tippy", directive);
 

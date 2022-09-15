@@ -4,10 +4,10 @@ import type {
   TaskOptions,
   TaskState,
 } from "@/extensions/task/types";
-import type { JSONContent } from "@tiptap/vue-3";
 import type { propsInterface } from "@/extensions/task/helpers";
 import type { Editor } from "@tiptap/vue-3";
 import type { EventOption } from "@/extensions/feedback/types";
+import type { ListOption } from "@/extensions/task/helpers/listOptions";
 
 export interface MCProps {
   id: string;
@@ -33,10 +33,7 @@ export interface MCEmits {
 }
 
 // Content
-export interface MCOption {
-  id: string;
-  content: JSONContent;
-}
+export type MCOption = ListOption;
 
 // Evaluation
 export interface MCEvaluation extends TaskEvaluation {

@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-row justify-between">
+  <div class="flex flex-row w-full justify-between">
     <div class="flex flex-row flex-wrap items-center grow gap-y-1 py-1">
       <EventSelector
-        :event-options="eventOptions"
+        :event-options="editor.storage.feedbacks.eventOptions"
         :trigger="trigger"
         @update:event="updateEventTrigger"
       />
@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject } from "vue";
+import { computed, defineComponent } from "vue";
 import { v4 as uuid } from "uuid";
 import IconCopy from "@/helpers/icons/IconCopy.vue";
 import IconTrash from "@/helpers/icons/IconTrash.vue";
@@ -42,7 +42,6 @@ import FeedbackSelector from "@/extensions/feedback/helpers/FeedbackSelector.vue
 import type { Editor } from "@tiptap/vue-3";
 import type { EventOption, EventRule, EventTrigger } from "@/extensions/feedback/types";
 import type { PropType } from "vue";
-import type { InjectedEventOptions } from "@/helpers/useEventOptions";
 
 export default defineComponent({
   name: "EventTriggerComponent",
@@ -68,10 +67,8 @@ export default defineComponent({
   },
 
   setup(props) {
-    const { eventOptions } = inject("eventOptions") as InjectedEventOptions;
-
     const conditions = computed(() => {
-      const eventOption = eventOptions.value.find(
+      const eventOption = props.editor.storage.feedbacks.eventOptions.find(
         (o: EventOption) => o.name === props.trigger.event && o.parent === props.trigger.parent
       );
       return !eventOption ? [] : eventOption.conditions;
@@ -104,7 +101,6 @@ export default defineComponent({
     };
 
     return {
-      eventOptions,
       conditions,
       feedbacks,
       addEventTrigger,

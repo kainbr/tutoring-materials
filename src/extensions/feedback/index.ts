@@ -4,8 +4,9 @@ import { Extension, findChildren } from "@tiptap/core";
 import { isEqual } from "lodash-es";
 import { Plugin, PluginKey } from "prosemirror-state";
 
-import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
+import type { EventOption, EventTrigger, Feedback } from "@/extensions/feedback/types";
 import type { MarkFeedback } from "@/extensions/feedback/mark/types";
+import type { NodeWithPos } from "@tiptap/vue-3";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -34,12 +35,30 @@ declare module "@tiptap/core" {
        * Removes an event trigger from the document.
        */
       removeEventTrigger: (trigger: EventTrigger) => ReturnType;
+      /**
+       * Adds a new event option to the global storage.
+       */
+      addEventOption: (eventOption: EventOption) => ReturnType;
+      /**
+       * Remove an event option from the global storage.
+       */
+      removeEventOption: (eventOption: EventOption) => ReturnType;
     };
   }
 }
 
-export const FeedbackExtension = Extension.create({
+export interface FeedbackExtensionStorage {
+  eventOptions: EventOption[];
+}
+
+export const FeedbackExtension = Extension.create<unknown, FeedbackExtensionStorage>({
   name: "feedbacks",
+
+  addStorage() {
+    return {
+      eventOptions: [],
+    };
+  },
 
   addGlobalAttributes() {
     return [
@@ -72,9 +91,9 @@ export const FeedbackExtension = Extension.create({
           state.doc.descendants((node, pos) => {
             if (node.type.name === "document" && !!node.attrs.feedbacks) {
               // Fetch ids of available tasks
-              const taskIds = findChildren(state.doc, (node) => node.type.name === "task").map(
-                (node) => node.node.attrs.id
-              );
+              const taskIds = findChildren(state.doc, (node) =>
+                node.type.name.startsWith("task")
+              ).map((node) => node.node.attrs.id);
 
               // Feedbacks
               const feedbacks = node.attrs.feedbacks.filter(
@@ -120,6 +139,16 @@ export const FeedbackExtension = Extension.create({
         },
       }),
     ];
+  },
+
+  onUpdate() {
+    // Cleanup events that do not have a valid parent anymore
+    const taskIds = findChildren(this.editor.state.doc, (node) =>
+      node.type.name.startsWith("task")
+    ).map((node: NodeWithPos) => node.node.attrs.id);
+    this.storage.eventOptions = this.storage.eventOptions.filter(
+      (e: EventOption) => e.parent === null || taskIds.includes(e.parent)
+    );
   },
 
   addCommands() {
@@ -227,6 +256,25 @@ export const FeedbackExtension = Extension.create({
           });
           return true;
         },
+
+      addEventOption: (eventOption) => () => {
+        const option = this.storage.eventOptions.find(
+          (o: EventOption) => o.name === eventOption.name && o.parent === eventOption.parent
+        );
+        if (!option) {
+          this.storage.eventOptions = [...this.storage.eventOptions, eventOption];
+        }
+
+        return true;
+      },
+
+      removeEventOption: (eventOption) => () => {
+        this.storage.eventOptions = this.storage.eventOptions.filter(
+          (o: EventOption) => o.name !== eventOption.name && o.parent !== eventOption.parent
+        );
+
+        return true;
+      },
     };
   },
 });

@@ -2,9 +2,9 @@
   <TaskScaffold contenteditable="false" :editor="editor">
     <!-- Render -->
     <template #render>
-      <div v-for="index in state?.order" :key="index" class="gap-2 items-center cursor-default">
+      <div v-for="index in state?.order" :key="index" class="gap-2 cursor-default">
         <div
-          class="flex flex-row pl-2 items-center"
+          class="flex flex-row pl-2"
           :class="{
             'bg-green-50': showCorrectAnswerOption(content[index]),
             'bg-red-50': showIncorrectAnswerOption(content[index]),
@@ -13,7 +13,7 @@
         >
           <input
             type="checkbox"
-            class="mr-2"
+            class="mx-2 h-fit my-2.5"
             :checked="isOptionChecked(content[index])"
             :disabled="['correct', 'final-incorrect'].includes(state.state)"
           />
@@ -26,16 +26,13 @@
 
     <!-- Content -->
     <template #content>
-      <div
-        v-for="(option, index) in content"
-        :key="option.id"
-        class="flex flex-row gap-2 items-center"
-      >
-        <div class="flex flex-row min-w-fit items-center">
+      <div v-for="(option, index) in content" :key="option.id" class="flex flex-row gap-2">
+        <div class="flex flex-row min-w-fit">
           <span class="px-2 w-10 min-w-fit"> ({{ index + 1 }}) </span>
           <input
             :checked="evaluation.solution.find((s) => s.id === option.id)?.value || false"
             type="checkbox"
+            class="mx-1 h-fit my-2"
             @input="toggleEvaluationOptionValue(option)"
           />
         </div>
@@ -44,7 +41,7 @@
           <InlineEditor
             is-editor
             :content="option.content"
-            @update:content="updateAnswerOptionContent(option, $event)"
+            @update:content="updateAnswerOptionContent(option, content, $event, update)"
           />
         </div>
 
@@ -52,14 +49,14 @@
           <EditorMenuButton
             :disabled="index === 0"
             tabindex="-1"
-            @click="moveUpOption(index, option)"
+            @click="moveUpOption(index, option, content, update)"
           >
             <IconArrowUp />
           </EditorMenuButton>
           <EditorMenuButton
             :disabled="!content || index === content.length - 1"
             tabindex="-1"
-            @click="moveDownOption(index, option)"
+            @click="moveDownOption(index, option, content, update)"
           >
             <IconArrowDown />
           </EditorMenuButton>
@@ -69,7 +66,7 @@
           <EditorMenuButton
             :disabled="!content || content.length <= 1"
             tabindex="-1"
-            @click="removeOption(index)"
+            @click="removeOption(index, content, update)"
           >
             <IconTrash />
           </EditorMenuButton>
@@ -87,7 +84,7 @@
             >
               <IconShuffle />
             </EditorMenuButton>
-            <EditorMenuButton @click="addOption">
+            <EditorMenuButton @click="addOption(content, update)">
               <IconAdd />
             </EditorMenuButton>
           </div>
@@ -159,7 +156,6 @@ import { useTask } from "@/extensions/task/helpers";
 import { v4 as uuid } from "uuid";
 
 import type { PropType } from "vue";
-import type { JSONContent } from "@tiptap/vue-3";
 import type {
   MCOption,
   MCEvaluation,
@@ -171,6 +167,7 @@ import type {
 import type { Editor } from "@tiptap/vue-3";
 import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
 import type { InjectedEventBus } from "@/helpers/useEventBus";
+import { useListOptions } from "@/extensions/task/helpers/listOptions";
 
 export default defineComponent({
   name: "TaskMultipleChoice",
@@ -235,44 +232,8 @@ export default defineComponent({
       [formatOptions, formatContent, formatEvaluation, formatState, formatEvents]
     );
 
-    const addOption = () => {
-      if (Array.isArray(props.content)) {
-        const contentCopy = props.content;
-        contentCopy.push({
-          id: uuid(),
-          content: { type: "doc", content: [{ type: "paragraph" }] },
-        });
-        update({ content: contentCopy });
-      }
-    };
-
-    const removeOption = (index: number) => {
-      if (Array.isArray(props.content)) {
-        if (props.content.length > 1) {
-          const contentCopy = props.content;
-          contentCopy.splice(index, 1);
-          update({ content: contentCopy });
-        }
-      }
-    };
-
-    const moveUpOption = (index: number, option: MCOption) => {
-      if (Array.isArray(props.content)) {
-        const contentCopy = props.content;
-        contentCopy.splice(index - 1, 0, option);
-        contentCopy.splice(index + 1, 1);
-        update({ content: contentCopy });
-      }
-    };
-
-    const moveDownOption = (index: number, option: MCOption) => {
-      if (Array.isArray(props.content)) {
-        const contentCopy = props.content;
-        contentCopy.splice(index + 2, 0, option);
-        contentCopy.splice(index, 1);
-        update({ content: contentCopy });
-      }
-    };
+    const { addOption, removeOption, moveUpOption, moveDownOption, updateAnswerOptionContent } =
+      useListOptions<MCOption>();
 
     const toggleEvaluationOptionValue = (option: MCOption) => {
       if (!!props.evaluation && Array.isArray(props.evaluation.solution)) {
@@ -280,14 +241,6 @@ export default defineComponent({
           return s.id === option.id ? { ...s, value: !s.value } : s;
         });
         update({ evaluation: { ...props.evaluation, solution: newSolution } });
-      }
-    };
-
-    const updateAnswerOptionContent = (option: MCOption, $event: JSONContent) => {
-      if (Array.isArray(props.content)) {
-        update({
-          content: props.content.map((o) => (option?.id === o.id ? { ...o, content: $event } : o)),
-        });
       }
     };
 

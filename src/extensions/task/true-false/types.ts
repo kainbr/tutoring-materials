@@ -4,10 +4,10 @@ import type {
   TaskOptions,
   TaskState,
 } from "@/extensions/task/types";
-import type { JSONContent } from "@tiptap/vue-3";
 import type { propsInterface } from "@/extensions/task/helpers";
 import type { Editor } from "@tiptap/vue-3";
 import type { EventOption } from "@/extensions/feedback/types";
+import type { ListOption } from "@/extensions/task/helpers/listOptions";
 
 export interface TFProps {
   id: string;
@@ -33,10 +33,7 @@ export interface TFEmits {
 }
 
 // Content
-export interface TFOption {
-  id: string;
-  content: JSONContent;
-}
+export type TFOption = ListOption;
 
 // Evaluation
 export interface TFEvaluation extends TaskEvaluation {
@@ -51,6 +48,8 @@ export type TFEvaluationOption = TaskEvaluationOption;
 // Option
 export interface TFOptions extends TaskOptions {
   shuffle: boolean;
+  trueLabel: string;
+  falseLabel: string;
 }
 
 // State
@@ -61,7 +60,7 @@ export interface TFState extends TaskState {
 
 export interface TFOptionAnswer {
   id: string;
-  value: boolean;
+  value: boolean | null;
 }
 
 export type TFFormatFunction = (

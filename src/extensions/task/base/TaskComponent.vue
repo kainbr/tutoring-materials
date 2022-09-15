@@ -80,7 +80,6 @@ import type { TaskContent, TaskEvaluation, TaskOptions, TaskState } from "@/exte
 import type { InjectedEventBus } from "@/helpers/useEventBus";
 import type { InjectedTaskStates } from "@/helpers/useTasks";
 import type { InjectedDefaults } from "@/helpers/useDefaults";
-import type { InjectedEventOptions } from "@/helpers/useEventOptions";
 
 export default defineComponent({
   components: {
@@ -135,7 +134,6 @@ export default defineComponent({
   setup: function (props) {
     const { taskOptions } = inject("defaults") as InjectedDefaults;
     const { eventBus } = inject("eventBus") as InjectedEventBus;
-    const { eventOptions } = inject("eventOptions") as InjectedEventOptions;
     const { taskStates, renderedTasks, addTaskState, updateTaskState, removeTaskState } = inject(
       "tasks"
     ) as InjectedTaskStates;
@@ -163,8 +161,11 @@ export default defineComponent({
         updateTaskState(state.value, newValues.state);
       }
 
-      eventOptions.value = [
-        ...eventOptions.value.filter((e: EventOption) => e.parent !== props.node.attrs.id),
+      // eslint-disable-next-line vue/no-mutating-props
+      props.editor.storage.feedbacks.eventOptions = [
+        ...props.editor.storage.feedbacks.eventOptions.filter(
+          (e: EventOption) => e.parent !== props.node.attrs.id
+        ),
         ...(!!newValues.events && Array.isArray(newValues.events) ? newValues.events : []),
       ];
     };

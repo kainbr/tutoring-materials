@@ -1,7 +1,11 @@
 <template>
   <TaskScaffold contenteditable="false" :editor="editor">
     <!-- Render -->
-    <template #render> Render </template>
+    <template #render>
+      <div class="bg-gray-300 h-80">
+        <div ref="draggable" class="w-min border-4 border-yellow-500">Drag This</div>
+      </div>
+    </template>
 
     <!-- Content -->
     <template #content> Content </template>
@@ -15,7 +19,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from "vue";
+// import {  inject } from "vue";
+import { defineComponent, ref, watchEffect } from "vue";
+// eslint-disable-next-line
+// @ts-ignore
+import PlainDraggable from "plain-draggable";
 
 import TaskScaffold from "@/extensions/task/helpers/TaskScaffold.vue";
 
@@ -31,7 +39,7 @@ import type {
   DNDEmits,
 } from "@/extensions/task/drag-and-drop/types";
 import type { Editor } from "@tiptap/vue-3";
-import type { InjectedEventBus } from "@/helpers/useEventBus";
+// import type { InjectedEventBus } from "@/helpers/useEventBus";
 
 export default defineComponent({
   name: "TaskFillTheBlank",
@@ -78,7 +86,7 @@ export default defineComponent({
   emits: ["update", "submit"],
 
   setup(props, { emit }) {
-    const { eventBus } = inject("eventBus") as InjectedEventBus;
+    // const { eventBus } = inject("eventBus") as InjectedEventBus;
 
     const { update } = useTask<
       DNDProps,
@@ -89,8 +97,19 @@ export default defineComponent({
       DNDState
     >(props, emit, []);
 
+    const draggable = ref(null);
+
+    watchEffect(() => {
+      if (!!draggable.value) {
+        new PlainDraggable(draggable.value);
+      } else {
+        // not mounted yet, or the element was unmounted (e.g. by v-if)
+      }
+    });
+
     return {
       update,
+      draggable,
     };
   },
 });
