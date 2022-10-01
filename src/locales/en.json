@@ -67,6 +67,7 @@
       "config-label-title-correct-answer": "Title correct answer",
       "config-label-title-final-incorrect-answer": "Title incorrect answer (final)",
       "config-label-title-incorrect-answer": "Title incorrect answer",
+      "config-text-select-gap-placeholder": "Placeholder for empty gap",
       "evaluation-label-type": "Type",
       "fill-the-blank": {
         "label-edit-options": "Edit options"
@@ -184,6 +185,7 @@
       "text-false-label": "Incorrect",
       "text-final-incorrect-answer": "Have a look at the correct answer.",
       "text-incorrect-answer": "Check your answer and try again.",
+      "text-select-gap-placeholder": "Select option",
       "text-submit-button": "Check",
       "text-true-label": "Correct",
       "title-correct-answer": "Correct answer",

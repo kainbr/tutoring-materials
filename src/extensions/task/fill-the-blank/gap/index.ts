@@ -1,4 +1,4 @@
-import { mergeAttributes, Node } from "@tiptap/core";
+import { Node } from "@tiptap/core";
 import { VueNodeViewRenderer } from "@tiptap/vue-3";
 import GapComponent from "@/extensions/task/fill-the-blank/gap/GapComponent.vue";
 import { Plugin, PluginKey } from "prosemirror-state";
@@ -64,7 +64,7 @@ export const Gap = Node.create({
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ["div", mergeAttributes(HTMLAttributes, {}), 0];
+    return ["div", HTMLAttributes, 0];
   },
 
   addNodeView() {

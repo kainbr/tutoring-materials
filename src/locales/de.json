@@ -67,6 +67,7 @@
       "config-label-title-correct-answer": "Überschrift korrekte Antwort",
       "config-label-title-final-incorrect-answer": "Überschrift falsche Antwort (final)",
       "config-label-title-incorrect-answer": "Überschrift falsche Antwort",
+      "config-text-select-gap-placeholder": "Platzhalter für leere Lücke",
       "evaluation-label-type": "Art",
       "fill-the-blank": {
         "label-edit-options": "Option bearbeiten"
@@ -184,6 +185,7 @@
       "text-false-label": "Inkorrekt",
       "text-final-incorrect-answer": "Sieh dir die richtige Antwort an.",
       "text-incorrect-answer": "Überprüfe deine Antwort noch einmal und versuche es erneut.",
+      "text-select-gap-placeholder": "Option auswählen",
       "text-submit-button": "Prüfen",
       "text-true-label": "Korrekt",
       "title-correct-answer": "Richtige Antwort",

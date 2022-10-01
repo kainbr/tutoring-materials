@@ -52,7 +52,7 @@ import { Gap } from "@/extensions/task/fill-the-blank/gap";
 
 import type { JSONContent } from "@tiptap/vue-3";
 import type { PropType } from "vue";
-import type { FTBEvaluation, FTBState } from "@/extensions/task/fill-the-blank/types";
+import type { FTBEvaluation, FTBOptions, FTBState } from "@/extensions/task/fill-the-blank/types";
 import type { InjectedContainerDimensions } from "@/helpers/useContainerDimensions";
 
 export default defineComponent({
@@ -85,6 +85,11 @@ export default defineComponent({
       },
     },
 
+    options: {
+      type: Object as PropType<FTBOptions>,
+      required: true,
+    },
+
     state: {
       type: Object as PropType<FTBState>,
       default() {
@@ -104,6 +109,12 @@ export default defineComponent({
     function updateEvaluation(attributes: Partial<FTBEvaluation>) {
       context.emit("update:evaluation", { ...props.evaluation, ...attributes });
     }
+
+    provide("options", {
+      options: computed(() => {
+        return props.options;
+      }),
+    });
 
     provide("evaluation", {
       evaluation: computed(() => {

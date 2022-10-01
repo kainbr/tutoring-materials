@@ -57,7 +57,7 @@
     </Popover>
     <Listbox
       v-else
-      :model-value="state?.answer?.find((a) => a.id === node.attrs.id)"
+      :model-value="state?.answer?.find((a) => a.id === node.attrs.id)?.value"
       @update:model-value="updateAnswer"
     >
       <div class="relative w-fit inline-block">
@@ -81,8 +81,8 @@
           class="absolute z-50 mt-2 max-h-60 min-w-full w-fit overflow-auto rounded-md bg-white p-0 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
         >
           <ListboxOption
-            v-for="option in node.attrs.options"
-            v-slot="{ active }"
+            v-for="(option, index) in node.attrs.options"
+            v-slot="{ active, selected }"
             :key="option.id"
             :value="option.id"
             :disabled="['correct', 'final-incorrect'].includes(state.state)"
@@ -90,14 +90,19 @@
           >
             <div
               :class="[
-                active ? 'bg-amber-100 text-amber-900' : 'text-gray-900',
+                active && ['init', 'incorrect'].includes(state?.state)
+                  ? 'bg-amber-100 text-amber-900'
+                  : 'text-gray-900',
+                selected && ['init', 'incorrect'].includes(state?.state)
+                  ? 'bg-amber-100 text-amber-900'
+                  : '',
                 'relative cursor-pointer select-none p-2',
                 isCorrectAnswerOption(option.id) ? 'bg-green-100' : '',
                 isIncorrectAnswerOption(option.id) ? 'bg-red-100' : '',
               ]"
             >
               <span :class="['block truncate']">
-                {{ option.text || "." }}
+                {{ option.text || "(" + (index + 1) + ")" }}
               </span>
             </div>
           </ListboxOption>
@@ -129,7 +134,7 @@ import type { PropType, Ref } from "vue";
 import type { NodeViewProps } from "@tiptap/core";
 import IconArrowDown from "@/helpers/icons/IconArrowDown.vue";
 import IconArrowUp from "@/helpers/icons/IconArrowUp.vue";
-import type { FTBEvaluation, FTBState } from "@/extensions/task/fill-the-blank/types";
+import type { FTBEvaluation, FTBOptions, FTBState } from "@/extensions/task/fill-the-blank/types";
 import IconDropDown from "@/helpers/icons/IconDropDown.vue";
 
 export default defineComponent({
@@ -154,7 +159,6 @@ export default defineComponent({
     editor: { type: Object as PropType<NodeViewProps["editor"]>, required: true },
     node: { type: Object as PropType<NodeViewProps["node"]>, required: true },
     decorations: { type: Object as PropType<NodeViewProps["decorations"]>, required: true },
-    selected: { type: Boolean as PropType<NodeViewProps["selected"]>, required: true },
     extension: { type: Object as PropType<NodeViewProps["extension"]>, required: true },
     getPos: { type: Function as PropType<NodeViewProps["getPos"]>, required: true },
     updateAttributes: {
@@ -167,6 +171,10 @@ export default defineComponent({
   setup(props) {
     const isListboxOpen = ref(false);
     const isModalOpen = ref(true);
+
+    const { options } = inject("options") as {
+      options: Ref<FTBOptions>;
+    };
 
     const { evaluation, updateEvaluation } = inject("evaluation") as {
       evaluation: Ref<FTBEvaluation>;
@@ -247,12 +255,18 @@ export default defineComponent({
     };
 
     const selectedValue = computed(() => {
-      return (
-        props.node.attrs.options.find(
-          (o: { id: string }) =>
-            o.id === state.value.answer?.find((a) => a.id === props.node.attrs.id)?.value
-        )?.text || "Select option"
+      const selectedOption = props.node.attrs.options.find(
+        (o: { id: string }) =>
+          o.id === state.value.answer?.find((a) => a.id === props.node.attrs.id)?.value
       );
+
+      if (!selectedOption) {
+        return options.value.textSelectGapPlaceholder;
+      } else if (!selectedOption.text) {
+        return "...";
+      } else {
+        return selectedOption.text;
+      }
     });
 
     const isCorrectAnswerOption = (id: string | null | undefined) => {
@@ -299,6 +313,7 @@ export default defineComponent({
       evaluation,
       isListboxOpen,
       isModalOpen,
+      options,
       selectedValue,
       state,
       addSelectOption,

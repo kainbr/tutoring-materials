@@ -5,6 +5,7 @@
       <GapEditor
         :content="content"
         :evaluation="evaluation"
+        :options="options"
         :state="state"
         @update:state="
           update({
@@ -19,7 +20,7 @@
       <GapEditor
         :content="content"
         :evaluation="evaluation"
-        :state="state"
+        :options="options"
         is-editor
         @update:content="
           update({
@@ -53,6 +54,14 @@
     <!-- Options -->
     <template #options>
       <div v-if="options" class="mt-1 flex flex-col gap-2">
+        <OptionsFormString
+          name="textSelectGapPlaceholder"
+          :value="
+            options.textSelectGapPlaceholder || $t('global.options.text-select-gap-placeholder')
+          "
+          :label="$t('editor.task.config-text-select-gap-placeholder')"
+          @update:value="update({ options: { ...options, textSelectGapPlaceholder: $event } })"
+        />
         <OptionsDefaults
           :options="options"
           allow-empty-answer-submission
@@ -96,11 +105,13 @@ import type { Editor } from "@tiptap/vue-3";
 import OptionsFormEnum from "@/extensions/task/helpers/OptionsFormEnum.vue";
 import OptionsDefaults from "@/extensions/task/helpers/OptionsDefaults.vue";
 import { formatEvents } from "@/extensions/task/fill-the-blank/format/events";
+import OptionsFormString from "@/extensions/task/helpers/OptionsFormString.vue";
 
 export default defineComponent({
   name: "TaskFillTheBlank",
 
   components: {
+    OptionsFormString,
     GapEditor,
     TaskScaffold,
     OptionsDefaults,

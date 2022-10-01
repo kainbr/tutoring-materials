@@ -47,7 +47,7 @@ export type FTBEvaluationOption = TaskEvaluationOption;
 
 // Option
 export interface FTBOptions extends TaskOptions {
-  shuffle: boolean;
+  textSelectGapPlaceholder: string;
 }
 
 // State
