@@ -13,7 +13,7 @@ export interface FTBProps {
   id: string;
   editor: Editor;
   options: FTBOptions;
-  content: FTBOption[];
+  content: FTBContent;
   evaluation: FTBEvaluation;
   state: FTBState;
 }
@@ -23,7 +23,7 @@ export interface FTBEmits {
     e: "update",
     task: {
       options: FTBOptions;
-      content: FTBOption[];
+      content: FTBContent;
       evaluation: FTBEvaluation;
       state: FTBState;
       events: EventOption[];
@@ -33,16 +33,13 @@ export interface FTBEmits {
 }
 
 // Content
-export interface FTBOption {
-  id: string;
-  content: JSONContent;
-}
+export type FTBContent = JSONContent;
 
 // Evaluation
 export interface FTBEvaluation extends TaskEvaluation {
   solution: {
     id: string;
-    value: boolean;
+    options: { id: string; value: boolean }[];
   }[];
 }
 
@@ -55,15 +52,12 @@ export interface FTBOptions extends TaskOptions {
 
 // State
 export interface FTBState extends TaskState {
-  answer: FTBOptionAnswer[];
-  order: number[];
-}
-
-export interface FTBOptionAnswer {
-  id: string;
-  value: boolean;
+  answer: {
+    id: string;
+    value: string | null;
+  }[];
 }
 
 export type FTBFormatFunction = (
-  data: propsInterface<FTBOptions, FTBOption[], FTBEvaluation, FTBState>
-) => propsInterface<FTBOptions, FTBOption[], FTBEvaluation, FTBState>;
+  data: propsInterface<FTBOptions, FTBContent, FTBEvaluation, FTBState>
+) => propsInterface<FTBOptions, FTBContent, FTBEvaluation, FTBState>;

@@ -68,6 +68,9 @@
       "config-label-title-final-incorrect-answer": "Überschrift falsche Antwort (final)",
       "config-label-title-incorrect-answer": "Überschrift falsche Antwort",
       "evaluation-label-type": "Art",
+      "fill-the-blank": {
+        "label-edit-options": "Option bearbeiten"
+      },
       "multiple-choice": {
         "evaluation-all-match": "Alle Antwortoptionen sind korrekt aus-/abgewählt"
       },

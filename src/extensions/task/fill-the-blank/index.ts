@@ -6,7 +6,7 @@ declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     taskFillTheBlank: {
       /**
-       * Adds a fill in the blank task to the document.
+       * Adds a fill-in-the-blank task to the document.
        */
       setFillTheBlankTask: () => ReturnType;
     };
