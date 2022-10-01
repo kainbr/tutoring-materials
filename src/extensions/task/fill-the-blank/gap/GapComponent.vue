@@ -29,7 +29,7 @@
               type="text"
               placeholder="Option Text"
               :value="option.text"
-              @input="updateSelectOptionText(option.id, $event.target.value)"
+              @input="updateSelectOptionText(option.id, $event)"
             />
             <div class="flex flex-row gap-0.5">
               <EditorMenuButton :disabled="index === 0" @click="moveUpOption(index, option.id)">
@@ -186,7 +186,8 @@ export default defineComponent({
       props.updateAttributes({ options: [...props.node.attrs.options, { id: uuid(), text: "" }] });
     };
 
-    const updateSelectOptionText = (optionId: string, text: string) => {
+    const updateSelectOptionText = (optionId: string, event: Event) => {
+      const text = (event.target as HTMLInputElement).value;
       props.updateAttributes({
         options: props.node.attrs.options.map((o: { id: string; text: string }) => {
           return o.id === optionId ? { ...o, text } : o;
@@ -254,7 +255,8 @@ export default defineComponent({
       );
     });
 
-    const isCorrectAnswerOption = (id: string) => {
+    const isCorrectAnswerOption = (id: string | null | undefined) => {
+      if (!id) return false;
       if (!!state.value.state && ["correct", "final-incorrect"].includes(state.value.state)) {
         return !!evaluation.value.solution
           .find((s) => s.id === props.node.attrs.id)
@@ -264,7 +266,8 @@ export default defineComponent({
       }
     };
 
-    const isIncorrectAnswerOption = (id: string) => {
+    const isIncorrectAnswerOption = (id: string | null | undefined) => {
+      if (!id) return false;
       if (!!state.value.state && ["correct", "final-incorrect"].includes(state.value.state)) {
         return !evaluation.value.solution
           .find((s) => s.id === props.node.attrs.id)
