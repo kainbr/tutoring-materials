@@ -47,12 +47,27 @@
           v-for="index in state?.order"
           :key="index"
           class="flex flex-row grid grid-cols-8 w-full gap-2"
+          :class="[showCorrectnessAnswerOption(content[index])]"
         >
-          <div class="col-span-1 flex justify-center">
-            <input type="radio" class="h-fit m-2" />
+          <div class="col-span-1 flex justify-center"
+               @click="updateAnswerOptionValue(content[index], false)">
+            <input
+              type="radio"
+              :checked="
+                  state.answer.find((s) => s.id === content[index].id)?.value === false || false
+                "
+              :disabled="['correct', 'final-incorrect'].includes(state.state)"
+            />
           </div>
-          <div class="col-span-1 flex justify-center">
-            <input type="radio" class="h-fit m-2" />
+          <div class="col-span-1 flex justify-center"
+               @click="updateAnswerOptionValue(content[index], true)">
+            <input
+              type="radio"
+              :checked="
+                  state.answer.find((s) => s.id === content[index].id)?.value === true || false
+                "
+              :disabled="['correct', 'final-incorrect'].includes(state.state)"
+            />
           </div>
           <div class="col-span-6">
             <InlineEditor :content="!!content ? content[index].content : undefined" />
@@ -71,12 +86,15 @@
             type="radio"
             class="mx-1 h-fit my-2.5"
             @input="updateEvaluationOptionValue(option, false)"
+
+            v-tippy="'False'"
           />
           <input
             :checked="evaluation.solution.find((s) => s.id === option.id)?.value === true || false"
             type="radio"
             class="mx-1 h-fit my-2.5"
             @input="updateEvaluationOptionValue(option, true)"
+            v-tippy="'True'"
           />
         </div>
 

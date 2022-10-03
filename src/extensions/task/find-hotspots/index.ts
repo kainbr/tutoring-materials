@@ -17,7 +17,10 @@ export const TaskFindHotspots = BaseTask.extend({
   name: "task-find-hotspots",
 
   addAttributes() {
-    return { ...this.parent?.(), type: "find-hotspots" };
+    return {
+      ...this.parent?.(),
+      type: "find-hotspots",
+    };
   },
 
   addCommands() {

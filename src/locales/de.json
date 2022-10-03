@@ -72,6 +72,9 @@
       "fill-the-blank": {
         "label-edit-options": "Option bearbeiten"
       },
+      "find-hotspots": {
+        "evaluation-click-one-correct": "Eine korrekte Region auswählen"
+      },
       "multiple-choice": {
         "evaluation-all-match": "Alle Antwortoptionen sind korrekt aus-/abgewählt"
       },

@@ -1,15 +1,23 @@
-// noinspection JSUnusedGlobalSymbols
+// noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
 
-import type { FTBEvaluation, FTBState } from "@/extensions/task/fill-the-blank/types";
+import type { FHEvaluation, FHState } from "@/extensions/task/find-hotspots/types";
 
-export const evaluate = function (config: FTBEvaluation, state: FTBState): boolean {
+export const evaluate = function (config: FHEvaluation, state: FHState): boolean {
   switch (config.name) {
-    case "all-match":
+    case "click-one-correct":
+      const correctRegions = config.solution
+        .filter((region) => region.value)
+        .map((region) => region.id);
+
+      for (const region of state.answer.clickedRegions as string[]) {
+        if (correctRegions.includes(region)) return true;
+      }
+
       return false;
   }
   return false;
 };
 
-export const geFTBacts = function (config: FTBEvaluation, state: FTBState): object {
+export const getFacts = function (config: FHEvaluation, state: FHState): object {
   return {};
 };

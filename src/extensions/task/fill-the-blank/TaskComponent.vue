@@ -161,7 +161,7 @@ export default defineComponent({
     const { update } = useTask<FTBProps, FTBEmits, FTBOptions, FTBContent, FTBEvaluation, FTBState>(
       props,
       emit,
-      [formatOptions, formatContent, formatEvaluation, formatState, formatEvents]
+      [formatOptions, formatContent, formatEvaluation, formatState, formatEvents, formatEvents]
     );
 
     const updateEvaluationName = (newName: string) => {

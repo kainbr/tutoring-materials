@@ -41,6 +41,7 @@ export interface TaskOptions {
   textIncorrectAnswer: string;
   titleFinalIncorrectAnswer: string;
   textFinalIncorrectAnswer: string;
+  hideSubmitButton?: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

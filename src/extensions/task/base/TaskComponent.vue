@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject, onMounted } from "vue";
+import { computed, defineComponent, inject, onMounted, provide } from "vue";
 import { Editor, NodeViewContent, NodeViewWrapper } from "@tiptap/vue-3";
 import { calculateHexIcon } from "@/helpers/util";
 import IconClose from "@/helpers/icons/IconClose.vue";
@@ -80,6 +80,11 @@ import type { TaskContent, TaskEvaluation, TaskOptions, TaskState } from "@/exte
 import type { InjectedEventBus } from "@/helpers/useEventBus";
 import type { InjectedTaskStates } from "@/helpers/useTasks";
 import type { InjectedDefaults } from "@/helpers/useDefaults";
+import { evaluate } from "@/extensions/task/evaluate";
+
+export type InjectedSubmit = {
+  submit: (state: TaskState) => void;
+};
 
 export default defineComponent({
   components: {
@@ -207,6 +212,63 @@ export default defineComponent({
         removeTaskState(state.value);
       }
     };
+
+    /**
+     * Evaluate the response and determine the next state of the task
+     * Possible values are: correct, incorrect and final-incorrect
+     */
+    const submit = async (state: TaskState) => {
+
+      // Evaluate answer
+      const { response, facts } = await evaluate(
+        props.node.attrs.type,
+        props.node.attrs.evaluation,
+        state
+      );
+
+      // Emit event
+      eventBus.emit("interaction", {
+        type: "answer-submitted",
+        parent: state.id,
+        facts: {
+          attempt: state.attempt,
+          empty: state.empty,
+          response,
+          ...facts,
+        },
+        data: {
+          ...state,
+          response,
+        },
+        label: {
+          message: "global.event.type-answer-submitted",
+          hexIcon: calculateHexIcon(state.id),
+        },
+      });
+
+      // Set the next state depending on the result and the configuration of the task
+      if (response) {
+        updateTaskState(state, { ...state, state: "correct" });
+      } else {
+        if (
+          optionsWithDefaults.value.hasMaxAttempts &&
+          state.attempt >= optionsWithDefaults.value.maxAttempts
+        ) {
+          updateTaskState(state, {
+            ...state,
+            state: "final-incorrect",
+          });
+        } else {
+          updateTaskState(state, {
+            ...state,
+            state: "incorrect",
+            attempt: state.attempt + 1,
+          });
+        }
+      }
+    };
+
+    provide("submit", { submit });
 
     return { state, calculateHexIcon, update, optionsWithDefaults, removeTask, removeTaskState };
   },
