@@ -5,6 +5,7 @@ import type { TFFormatFunction, TFOption } from "@/extensions/task/true-false/ty
 export const formatContent: TFFormatFunction = function (data) {
   if (!data.content || !Array.isArray(data.content) || data.content.length === 0) {
     data.content = defaultContent;
+    data.options = { ...data.options, maxAttempts: 1 };
   } else {
     data.content = data.content.map((option) => {
       const defaultOption = {

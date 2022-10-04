@@ -11,7 +11,6 @@ export const formatOptions: TFFormatFunction = function (data) {
   data.options = {
     ...defaultTrueFalseOptions,
     ...data.options,
-    maxAttempts: 1,
   };
 
   return data;

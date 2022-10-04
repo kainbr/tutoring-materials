@@ -218,7 +218,6 @@ export default defineComponent({
      * Possible values are: correct, incorrect and final-incorrect
      */
     const submit = async (state: TaskState) => {
-
       // Evaluate answer
       const { response, facts } = await evaluate(
         props.node.attrs.type,
@@ -250,6 +249,13 @@ export default defineComponent({
       if (response) {
         updateTaskState(state, { ...state, state: "correct" });
       } else {
+        console.log(
+          "maxAttempts",
+          optionsWithDefaults.value.hasMaxAttempts,
+          state.attempt,
+          optionsWithDefaults.value.maxAttempts,
+          state.attempt >= optionsWithDefaults.value.maxAttempts
+        );
         if (
           optionsWithDefaults.value.hasMaxAttempts &&
           state.attempt >= optionsWithDefaults.value.maxAttempts

@@ -49,23 +49,27 @@
           class="flex flex-row grid grid-cols-8 w-full gap-2"
           :class="[showCorrectnessAnswerOption(content[index])]"
         >
-          <div class="col-span-1 flex justify-center"
-               @click="updateAnswerOptionValue(content[index], false)">
+          <div
+            class="col-span-1 flex justify-center"
+            @click="updateAnswerOptionValue(content[index], false)"
+          >
             <input
               type="radio"
               :checked="
-                  state.answer.find((s) => s.id === content[index].id)?.value === false || false
-                "
+                state.answer.find((s) => s.id === content[index].id)?.value === false || false
+              "
               :disabled="['correct', 'final-incorrect'].includes(state.state)"
             />
           </div>
-          <div class="col-span-1 flex justify-center"
-               @click="updateAnswerOptionValue(content[index], true)">
+          <div
+            class="col-span-1 flex justify-center"
+            @click="updateAnswerOptionValue(content[index], true)"
+          >
             <input
               type="radio"
               :checked="
-                  state.answer.find((s) => s.id === content[index].id)?.value === true || false
-                "
+                state.answer.find((s) => s.id === content[index].id)?.value === true || false
+              "
               :disabled="['correct', 'final-incorrect'].includes(state.state)"
             />
           </div>
@@ -86,7 +90,6 @@
             type="radio"
             class="mx-1 h-fit my-2.5"
             @input="updateEvaluationOptionValue(option, false)"
-
             v-tippy="'False'"
           />
           <input
@@ -198,6 +201,8 @@
       <div v-if="options" class="mt-1 flex flex-col gap-2">
         <OptionsDefaults
           :options="options"
+          allow-empty-answer-submission
+          has-max-attempts
           has-submit-button
           has-correct-state
           has-incorrect-state
