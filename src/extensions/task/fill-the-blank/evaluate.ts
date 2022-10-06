@@ -3,6 +3,8 @@
 import type { FTBEvaluation, FTBState } from "@/extensions/task/fill-the-blank/types";
 
 export const evaluate = function (config: FTBEvaluation, state: FTBState): boolean {
+  console.log("evaluate gaps", config, state);
+
   switch (config.name) {
     case "all-match":
       return config.solution.every((option) => {

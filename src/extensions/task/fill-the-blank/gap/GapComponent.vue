@@ -64,12 +64,14 @@
         <ListboxButton
           class="relative border border-blue-700 rounded-lg bg-white py-0 pl-2 pr-8 text-left shadow-md"
           :class="{
-            'border border-green-700 bg-green-100': isCorrectAnswerOption(
-              state.answer.find((a) => a.id === node.attrs.id)?.value
-            ),
-            'border border-red-700 bg-red-100': isIncorrectAnswerOption(
-              state.answer.find((a) => a.id === node.attrs.id)?.value
-            ),
+            'border border-green-700 bg-green-100':
+              (['correct', 'final-incorrect'].includes(state.state) ||
+                !!state.correctGaps?.includes(node.attrs.id)) &&
+              isCorrectAnswerOption(state.answer.find((a) => a.id === node.attrs.id)?.value),
+            'border border-red-700 bg-red-100':
+              (['correct', 'final-incorrect'].includes(state.state) ||
+                !!state.correctGaps?.includes(node.attrs.id)) &&
+              isIncorrectAnswerOption(state.answer.find((a) => a.id === node.attrs.id)?.value),
           }"
         >
           <span class="block truncate">{{ selectedValue }}</span>
@@ -85,7 +87,10 @@
             v-slot="{ active, selected }"
             :key="option.id"
             :value="option.id"
-            :disabled="['correct', 'final-incorrect'].includes(state.state)"
+            :disabled="
+              ['correct', 'final-incorrect'].includes(state.state) ||
+              !!state.correctGaps?.includes(node.attrs.id)
+            "
             as="template"
           >
             <div
@@ -96,9 +101,17 @@
                 selected && ['init', 'incorrect'].includes(state?.state)
                   ? 'bg-amber-100 text-amber-900'
                   : '',
-                'relative cursor-pointer select-none p-2',
-                isCorrectAnswerOption(option.id) ? 'bg-green-100' : '',
-                isIncorrectAnswerOption(option.id) ? 'bg-red-100' : '',
+                'relative  select-none p-2',
+                (['correct', 'final-incorrect'].includes(state.state) ||
+                  !!state.correctGaps?.includes(node.attrs.id)) &&
+                isCorrectAnswerOption(option.id)
+                  ? 'bg-green-100'
+                  : 'cursor-pointer',
+                (['correct', 'final-incorrect'].includes(state.state) ||
+                  !!state.correctGaps?.includes(node.attrs.id)) &&
+                isIncorrectAnswerOption(option.id)
+                  ? 'bg-red-100'
+                  : 'cursor-pointer',
               ]"
             >
               <span :class="['block truncate']">
@@ -130,12 +143,13 @@ import {
 } from "@headlessui/vue";
 import { v4 as uuid } from "uuid";
 
-import type { PropType, Ref } from "vue";
-import type { NodeViewProps } from "@tiptap/core";
 import IconArrowDown from "@/helpers/icons/IconArrowDown.vue";
 import IconArrowUp from "@/helpers/icons/IconArrowUp.vue";
-import type { FTBEvaluation, FTBOptions, FTBState } from "@/extensions/task/fill-the-blank/types";
 import IconDropDown from "@/helpers/icons/IconDropDown.vue";
+import type { PropType, Ref } from "vue";
+import type { NodeViewProps } from "@tiptap/core";
+import type { FTBEvaluation, FTBOptions, FTBState } from "@/extensions/task/fill-the-blank/types";
+import type { InjectedAnswer } from "@/extensions/task/fill-the-blank/TaskComponent.vue";
 
 export default defineComponent({
   components: {
@@ -169,6 +183,8 @@ export default defineComponent({
   },
 
   setup(props) {
+    const { emitAnswerChangedEvent } = inject("answer") as InjectedAnswer;
+
     const isListboxOpen = ref(false);
     const isModalOpen = ref(true);
 
@@ -243,15 +259,20 @@ export default defineComponent({
     };
 
     const updateAnswer = (optionId: string) => {
-      updateState({
-        answer: state.value.answer.map((a) => {
-          if (a.id === props.node.attrs.id) {
-            return { ...a, value: optionId };
-          } else {
-            return a;
-          }
-        }),
+      const oldAnswer = props.node.attrs.state?.answer;
+      const newAnswer = state.value.answer.map((a) => {
+        if (a.id === props.node.attrs.id) {
+          return { ...a, value: optionId };
+        } else {
+          return a;
+        }
       });
+
+      updateState({
+        answer: newAnswer,
+      });
+
+      emitAnswerChangedEvent(newAnswer, oldAnswer);
     };
 
     const selectedValue = computed(() => {
@@ -271,23 +292,21 @@ export default defineComponent({
 
     const isCorrectAnswerOption = (id: string | null | undefined) => {
       if (!id) return false;
-      if (!!state.value.state && ["correct", "final-incorrect"].includes(state.value.state)) {
+
+      if (!!state.value.state) {
         return !!evaluation.value.solution
           .find((s) => s.id === props.node.attrs.id)
           ?.options.find((o) => o.id === id)?.value;
-      } else {
-        return false;
       }
     };
 
     const isIncorrectAnswerOption = (id: string | null | undefined) => {
       if (!id) return false;
-      if (!!state.value.state && ["correct", "final-incorrect"].includes(state.value.state)) {
+
+      if (!!state.value.state) {
         return !evaluation.value.solution
           .find((s) => s.id === props.node.attrs.id)
           ?.options.find((o) => o.id === id)?.value;
-      } else {
-        return false;
       }
     };
 

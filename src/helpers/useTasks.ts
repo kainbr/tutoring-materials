@@ -25,9 +25,14 @@ export default function (editor: Editor): InjectedTaskStates {
   }
 
   function updateTaskState(taskState: TaskState, attributes: Partial<TaskState>) {
+    console.log("on updateTaskState1", attributes);
+    console.log("on updateTaskState2", taskState);
+    console.log("on updateTaskState3", taskStates.value);
+
     taskStates.value = taskStates.value.map((ts: TaskState) => {
       return { ...ts, ...(ts.id !== taskState.id ? {} : attributes) };
     });
+    console.log("on updateTaskState4", taskStates.value);
   }
 
   function removeTaskState(taskState: TaskState) {

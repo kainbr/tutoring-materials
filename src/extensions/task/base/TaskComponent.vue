@@ -225,6 +225,30 @@ export default defineComponent({
         state
       );
 
+      // Set the next state depending on the result and the configuration of the task
+      let newState;
+      if (response) {
+        newState = { ...state, state: "correct" };
+      } else {
+        if (
+          optionsWithDefaults.value.hasMaxAttempts &&
+          state.attempt >= optionsWithDefaults.value.maxAttempts
+        ) {
+          newState = {
+            ...state,
+            state: "final-incorrect",
+          };
+        } else {
+          newState = {
+            ...state,
+            state: "incorrect",
+            attempt: state.attempt + 1,
+          };
+        }
+      }
+
+      updateTaskState(state, newState);
+
       // Emit event
       eventBus.emit("interaction", {
         type: "answer-submitted",
@@ -244,34 +268,6 @@ export default defineComponent({
           hexIcon: calculateHexIcon(state.id),
         },
       });
-
-      // Set the next state depending on the result and the configuration of the task
-      if (response) {
-        updateTaskState(state, { ...state, state: "correct" });
-      } else {
-        console.log(
-          "maxAttempts",
-          optionsWithDefaults.value.hasMaxAttempts,
-          state.attempt,
-          optionsWithDefaults.value.maxAttempts,
-          state.attempt >= optionsWithDefaults.value.maxAttempts
-        );
-        if (
-          optionsWithDefaults.value.hasMaxAttempts &&
-          state.attempt >= optionsWithDefaults.value.maxAttempts
-        ) {
-          updateTaskState(state, {
-            ...state,
-            state: "final-incorrect",
-          });
-        } else {
-          updateTaskState(state, {
-            ...state,
-            state: "incorrect",
-            attempt: state.attempt + 1,
-          });
-        }
-      }
     };
 
     provide("submit", { submit });

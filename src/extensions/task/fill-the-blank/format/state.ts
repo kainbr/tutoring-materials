@@ -14,7 +14,8 @@ export const formatState: FTBFormatFunction = function (data) {
     ...data.state,
     type: "fill-the-blank",
     answer: (answers = formatAnswer(data.state, data.content)),
-    empty: answers.every((a) => !a.value),
+    correctGaps: [...(data.state.correctGaps || [])],
+    empty: !answers.every((a) => !!a.value),
   };
 
   return data;

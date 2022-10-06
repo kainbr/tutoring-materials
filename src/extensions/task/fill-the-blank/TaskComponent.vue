@@ -78,8 +78,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-// import { inject } from "vue";
+import { defineComponent, provide } from "vue";
+import { inject } from "vue";
 import { formatContent } from "@/extensions/task/fill-the-blank/format/content";
 import {
   formatEvaluation,
@@ -100,12 +100,21 @@ import type {
   FTBProps,
   FTBEmits,
   FTBContent,
+  FTBStateAnswer,
 } from "@/extensions/task/fill-the-blank/types";
-import type { Editor } from "@tiptap/vue-3";
-import OptionsFormEnum from "@/extensions/task/helpers/OptionsFormEnum.vue";
-import OptionsDefaults from "@/extensions/task/helpers/OptionsDefaults.vue";
+import { calculateHexIcon } from "@/helpers/util";
 import { formatEvents } from "@/extensions/task/fill-the-blank/format/events";
+import OptionsDefaults from "@/extensions/task/helpers/OptionsDefaults.vue";
+import OptionsFormEnum from "@/extensions/task/helpers/OptionsFormEnum.vue";
 import OptionsFormString from "@/extensions/task/helpers/OptionsFormString.vue";
+import type { Editor } from "@tiptap/vue-3";
+import type { Event } from "@/extensions/document/types";
+import type { InjectedEventBus } from "@/helpers/useEventBus";
+import type { InjectedTaskStates } from "@/helpers/useTasks";
+
+export type InjectedAnswer = {
+  emitAnswerChangedEvent: (newAnswer: FTBStateAnswer, oldAnswer: FTBStateAnswer) => void;
+};
 
 export default defineComponent({
   name: "TaskFillTheBlank",
@@ -156,13 +165,53 @@ export default defineComponent({
   emits: ["update", "submit"],
 
   setup(props, { emit }) {
-    // const { eventBus } = inject("eventBus") as InjectedEventBus;
+    const { eventBus } = inject("eventBus") as InjectedEventBus;
+    const { taskStates } = inject("tasks") as InjectedTaskStates;
 
     const { update } = useTask<FTBProps, FTBEmits, FTBOptions, FTBContent, FTBEvaluation, FTBState>(
       props,
       emit,
       [formatOptions, formatContent, formatEvaluation, formatState, formatEvents, formatEvents]
     );
+
+    eventBus.on("interaction", (e: Event) => {
+      if (e.type === "answer-submitted" && e.parent === props.id) {
+        update({
+          state: {
+            ...(taskStates.value.find((s) => s.id === props.id) as FTBState),
+            correctGaps:
+              props.evaluation?.solution
+                .filter((s) => {
+                  const gapAnswer = props.state?.answer.find((a) => a.id === s.id)?.value;
+                  if (!gapAnswer) return false;
+                  return !!s.options.find((o) => o.id === gapAnswer)?.value;
+                })
+                .map((s) => {
+                  return s.id;
+                }) || [],
+          },
+        });
+      }
+    });
+
+    const emitAnswerChangedEvent = (newAnswer: FTBStateAnswer, oldAnswer: FTBStateAnswer) => {
+      eventBus.emit("interaction", {
+        type: "answer-changed",
+        parent: props.id,
+        facts: {},
+        label: {
+          message: "global.event.type-answer-changed",
+          hexIcon: calculateHexIcon(props.id),
+        },
+        data: {
+          ...props.state,
+          answer: newAnswer,
+          oldAnswer: oldAnswer,
+        },
+      });
+    };
+
+    provide("answer", { emitAnswerChangedEvent });
 
     const updateEvaluationName = (newName: string) => {
       switch (newName) {

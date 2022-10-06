@@ -48,15 +48,19 @@ export type FTBEvaluationOption = TaskEvaluationOption;
 // Option
 export interface FTBOptions extends TaskOptions {
   textSelectGapPlaceholder: string;
+  lockCorrectOptions: boolean;
 }
 
 // State
 export interface FTBState extends TaskState {
-  answer: {
-    id: string;
-    value: string | null;
-  }[];
+  answer: FTBStateAnswer;
+  correctGaps?: string[];
 }
+
+export type FTBStateAnswer = {
+  id: string;
+  value: string | null;
+}[];
 
 export type FTBFormatFunction = (
   data: propsInterface<FTBOptions, FTBContent, FTBEvaluation, FTBState>
