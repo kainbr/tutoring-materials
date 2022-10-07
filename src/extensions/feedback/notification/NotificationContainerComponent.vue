@@ -6,7 +6,7 @@
     <div class="w-full flex flex-col items-center space-y-4 sm:items-end">
       <notification-component
         v-for="activeNotificationFeedback in activeNotificationFeedbacks"
-        :key="activeNotificationFeedback"
+        :key="activeNotificationFeedback.id"
         :feedback="activeNotificationFeedback"
         :editor="editor"
       ></notification-component>

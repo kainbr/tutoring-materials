@@ -57,7 +57,7 @@
     </Popover>
     <Listbox
       v-else
-      :model-value="state?.answer?.find((a) => a.id === node.attrs.id)?.value"
+      :model-value="state?.answer?.find((a) => a.id === node.attrs.id)?.value || undefined"
       @update:model-value="updateAnswer"
     >
       <div class="relative w-fit inline-block">

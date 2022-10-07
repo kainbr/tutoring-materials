@@ -34,7 +34,7 @@ export default defineComponent({
       required: true,
     },
     condition: {
-      type: Object as PropType<EventCondition>,
+      type: Object as PropType<EventCondition | undefined>,
       required: true,
     },
   },

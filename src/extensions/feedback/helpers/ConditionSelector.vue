@@ -90,7 +90,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 import {
   Combobox,
   ComboboxButton,
@@ -105,6 +105,7 @@ import RuleEditor from "@/extensions/feedback/helpers/RuleEditor.vue";
 
 import type { EventRule, EventTrigger, EventCondition } from "@/extensions/feedback/types";
 import type { PropType } from "vue";
+import { useI18n } from "vue-i18n";
 
 export default defineComponent({
   name: "ConditionSelector",
@@ -132,41 +133,36 @@ export default defineComponent({
 
   emits: ["update:rules"],
 
-  data() {
-    return {
-      factsQuery: "",
-    };
-  },
+  setup(props, context){
 
-  computed: {
-    filteredConditions() {
-      return this.factsQuery === ""
-        ? this.conditions
-        : this.conditions.filter((condition: EventCondition) =>
-            (!!condition.label?.message ? this.$t(condition.label?.message) : condition.fact)
-              .toLowerCase()
-              .replace(/\s+/g, "")
-              .includes(this.factsQuery.toLowerCase().replace(/\s+/g, ""))
-          );
-    },
-  },
+    const { t } = useI18n();
 
-  watch: {
-    conditions(newConditions) {
+    const factsQuery = ref("")
+
+    const filteredConditions = computed(() => {
+      return factsQuery.value === ""
+        ? props.conditions
+        : props.conditions.filter((condition: EventCondition) =>
+          (!!condition.label?.message ? t(condition.label?.message) : condition.fact)
+            .toLowerCase()
+            .replace(/\s+/g, "")
+            .includes(factsQuery.value.toLowerCase().replace(/\s+/g, ""))
+        );
+    })
+
+    watch(props.conditions, (newConditions) => {
       const availableFacts = newConditions.map((c: EventCondition) => c.fact);
-      const newRules = this.trigger.rules.filter((r: EventRule) => availableFacts.includes(r.fact));
-      if (newRules.length !== this.trigger.rules.length) {
-        this.$emit("update:rules", newRules);
+      const newRules = props.trigger.rules.filter((r: EventRule) => availableFacts.includes(r.fact));
+      if (newRules.length !== props.trigger.rules.length) {
+        context.emit("update:rules", newRules);
       }
-    },
-  },
+    })
 
-  methods: {
-    getConditionByRule(rule: EventRule) {
-      return this.conditions.find((condition: EventCondition) => rule.fact === condition.fact);
-    },
+    const getConditionByRule = (rule: EventRule) => {
+      return props.conditions.find((condition: EventCondition) => rule.fact === condition.fact);
+    }
 
-    addRule(condition: EventCondition) {
+    const addRule = (condition: EventCondition) => {
       const rule: EventRule = {
         id: uuid(),
         fact: condition.fact,
@@ -174,22 +170,26 @@ export default defineComponent({
         value: condition.defaultValue,
       };
 
-      this.$emit("update:rules", [...this.trigger.rules, rule]);
-    },
+      context.emit("update:rules", [...props.trigger.rules, rule]);
+    }
 
-    updateRule(rule: EventRule, newRule: EventRule) {
-      this.$emit(
+    const updateRule = (rule: EventRule, newRule: EventRule) => {
+      context.emit(
         "update:rules",
-        this.trigger.rules.map((r: EventRule) => (isEqual(rule, r) ? newRule : r))
+        props.trigger.rules.map((r: EventRule) => (isEqual(rule, r) ? newRule : r))
       );
-    },
+    }
 
-    removeRule(rule: EventRule) {
-      this.$emit(
+    const removeRule = (rule: EventRule) => {
+      context.emit(
         "update:rules",
-        this.trigger.rules.filter((r: EventRule) => !isEqual(r, rule))
+        props.trigger.rules.filter((r: EventRule) => !isEqual(r, rule))
       );
-    },
-  },
+    }
+
+    return {
+      factsQuery, filteredConditions, getConditionByRule, addRule, updateRule, removeRule
+    }
+  }
 });
 </script>
