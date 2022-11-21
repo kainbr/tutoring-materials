@@ -75,12 +75,21 @@
       "find-hotspots": {
         "evaluation-click-one-correct": "Eine korrekte Region auswählen"
       },
+      "mapping": {
+        "evaluation-all-match": "Alle Antwortoptionen sind korrekt aus-/abgewählt",
+        "label-source-node": "Start Option",
+        "label-target-node": "Ziel Option",
+        "title-correct-mappings": "Korrekte Zuordnungen",
+        "title-source-nodes": "Ziel Optionen",
+        "title-target-nodes": "Ziel Optionen"
+      },
       "multiple-choice": {
         "evaluation-all-match": "Alle Antwortoptionen sind korrekt aus-/abgewählt"
       },
       "single-choice": {
         "evaluation-all-match": "Alle Antwortoptionen sind korrekt aus-/abgewählt"
       },
+      "text-screen-size": "Bitte den Bildschirm drehen, um die Aufgabe anzuzeigen.",
       "title-evaluation": "Auswertung",
       "title-feedbacks": "Rückmeldungen",
       "title-options": "Optionen",

@@ -13,7 +13,7 @@ export interface MAPProps {
   id: string;
   editor: Editor;
   options: MAPOptions;
-  content: MAPOption[];
+  content: MAPContent;
   evaluation: MAPEvaluation;
   state: MAPState;
 }
@@ -23,7 +23,7 @@ export interface MAPEmits {
     e: "update",
     task: {
       options: MAPOptions;
-      content: MAPOption[];
+      content: MAPContent;
       evaluation: MAPEvaluation;
       state: MAPState;
       events: EventOption[];
@@ -33,6 +33,11 @@ export interface MAPEmits {
 }
 
 // Content
+export interface MAPContent {
+  source: MAPOption[];
+  target: MAPOption[];
+}
+
 export interface MAPOption {
   id: string;
   content: JSONContent;
@@ -41,8 +46,8 @@ export interface MAPOption {
 // Evaluation
 export interface MAPEvaluation extends TaskEvaluation {
   solution: {
-    id: string;
-    value: boolean;
+    source: string;
+    target: string;
   }[];
 }
 
@@ -56,14 +61,13 @@ export interface MAPOptions extends TaskOptions {
 // State
 export interface MAPState extends TaskState {
   answer: MAPOptionAnswer[];
-  order: number[];
 }
 
 export interface MAPOptionAnswer {
-  id: string;
-  value: boolean;
+  source: string;
+  target: string;
 }
 
 export type MAPFormatFunction = (
-  data: propsInterface<MAPOptions, MAPOption[], MAPEvaluation, MAPState>
-) => propsInterface<MAPOptions, MAPOption[], MAPEvaluation, MAPState>;
+  data: propsInterface<MAPOptions, MAPContent, MAPEvaluation, MAPState>
+) => propsInterface<MAPOptions, MAPContent, MAPEvaluation, MAPState>;

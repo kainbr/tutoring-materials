@@ -3,71 +3,316 @@
     <!-- Render -->
     <template #render>
       <div v-if="width < 400" class="text-center">
-        Bitte den Bildschirm drehen, um die Aufgabe anzuzeigen.
+        {{ $t("editor.task.text-screen-size") }}
       </div>
-      <div v-else class="grid grid-cols-3">
-        <div class="flex flex-col gap-2">
-          <div
-            v-for="o in startOptions"
-            :key="o"
-            ref="startRefs"
-            class="p-1 border-2 m-1 rounded-xl text-center"
-          >
-            {{ o }}
-          </div>
+      <div v-else class="grid grid-cols-3" @mouseleave="cancelDragging">
+        <!-- Start options -->
+        <div class="flex flex-col h-full justify-center">
+          <SourceOption
+            v-for="s in content?.source"
+            ref="sourceRefs"
+            :key="s.id"
+            :id="s.id"
+            :class="{ 'bg-amber-300': sourceElement === s.id }"
+            :content="s.content"
+            :disabled="!!state && ['correct', 'final-incorrect'].includes(state.state)"
+            @start-dragging="sourceDragging(s.id)"
+            @update-dragging-position="updateDraggingPosition"
+            @stop-dragging="stopDragging"
+            @cancel-dragging="cancelDragging"
+          />
         </div>
+
         <div></div>
-        <div class="flex flex-col gap-2">
-          <div
-            v-for="o in endOptions"
-            :key="o"
-            ref="endRefs"
-            class="p-1 border-2 my-1 rounded-xl text-center"
-          >
-            {{ o }}
-          </div>
+
+        <!-- End options -->
+        <div class="flex flex-col h-full justify-center">
+          <TargetOption
+            v-for="t in content?.target"
+            ref="targetRefs"
+            :key="t.id"
+            :id="t.id"
+            :class="{ 'bg-amber-300': targetElement === t.id, 'cursor-grab': !!sourceElement }"
+            :content="t.content"
+            :is-connected="!!state.answer.find((a) => a.target === t.id)"
+            :disabled="!!state && ['correct', 'final-incorrect'].includes(state.state)"
+            @cancel-dragging="cancelDragging"
+            @remove-connection="removeConnection(t.id)"
+          />
         </div>
       </div>
     </template>
 
     <!-- Content -->
-    <template #content> Content </template>
+    <template #content>
+      <div class="flex flex-row items-center pb-1">
+        <IconArrowRightOnRect class="h-5 pl-2 pr-4"></IconArrowRightOnRect>
+        {{ $t("editor.task.mapping.title-source-nodes") }}
+      </div>
+      <div v-for="(option, index) in content?.source" :key="option.id" class="flex flex-row gap-2">
+        <div class="flex flex-row min-w-fit my-1">
+          <span class="px-2 w-10 min-w-fit"> ({{ index + 1 }}) </span>
+        </div>
+        <div class="grow [&_p]:my-1 [&_img]:my-0 max-h-40 overflow-auto my-1">
+          <InlineEditor
+            is-editor
+            allow-images
+            :content="option.content"
+            @update:content="updateOptionContent(option, $event)"
+          />
+        </div>
+        <div class="min-w-fit">
+          <EditorMenuButton
+            :disabled="index === 0"
+            tabindex="-1"
+            @click="moveUpOption(index, option)"
+          >
+            <IconArrowUp />
+          </EditorMenuButton>
+          <EditorMenuButton
+            :disabled="!content.source || index === content.source.length - 1"
+            tabindex="-1"
+            @click="moveDownOption(index, option)"
+          >
+            <IconArrowDown />
+          </EditorMenuButton>
+          <EditorMenuButton
+            :disabled="!content.source || content.source.length <= 1"
+            tabindex="-1"
+            @click="removeOption(index)"
+          >
+            <IconTrash />
+          </EditorMenuButton>
+        </div>
+      </div>
+      <div>
+        <div class="flex flex-row justify-end">
+          <div class="flex gap-1">
+            <EditorMenuButton @click="addOption(true)">
+              <IconAdd />
+            </EditorMenuButton>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center pb-1">
+        <IconArrowDownOnSquare class="h-5 pl-2 pr-4"></IconArrowDownOnSquare>
+        {{ $t("editor.task.mapping.title-target-nodes") }}
+      </div>
+      <div v-for="(option, index) in content?.target" :key="option.id" class="flex flex-row gap-2">
+        <div class="flex flex-row min-w-fit my-1">
+          <span class="px-2 w-10 min-w-fit"> ({{ index + 1 }}) </span>
+        </div>
+        <div class="grow [&_p]:my-1 [&_img]:my-0 max-h-40 overflow-auto my-1">
+          <InlineEditor
+            is-editor
+            allow-images
+            :content="option.content"
+            @update:content="updateOptionContent(option, $event, false)"
+          />
+        </div>
+        <div class="min-w-fit">
+          <EditorMenuButton
+            :disabled="index === 0"
+            tabindex="-1"
+            @click="moveUpOption(index, option, false)"
+          >
+            <IconArrowUp />
+          </EditorMenuButton>
+          <EditorMenuButton
+            :disabled="!content.source || index === content.target.length - 1"
+            tabindex="-1"
+            @click="moveDownOption(index, option, false)"
+          >
+            <IconArrowDown />
+          </EditorMenuButton>
+          <EditorMenuButton
+            :disabled="!content.source || content.target.length <= 1"
+            tabindex="-1"
+            @click="removeOption(index, false)"
+          >
+            <IconTrash />
+          </EditorMenuButton>
+        </div>
+      </div>
+      <div>
+        <div class="flex flex-row justify-end">
+          <div class="flex gap-1">
+            <EditorMenuButton @click="addOption(false)">
+              <IconAdd />
+            </EditorMenuButton>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center pb-1">
+        <IconLink class="h-5 pl-2 pr-4"></IconLink>
+        {{ $t("editor.task.mapping.title-correct-mappings") }}
+      </div>
+      <div
+        v-if="!!evaluation && !!evaluation.solution"
+        v-for="(mapping, index) in evaluation.solution"
+        :key="mapping.source"
+        class="flex flex-row gap-2"
+      >
+        <div class="flex flex-row min-w-fit my-1">
+          <span class="px-2 w-10 min-w-fit"> ({{ index + 1 }}) </span>
+        </div>
+        <div v-if="content" class="grow flex flex-col gap-1 my-1">
+          <div class="flex flex-row items-center justify-center">
+            <span class="mx-2"> {{ $t("editor.task.mapping.label-source-node") }} </span>
+            <select
+              v-model="mapping.source"
+              class="px-1.5 py-0.5 block focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
+            >
+              <option
+                v-for="option in content?.source.filter(
+                  (o) =>
+                    !evaluation?.solution.find((s) => s.source === o.id && o.id !== mapping.source)
+                )"
+                :key="option.id"
+                :value="option.id"
+              >
+                {{ content?.source.findIndex((o) => o.id === option.id) + 1 }}
+              </option>
+            </select>
+            <IconArrowRight></IconArrowRight>
+            <select
+              v-model="mapping.target"
+              class="px-1.5 py-0.5 block focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
+            >
+              <option
+                v-for="option in content?.target.filter(
+                  (o) =>
+                    !evaluation?.solution.find((s) => s.target === o.id && o.id !== mapping.target)
+                )"
+                :key="option.id"
+                :value="option.id"
+              >
+                {{ content?.target.findIndex((o) => o.id === option.id) + 1 }}
+              </option>
+            </select>
+            <span class="mx-2"> {{ $t("editor.task.mapping.label-target-node") }} </span>
+          </div>
+        </div>
+        <div class="min-w-fit">
+          <EditorMenuButton
+            :disabled="evaluation.solution.length <= 1"
+            tabindex="-1"
+            @click="evaluation.solution = evaluation.solution.filter((s) => s !== mapping)"
+          >
+            <IconTrash />
+          </EditorMenuButton>
+        </div>
+      </div>
+      <div>
+        <div class="flex flex-row justify-end">
+          <div class="flex gap-1">
+            <EditorMenuButton @click="addMapping" :disabled="!canAddMapping">
+              <IconAdd />
+            </EditorMenuButton>
+          </div>
+        </div>
+      </div>
+    </template>
 
     <!-- Evaluation -->
-    <template #evaluation> Evaluation </template>
+    <template #evaluation>
+      <OptionsFormEnum
+        v-if="!!evaluation"
+        name="evaluationName"
+        :value="evaluation.name"
+        :options="
+          evaluationOptions.map((o) => {
+            return { value: o.name, label: o.label };
+          })
+        "
+        :label="$t('editor.task.evaluation-label-type')"
+        @update:value="updateEvaluationName"
+      />
+    </template>
 
     <!-- Options -->
-    <template #options> Options </template>
+    <template #options>
+      <div v-if="options" class="mt-1 flex flex-col gap-2">
+        <OptionsDefaults
+          :options="options"
+          allow-empty-answer-submission
+          has-max-attempts
+          has-submit-button
+          has-correct-state
+          has-incorrect-state
+          has-final-incorrect-state
+          @update:options="update({ options: $event })"
+        />
+      </div>
+    </template>
   </TaskScaffold>
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, onUnmounted, ref, watch, watchEffect } from "vue";
-
+import { computed, defineComponent, inject, onUnmounted, ref, watch } from "vue";
+import { formatContent } from "@/extensions/task/mapping/format/content";
+import { formatEvaluation, evaluationOptions } from "@/extensions/task/mapping/format/evaluation";
+import { formatEvents } from "@/extensions/task/mapping/format/events";
+import { formatOptions } from "@/extensions/task/mapping/format/options";
+import { formatState } from "@/extensions/task/mapping/format/state";
+import { useTask } from "@/extensions/task/helpers";
+import { v4 as uuid } from "uuid";
+import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
+import IconAdd from "@/helpers/icons/IconAdd.vue";
+import IconArrowDownOnSquare from "@/helpers/icons/IconArrowDownOnSquare.vue";
+import IconArrowDown from "@/helpers/icons/IconArrowDown.vue";
+import IconArrowRight from "@/helpers/icons/IconArrowRight.vue";
+import IconArrowRightOnRect from "@/helpers/icons/IconArrowRightOnRect.vue";
+import IconArrowUp from "@/helpers/icons/IconArrowUp.vue";
+import IconLink from "@/helpers/icons/IconLink.vue";
+import IconFeedback from "@/helpers/icons/IconFeedback.vue";
+import IconShuffle from "@/helpers/icons/IconShuffle.vue";
+import IconTrash from "@/helpers/icons/IconTrash.vue";
+import InlineEditor from "@/helpers/InlineEditor.vue";
 import LeaderLine from "leader-line-new";
-
+import OptionsDefaults from "@/extensions/task/helpers/OptionsDefaults.vue";
+import OptionsFormEnum from "@/extensions/task/helpers/OptionsFormEnum.vue";
+import SourceOption from "@/extensions/task/mapping/SourceOption.vue";
+import TargetOption from "@/extensions/task/mapping/TargetOption.vue";
 import TaskScaffold from "@/extensions/task/helpers/TaskScaffold.vue";
 
-import { useTask } from "@/extensions/task/helpers";
-
-import type { PropType, Ref } from "vue";
+import type { Editor } from "@tiptap/vue-3";
+import type { InjectedContainerDimensions } from "@/helpers/useContainerDimensions";
+import type { JSONContent } from "@tiptap/vue-3";
 import type {
-  MAPOption,
   MAPEvaluation,
   MAPOptions,
   MAPState,
   MAPProps,
   MAPEmits,
+  MAPContent,
+  MAPOption,
 } from "@/extensions/task/mapping/types";
-import type { Editor } from "@tiptap/vue-3";
-// import type { InjectedEventBus } from "@/helpers/useEventBus";
-import type { InjectedContainerDimensions } from "@/helpers/useContainerDimensions";
+import type { PropType, Ref } from "vue";
 
 export default defineComponent({
-  name: "TaskFillTheBlank",
+  name: "TaskMapping",
 
   components: {
+    IconArrowRight,
+    IconLink,
+    TargetOption,
+    IconArrowDownOnSquare,
+    IconArrowRightOnRect,
+    SourceOption,
+    EditorMenuButton,
+    IconAdd,
+    IconFeedback,
+    IconArrowDown,
+    IconArrowUp,
+    IconShuffle,
+    IconTrash,
+    InlineEditor,
     TaskScaffold,
+    OptionsDefaults,
+    OptionsFormEnum,
   },
 
   props: {
@@ -86,9 +331,9 @@ export default defineComponent({
       },
     },
     content: {
-      type: Array as PropType<MAPOption[]>,
+      type: Object as PropType<MAPContent>,
       default() {
-        return [];
+        return {};
       },
     },
     evaluation: {
@@ -108,68 +353,307 @@ export default defineComponent({
   emits: ["update", "submit"],
 
   setup(props, { emit }) {
+    /* Imports */
     // const { eventBus } = inject("eventBus") as InjectedEventBus;
+    const { width, height } = inject("containerDimensions") as InjectedContainerDimensions;
+    const { update } = useTask<MAPProps, MAPEmits, MAPOptions, MAPContent, MAPEvaluation, MAPState>(
+      props,
+      emit,
+      [formatOptions, formatContent, formatEvaluation, formatState, formatEvents]
+    );
 
-    const startOptions = ref(["Option L1", "Option L2", "Option L3", "Option L4"]);
-    const endOptions = ref(["Option R1", "Option R2", "Option R3", "Option R4"]);
+    /* Variable */
+    let sourceElement: Ref<string | null> = ref(null);
+    let targetElement: Ref<string | null> = ref(null);
+    const lines: Ref<{ source: string; target: string; line: LeaderLine }[]> = ref([]);
+    const sourceRefs: Ref<typeof SourceOption[]> = ref([]);
+    const targetRefs: Ref<typeof TargetOption[]> = ref([]);
+    const handleRefs: Ref<Element[]> = ref([]);
 
-    const startRefs = ref([]);
-    const endRefs = ref([]);
+    /* Content editing */
+    const addOption = (isSourceOption: boolean = true) => {
+      const content = isSourceOption ? props.content?.source || [] : props.content?.target || [];
+      content.push({
+        id: uuid(),
+        content: { type: "doc", content: [{ type: "paragraph" }] },
+      });
+      update({
+        content: {
+          ...props.content,
+          source: isSourceOption ? content : props.content?.source,
+          target: !isSourceOption ? content : props.content?.target,
+        },
+      });
+    };
 
-    const line: Ref<null | LeaderLine> = ref(null);
+    const updateOptionContent = (
+      option: MAPOption,
+      answerOptionContent: JSONContent,
+      isSourceOption: boolean = true
+    ) => {
+      update({
+        content: {
+          ...props.content,
+          source: isSourceOption
+            ? props.content?.source.map((o) =>
+                option?.id === o.id ? { ...o, content: answerOptionContent } : o
+              )
+            : props.content?.source,
+          target: !isSourceOption
+            ? props.content?.target.map((o) =>
+                option?.id === o.id ? { ...o, content: answerOptionContent } : o
+              )
+            : props.content?.target,
+        },
+      });
+    };
 
-    const { update } = useTask<
-      MAPProps,
-      MAPEmits,
-      MAPOptions,
-      MAPOption[],
-      MAPEvaluation,
-      MAPState
-    >(props, emit, []);
-
-    const { width } = inject("containerDimensions") as InjectedContainerDimensions;
-
-    watch(width, () => {
-      if (
-        !!startRefs.value &&
-        startRefs.value.length > 0 &&
-        !!endRefs.value &&
-        endRefs.value.length > 0
-      ) {
-        if (!!line.value) line.value.remove();
-        line.value = new LeaderLine(startRefs.value[0], endRefs.value[1]);
+    const moveDownOption = (index: number, option: MAPOption, isSourceOption: boolean = true) => {
+      const content = isSourceOption ? props.content?.source || [] : props.content?.target || [];
+      if (Array.isArray(content) && index < content.length) {
+        content.splice(index + 2, 0, option);
+        content.splice(index, 1);
+        update({
+          content: {
+            ...props.content,
+            source: isSourceOption ? content : props.content?.source,
+            target: !isSourceOption ? content : props.content?.target,
+          },
+        });
       }
+    };
 
-      if (width.value < 400 && !!line.value) {
-        line.value.hide();
+    const moveUpOption = (index: number, option: MAPOption, isSourceOption: boolean = true) => {
+      const content = isSourceOption ? props.content?.source || [] : props.content?.target || [];
+      if (Array.isArray(content) && index < content.length) {
+        content.splice(index - 1, 0, option);
+        content.splice(index + 1, 1);
+        update({
+          content: {
+            ...props.content,
+            source: isSourceOption ? content : props.content?.source,
+            target: !isSourceOption ? content : props.content?.target,
+          },
+        });
       }
+    };
+
+    const removeOption = (index: number, isSourceOption: boolean = true) => {
+      const content = isSourceOption ? props.content?.source || [] : props.content?.target || [];
+      if (content.length > 1) {
+        content.splice(index, 1);
+        update({
+          content: {
+            ...props.content,
+            source: isSourceOption ? content : props.content?.source,
+            target: !isSourceOption ? content : props.content?.target,
+          },
+        });
+      }
+    };
+
+    const updateEvaluationName = (newName: string) => {
+      switch (newName) {
+        case "all-match":
+        default:
+          update({
+            evaluation: {
+              name: newName,
+              solution:
+                !!props.evaluation && !!props.evaluation.solution ? props.evaluation.solution : [],
+            },
+          });
+      }
+    };
+
+    const canAddMapping = computed(() => {
+      return (
+        props.content?.source.some(
+          (o) => !props.evaluation?.solution.find((s) => s.source === o.id)
+        ) &&
+        props.content?.target.some(
+          (o) => !props.evaluation?.solution.find((s) => s.target === o.id)
+        )
+      );
     });
 
-    watchEffect(() => {
-      if (
-        !!startRefs.value &&
-        startRefs.value.length > 0 &&
-        !!endRefs.value &&
-        endRefs.value.length > 0
-      ) {
-        if (!!line.value) line.value.remove();
-        line.value = new LeaderLine(startRefs.value[0], endRefs.value[1]);
-      } else {
-        // not mounted yet, or the element was unmounted (e.g. by v-if)
+    const addMapping = () => {
+      if (canAddMapping) {
+        const sourceNode = props.content?.source.find(
+          (o) => !props.evaluation?.solution.find((s) => s.source === o.id)
+        );
+        const targetNode = props.content?.target.find(
+          (o) => !props.evaluation?.solution.find((s) => s.target === o.id)
+        );
+
+        if (!!sourceNode && !!targetNode) {
+          update({
+            evaluation: {
+              ...props.evaluation,
+              solution: [
+                ...props.evaluation.solution,
+                {
+                  source: sourceNode.id,
+                  target: targetNode.id,
+                },
+              ],
+            },
+          });
+        }
+      }
+    };
+
+    /* Drag and state management */
+
+    const sourceDragging = (id: string) => {
+      sourceElement.value = id;
+    };
+
+    const updateDraggingPosition = (event: MouseEvent) => {
+      for (const targetRef of targetRefs.value) {
+        const domRect = targetRef.getBoundingClientRect();
+
+        if (
+          event.clientX >= domRect.left &&
+          event.clientX <= domRect.right &&
+          event.clientY <= domRect.bottom &&
+          event.clientY >= domRect.top
+        ) {
+          targetElement.value = targetRef.id;
+          return;
+        }
+        targetElement.value = null;
+      }
+    };
+
+    const stopDragging = () => {
+      if (!!sourceElement.value && !!targetElement.value) {
+        update({
+          state: {
+            ...props.state,
+            answer: [
+              ...props.state.answer.filter(
+                (a) => a.source !== sourceElement.value && a.target !== targetElement.value
+              ),
+              {
+                source: sourceElement.value,
+                target: targetElement.value,
+              },
+            ],
+          },
+        });
+      }
+      sourceElement.value = null;
+      targetElement.value = null;
+    };
+
+    const cancelDragging = (e: MouseEvent | TouchEvent) => {
+      for (const valueElement of sourceRefs.value) {
+        valueElement.onInputEnd(e);
+      }
+    };
+
+    watch([() => props.state.answer, () => props.content, width, height], () => {
+      // Remove non-existing lines
+      lines.value = lines.value.filter((line) => {
+        if (
+          width.value < 400 ||
+          !props.state.answer.find((s) => s.source === line.source && s.target === line.target)
+        ) {
+          line.line.remove();
+          return false;
+        } else {
+          const sourceRef = sourceRefs.value.find((r) => r.id === line.source);
+          const targetRef = targetRefs.value.find((r) => r.id === line.target);
+          if (!!sourceRef && !!targetRef) {
+            line.line.setOptions({
+              start: LeaderLine.pointAnchor(sourceRef.$el, {
+                x: sourceRef.$el.getBoundingClientRect().width + 13,
+                y: sourceRef.$el.getBoundingClientRect().height / 2,
+              }),
+              end: LeaderLine.pointAnchor(targetRef.$el, {
+                x: -13,
+                y: targetRef.$el.getBoundingClientRect().height / 2,
+              }),
+            });
+          }
+          return true;
+        }
+      });
+
+      // Add new lines
+      for (const answer of props.state.answer) {
+        if (!lines.value.find((l) => l.source === answer.source && l.target === answer.target)) {
+          const sourceRef = sourceRefs.value.find((r) => r.id === answer.source);
+          const targetRef = targetRefs.value.find((r) => r.id === answer.target);
+          if (!!sourceRef && !!targetRef) {
+            const newLine = new LeaderLine(
+              LeaderLine.pointAnchor(sourceRef.$el, {
+                x: sourceRef.$el.getBoundingClientRect().width + 13,
+                y: sourceRef.$el.getBoundingClientRect().height / 2,
+              }),
+              LeaderLine.pointAnchor(targetRef.$el, {
+                x: -13,
+                y: targetRef.$el.getBoundingClientRect().height / 2,
+              }),
+              {
+                startPlug: "behind",
+                startSocket: "right",
+                endPlug: "behind",
+                endSocket: "left",
+                color: "#38bdf8",
+              }
+            );
+            lines.value = [
+              ...lines.value,
+              {
+                source: answer.source,
+                target: answer.target,
+                line: newLine,
+              },
+            ];
+          }
+        }
       }
     });
 
     onUnmounted(() => {
-      if (!!line.value) line.value.remove();
+      for (const line of lines.value) {
+        line.line.remove();
+      }
     });
+
+    const removeConnection = (id: string) => {
+      update({
+        state: {
+          ...props.state,
+          answer: props.state.answer.filter((a) => a.target !== id),
+        },
+      });
+    };
 
     return {
       update,
-      startOptions,
-      startRefs,
-      endOptions,
-      endRefs,
       width,
+      sourceRefs,
+      targetRefs,
+      handleRefs,
+      sourceElement,
+      targetElement,
+      updateOptionContent,
+      addOption,
+      removeOption,
+      evaluationOptions,
+      updateEvaluationName,
+      canAddMapping,
+      addMapping,
+      moveUpOption,
+      moveDownOption,
+      sourceDragging,
+      updateDraggingPosition,
+      stopDragging,
+      cancelDragging,
+      removeConnection,
     };
   },
 });

@@ -75,12 +75,21 @@
       "find-hotspots": {
         "evaluation-click-one-correct": "Click one correct region"
       },
+      "mapping": {
+        "evaluation-all-match": "All options are un-/selected correctly",
+        "label-source-node": "Source option",
+        "label-target-node": "Target node",
+        "title-correct-mappings": "Correct mappings",
+        "title-source-nodes": "Target nodes",
+        "title-target-nodes": "Target nodes"
+      },
       "multiple-choice": {
         "evaluation-all-match": "All options are un-/selected correctly"
       },
       "single-choice": {
         "evaluation-all-match": "All options are un-/selected correctly"
       },
+      "text-screen-size": "Please rotate your device to display the task.",
       "title-evaluation": "Evaluation",
       "title-feedbacks": "Feedbacks",
       "title-options": "Options",

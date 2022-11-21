@@ -20,10 +20,7 @@
 
 <script lang="ts">
 // import {  inject } from "vue";
-import { defineComponent, ref, watchEffect } from "vue";
-// eslint-disable-next-line
-// @ts-ignore
-import PlainDraggable from "plain-draggable";
+import { defineComponent, ref } from "vue";
 
 import TaskScaffold from "@/extensions/task/helpers/TaskScaffold.vue";
 
@@ -99,13 +96,6 @@ export default defineComponent({
 
     const draggable = ref(null);
 
-    watchEffect(() => {
-      if (!!draggable.value) {
-        new PlainDraggable(draggable.value);
-      } else {
-        // not mounted yet, or the element was unmounted (e.g. by v-if)
-      }
-    });
 
     return {
       update,

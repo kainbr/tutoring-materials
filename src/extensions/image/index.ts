@@ -10,7 +10,7 @@ declare module "@tiptap/core" {
       /**
        * Uploads an image, compresses it and adds it to the document.
        */
-      uploadImage: (file: Blob) => ReturnType;
+      uploadImage: (file: File | Blob) => ReturnType;
     };
   }
 }
@@ -36,7 +36,7 @@ export const CustomImage = Image.extend({
 
   addCommands() {
     return {
-      uploadImage: (file: Blob) => () => {
+      uploadImage: (file: File | Blob) => () => {
         if (!file) {
           return false;
         }

@@ -6,6 +6,7 @@
     v-if="editor && showBubbleMenu"
     :editor="editor"
     :tippy-options="{ duration: 100, theme: 'light-border' }"
+    :should-show="() => isEditor"
     class="flex flex-row bg-white rounded-xl gap-0.5"
   >
     <EditorMenuButton
@@ -124,7 +125,21 @@
     <EditorMenuButton @click="editor.chain().focus().unsetAllMarks().run()">
       <IconFormatClear />
     </EditorMenuButton>
+    <EditorMenuButton v-if="allowImages" @click="imageModalOpen = true">
+      <IconImage />
+    </EditorMenuButton>
   </BubbleMenu>
+
+  <UploadModal
+    v-if="allowImages"
+    v-model="imageModalOpen"
+    :editor="editor"
+    :upload-callback="(e: File) => editor.commands.uploadImage(e)"
+    accepted-files="image/png, image/jpeg"
+    :title="$t('editor.menu.image-upload-headline')"
+    :supported-formats="$t('editor.menu.image-upload-supported-formats')"
+    :supplementary-text="$t('editor.menu.image-upload-supplementary-text')"
+  />
 
   <div v-if="showTopMenu" class="border border-b-0 p-2">
     <MenuSectionTypography :editor="editor" />
@@ -135,13 +150,15 @@
     :editor="editor"
     class="[&_p]:my-0 [&_p]:py-0"
     :class="{ 'border p-4': showTopMenu }"
+    @mouseup.prevent="inputUpEvent"
+    @touchup.passive="inputUpEvent"
   />
 </template>
 
 <script lang="ts">
 import { BubbleMenu, Editor, EditorContent } from "@tiptap/vue-3";
 import { Color } from "@tiptap/extension-color";
-import { defineComponent, onBeforeUnmount, watch } from "vue";
+import { defineComponent, onBeforeUnmount, ref, watch } from "vue";
 import { Math } from "@/extensions/math";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 import { Placeholder } from "@tiptap/extension-placeholder";
@@ -154,13 +171,65 @@ import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import IconBold from "@/helpers/icons/IconBold.vue";
 import IconFontColor from "@/helpers/icons/IconFontColor.vue";
 import IconFormatClear from "@/helpers/icons/IconFormatClear.vue";
+import IconImage from "@/helpers/icons/IconImage.vue";
 import IconItalic from "@/helpers/icons/IconItalic.vue";
 import IconUnderline from "@/helpers/icons/IconUnderline.vue";
+import Image from "@tiptap/extension-image";
 import MenuSectionTypography from "@/helpers/menu/MenuSectionTypography.vue";
 import StarterKit from "@tiptap/starter-kit";
+import UploadModal from "@/helpers/menu/UploadModal.vue";
+import Compressor from "compressorjs";
 
 import type { PropType } from "vue";
 import type { JSONContent } from "@tiptap/vue-3";
+
+const InlineEditorImage = Image.extend({
+  name: "inlineEditorImage",
+
+  addCommands() {
+    return {
+      uploadImage: (file: File | Blob) => () => {
+        if (!file) {
+          return false;
+        }
+
+        new Compressor(file, {
+          strict: true,
+          checkOrientation: true,
+          maxWidth: 512,
+          maxHeight: 512,
+          minWidth: 0,
+          minHeight: 0,
+          width: undefined,
+          height: undefined,
+          resize: "none",
+          quality: 0.8,
+          mimeType: "",
+          convertTypes: "image/png",
+          convertSize: 5000000,
+          success: (result: Blob) => {
+            // Convert result to dataUrl
+            const a = new FileReader();
+            a.onload = () => {
+              this.editor.commands.insertContent({
+                type: this.name,
+                attrs: {
+                  src: a.result,
+                },
+              });
+            };
+            a.readAsDataURL(result);
+          },
+          error: function (err: Error) {
+            window.alert(err.message);
+          },
+        });
+
+        return true;
+      },
+    };
+  },
+});
 
 export default defineComponent({
   name: "InlineEditor",
@@ -171,6 +240,7 @@ export default defineComponent({
     IconBold,
     IconFontColor,
     IconFormatClear,
+    IconImage,
     IconItalic,
     IconUnderline,
     EditorContent,
@@ -180,6 +250,7 @@ export default defineComponent({
     MenuButton,
     MenuItem,
     MenuItems,
+    UploadModal,
   },
 
   props: {
@@ -208,25 +279,38 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    allowImages: {
+      type: Boolean,
+      default: false,
+    },
   },
 
-  emits: ["update:content"],
+  emits: ["update:content", "inputUpEvent"],
 
   setup(props, context) {
     const { t, locale } = useI18n();
 
+    const imageModalOpen = ref(false);
+
     const editor: Editor = new Editor({
       extensions: [
-        StarterKit,
+        Color,
+        ...(props.allowImages
+          ? [
+              InlineEditorImage.configure({
+                allowBase64: true,
+              }),
+            ]
+          : []),
+        Math,
         Placeholder.configure({
           placeholder: () => t("editor.placeholder-text"),
         }),
-        Color,
+        StarterKit,
         TextStyle,
         Subscript,
         Superscript,
         Underline,
-        Math,
       ],
       editable: props.isEditor,
       content: props.content,
@@ -264,7 +348,13 @@ export default defineComponent({
       editor.destroy();
     });
 
-    return { editor };
+    const inputUpEvent = (e: MouseEvent | TouchEvent) => {
+      if (!props.isEditor) {
+        context.emit("inputUpEvent", e);
+      }
+    };
+
+    return { editor, imageModalOpen, inputUpEvent };
   },
 });
 </script>

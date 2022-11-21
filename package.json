@@ -44,7 +44,6 @@
     "leader-line-new": "^1.1.9",
     "lodash-es": "^4.17.21",
     "mitt": "^3.0.0",
-    "plain-draggable": "^2.5.14",
     "uuid": "^8.3.2",
     "vue-i18n": "^9.2.0",
     "vue-tippy": "^6.0.0-alpha.63"

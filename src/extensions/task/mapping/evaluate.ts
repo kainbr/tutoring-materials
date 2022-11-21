@@ -1,15 +1,27 @@
-// noinspection JSUnusedGlobalSymbols
+// noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
 
-import type { FTBEvaluation, FTBState } from "@/extensions/task/fill-the-blank/types";
+import type { MAPEvaluation, MAPState } from "@/extensions/task/mapping/types";
 
-export const evaluate = function (config: FTBEvaluation, state: FTBState): boolean {
+export const evaluate = function (config: MAPEvaluation, state: MAPState): boolean {
   switch (config.name) {
     case "all-match":
-      return false;
+      // Sort arrays by source id and then compare their JSON string.
+      return (
+        JSON.stringify(
+          config.solution.sort((a, b) => {
+            return a.source > b.source ? 1 : b.source > a.source ? -1 : 0;
+          })
+        ) ===
+        JSON.stringify(
+          state.answer.sort((a, b) => {
+            return a.source > b.source ? 1 : b.source > a.source ? -1 : 0;
+          })
+        )
+      );
   }
   return false;
 };
 
-export const geFTBacts = function (config: FTBEvaluation, state: FTBState): object {
+export const getFacts = function (config: MAPEvaluation, state: MAPState): object {
   return {};
 };
