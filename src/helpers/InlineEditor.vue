@@ -150,6 +150,7 @@
     :editor="editor"
     class="[&_p]:my-0 [&_p]:py-0"
     :class="{ 'border p-4': showTopMenu }"
+    style="hyphens: auto;"
     @mouseup.prevent="inputUpEvent"
     @touchup.passive="inputUpEvent"
   />
