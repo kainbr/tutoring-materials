@@ -19,20 +19,19 @@ export const formatEvaluation: MAPFormatFunction = function (data) {
       };
   }
 
-  data.evaluation.solution = data.evaluation.solution.filter(
-    (solution) =>
-      !!solution.source &&
-      !!data.content.source.find((o) => o.id === solution.source) &&
-      !!solution.target &&
-      !!data.content.target.find((o) => o.id === solution.target)
-  );
+  data.evaluation.solution = data.content.source.map((o) => {
+    return {
+      source: o.id,
+      target: data.evaluation.solution?.find((a) => a.source === o.id)?.target || null,
+    };
+  });
 
-  // Make sure that one option is always correct
-  if (data.evaluation.solution.length === 0) {
-    data.evaluation.solution.push({
-      source: data.content.source[0].id,
-      target: data.content.target[0].id,
-    });
+  // Make sure that each start option has a target associated
+  while (data.evaluation.solution.some((s) => !s.target)) {
+    let targetIndex = data.evaluation.solution?.findIndex((a) => !a.target);
+    data.evaluation.solution[targetIndex].target =
+      data.content.target.find((t) => !data.evaluation.solution?.find((s) => s.target === t.id))
+        ?.id || null;
   }
 
   return data;

@@ -78,7 +78,7 @@
       "mapping": {
         "evaluation-all-match": "All options are un-/selected correctly",
         "label-source-node": "Source option",
-        "label-target-node": "Target node",
+        "label-target-node": "Target option",
         "title-correct-mappings": "Correct mappings",
         "title-source-nodes": "Source nodes",
         "title-target-nodes": "Target nodes"

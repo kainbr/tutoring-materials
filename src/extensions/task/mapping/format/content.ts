@@ -10,6 +10,11 @@ export const formatContent: MAPFormatFunction = function (data) {
         id: uuid(),
         content: {
           type: "doc",
+          content: [
+            {
+              type: "paragraph",
+            },
+          ],
         },
       };
       return { ...defaultOption, ...option };
@@ -19,10 +24,29 @@ export const formatContent: MAPFormatFunction = function (data) {
         id: uuid(),
         content: {
           type: "doc",
+          content: [
+            {
+              type: "paragraph",
+            },
+          ],
         },
       };
       return { ...defaultOption, ...option };
     });
+
+    while (data.content.target.length < data.content.source.length) {
+      data.content.target.push({
+        id: uuid(),
+        content: {
+          type: "doc",
+          content: [
+            {
+              type: "paragraph",
+            },
+          ],
+        },
+      });
+    }
   }
 
   return data;

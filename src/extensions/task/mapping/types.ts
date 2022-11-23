@@ -47,7 +47,7 @@ export interface MAPOption {
 export interface MAPEvaluation extends TaskEvaluation {
   solution: {
     source: string;
-    target: string;
+    target: string | null;
   }[];
 }
 
@@ -65,7 +65,7 @@ export interface MAPState extends TaskState {
 
 export interface MAPOptionAnswer {
   source: string;
-  target: string;
+  target: string | null;
 }
 
 export type MAPFormatFunction = (

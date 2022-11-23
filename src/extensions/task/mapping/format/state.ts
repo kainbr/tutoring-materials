@@ -14,20 +14,17 @@ export const formatState: MAPFormatFunction = function (data) {
     ...data.state,
     type: "mapping",
     answer: (answers = formatAnswer(data.state, data.content)),
-    empty: answers.length === 0,
+    empty: answers.some((a) => !a.target),
   };
 
   return data;
 };
 
 function formatAnswer(state: MAPState, content: MAPContent): MAPOptionAnswer[] {
-  return (
-    state.answer?.filter(
-      (solution) =>
-        !!solution.source &&
-        !!content.source.find((o) => o.id === solution.source) &&
-        !!solution.target &&
-        !!content.target.find((o) => o.id === solution.target)
-    ) || []
-  );
+  return content.source.map((o) => {
+    return {
+      source: o.id,
+      target: state.answer?.find((a) => a.source === o.id)?.target || null,
+    };
+  });
 }

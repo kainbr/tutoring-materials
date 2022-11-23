@@ -127,7 +127,11 @@
             <IconArrowDown />
           </EditorMenuButton>
           <EditorMenuButton
-            :disabled="!content.source || content.target.length <= 1"
+            :disabled="
+              !content.source ||
+              content.target.length <= 1 ||
+              content.source.length === content.target.length
+            "
             tabindex="-1"
             @click="removeOption(index, false)"
           >
@@ -151,19 +155,17 @@
       </div>
       <div
         v-if="!!evaluation && !!evaluation.solution"
-        v-for="(mapping, index) in evaluation.solution"
+        v-for="mapping in evaluation.solution"
         :key="mapping.source"
         class="flex flex-row gap-2"
       >
-        <div class="flex flex-row min-w-fit my-1">
-          <span class="px-2 w-10 min-w-fit"> ({{ index + 1 }}) </span>
-        </div>
         <div v-if="content" class="grow flex flex-col gap-1 my-1">
           <div class="flex flex-row items-center justify-center">
             <span class="mx-2"> {{ $t("editor.task.mapping.label-source-node") }} </span>
             <select
               v-model="mapping.source"
               class="px-1.5 py-0.5 block focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
+              disabled
             >
               <option
                 v-for="option in content?.source.filter(
@@ -178,39 +180,15 @@
             </select>
             <IconArrowRight></IconArrowRight>
             <select
-              v-model="mapping.target"
+              :value="mapping.target"
+              @input="updateEvaluationMapping(mapping.source, $event.target.value)"
               class="px-1.5 py-0.5 block focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
             >
-              <option
-                v-for="option in content?.target.filter(
-                  (o) =>
-                    !evaluation?.solution.find((s) => s.target === o.id && o.id !== mapping.target)
-                )"
-                :key="option.id"
-                :value="option.id"
-              >
+              <option v-for="option in content?.target" :key="option.id" :value="option.id">
                 {{ content?.target.findIndex((o) => o.id === option.id) + 1 }}
               </option>
             </select>
             <span class="mx-2"> {{ $t("editor.task.mapping.label-target-node") }} </span>
-          </div>
-        </div>
-        <div class="min-w-fit">
-          <EditorMenuButton
-            :disabled="evaluation.solution.length <= 1"
-            tabindex="-1"
-            @click="evaluation.solution = evaluation.solution.filter((s) => s !== mapping)"
-          >
-            <IconTrash />
-          </EditorMenuButton>
-        </div>
-      </div>
-      <div>
-        <div class="flex flex-row justify-end">
-          <div class="flex gap-1">
-            <EditorMenuButton @click="addMapping" :disabled="!canAddMapping">
-              <IconAdd />
-            </EditorMenuButton>
           </div>
         </div>
       </div>
@@ -468,6 +446,23 @@ export default defineComponent({
       }
     };
 
+    const updateEvaluationMapping = (sourceId: string, targetId: string) => {
+      update({
+        evaluation: {
+          ...props.evaluation,
+          solution: props.evaluation?.solution.map((s) => {
+            if (s.source === sourceId) {
+              return { source: sourceId, target: targetId };
+            } else if (s.target === targetId) {
+              return { source: s.source, target: null };
+            } else {
+              return s;
+            }
+          }),
+        },
+      });
+    };
+
     const canAddMapping = computed(() => {
       return (
         props.content?.source.some(
@@ -555,74 +550,80 @@ export default defineComponent({
       }
     };
 
-    watch([() => props.state.answer, () => props.content, width, height, scrollTop, scrollLeft], () => {
-      // Remove non-existing lines
-      lines.value = lines.value.filter((line) => {
-        if (
-          width.value < 400 ||
-          !props.state.answer.find((s) => s.source === line.source && s.target === line.target)
-        ) {
-          line.line.remove();
-          return false;
-        } else {
-          const sourceRef = sourceRefs.value.find((r) => r.id === line.source);
-          const targetRef = targetRefs.value.find((r) => r.id === line.target);
-          if (!!sourceRef && !!targetRef) {
-            line.line.setOptions({
-              start: LeaderLine.pointAnchor(sourceRef.$el, {
-                x: sourceRef.$el.getBoundingClientRect().width + 13,
-                y: sourceRef.$el.getBoundingClientRect().height / 2,
-              }),
-              end: LeaderLine.pointAnchor(targetRef.$el, {
-                x: -13,
-                y: targetRef.$el.getBoundingClientRect().height / 2,
-              }),
-            });
+    watch(
+      [() => props.state.answer, () => props.content, width, height, scrollTop, scrollLeft],
+      () => {
+        // Remove non-existing lines
+        lines.value = lines.value.filter((line) => {
+          if (
+            width.value < 400 ||
+            !props.state.answer.find((s) => s.source === line.source && s.target === line.target)
+          ) {
+            line.line.remove();
+            return false;
+          } else {
+            const sourceRef = sourceRefs.value.find((r) => r.id === line.source);
+            const targetRef = targetRefs.value.find((r) => r.id === line.target);
+            if (!!sourceRef && !!targetRef) {
+              line.line.setOptions({
+                start: LeaderLine.pointAnchor(sourceRef.$el, {
+                  x: sourceRef.$el.getBoundingClientRect().width + 13,
+                  y: sourceRef.$el.getBoundingClientRect().height / 2,
+                }),
+                end: LeaderLine.pointAnchor(targetRef.$el, {
+                  x: -13,
+                  y: targetRef.$el.getBoundingClientRect().height / 2,
+                }),
+              });
+            }
+            return true;
           }
-          return true;
-        }
-      });
+        });
 
-      // Add new lines
-      for (const answer of props.state.answer) {
-        if (!lines.value.find((l) => l.source === answer.source && l.target === answer.target)) {
-          const sourceRef = sourceRefs.value.find((r) => r.id === answer.source);
-          const targetRef = targetRefs.value.find((r) => r.id === answer.target);
-          if (!!sourceRef && !!targetRef) {
-            const newLine = new LeaderLine(
-              LeaderLine.pointAnchor(sourceRef.$el, {
-                x: sourceRef.$el.getBoundingClientRect().width + 13,
-                y: sourceRef.$el.getBoundingClientRect().height / 2,
-              }),
-              LeaderLine.pointAnchor(targetRef.$el, {
-                x: -13,
-                y: targetRef.$el.getBoundingClientRect().height / 2,
-              }),
-              {
-                startPlug: "behind",
-                startSocket: "right",
-                endPlug: "behind",
-                endSocket: "left",
-                color: "#38bdf8",
-              }
-            );
-            lines.value = [
-              ...lines.value,
-              {
-                source: answer.source,
-                target: answer.target,
-                line: newLine,
-              },
-            ];
+        // Add new lines
+        for (const answer of props.state.answer) {
+          if (
+            !!answer.target &&
+            !lines.value.find((l) => l.source === answer.source && l.target === answer.target)
+          ) {
+            const sourceRef = sourceRefs.value.find((r) => r.id === answer.source);
+            const targetRef = targetRefs.value.find((r) => r.id === answer.target);
+            if (!!sourceRef && !!targetRef) {
+              const newLine = new LeaderLine(
+                LeaderLine.pointAnchor(sourceRef.$el, {
+                  x: sourceRef.$el.getBoundingClientRect().width + 13,
+                  y: sourceRef.$el.getBoundingClientRect().height / 2,
+                }),
+                LeaderLine.pointAnchor(targetRef.$el, {
+                  x: -13,
+                  y: targetRef.$el.getBoundingClientRect().height / 2,
+                }),
+                {
+                  startPlug: "behind",
+                  startSocket: "right",
+                  endPlug: "behind",
+                  endSocket: "left",
+                  color: "#38bdf8",
+                }
+              );
+              lines.value = [
+                ...lines.value,
+                {
+                  source: answer.source,
+                  target: answer.target,
+                  line: newLine,
+                },
+              ];
+            }
           }
+        }
+
+        // Update positions
+        for (const line of lines.value) {
+          line.line.position();
         }
       }
-
-      // Update positions
-      for (const line of lines.value) {
-        line.line.position();
-      }
-    });
+    );
 
     onUnmounted(() => {
       for (const line of lines.value) {
@@ -652,6 +653,7 @@ export default defineComponent({
       removeOption,
       evaluationOptions,
       updateEvaluationName,
+      updateEvaluationMapping,
       canAddMapping,
       addMapping,
       moveUpOption,
