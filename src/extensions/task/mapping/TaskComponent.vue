@@ -355,7 +355,9 @@ export default defineComponent({
   setup(props, { emit }) {
     /* Imports */
     // const { eventBus } = inject("eventBus") as InjectedEventBus;
-    const { width, height } = inject("containerDimensions") as InjectedContainerDimensions;
+    const { width, height, scrollTop, scrollLeft } = inject(
+      "containerDimensions"
+    ) as InjectedContainerDimensions;
     const { update } = useTask<MAPProps, MAPEmits, MAPOptions, MAPContent, MAPEvaluation, MAPState>(
       props,
       emit,
@@ -553,7 +555,7 @@ export default defineComponent({
       }
     };
 
-    watch([() => props.state.answer, () => props.content, width, height], () => {
+    watch([() => props.state.answer, () => props.content, width, height, scrollTop, scrollLeft], () => {
       // Remove non-existing lines
       lines.value = lines.value.filter((line) => {
         if (
@@ -614,6 +616,11 @@ export default defineComponent({
             ];
           }
         }
+      }
+
+      // Update positions
+      for (const line of lines.value) {
+        line.line.position();
       }
     });
 
