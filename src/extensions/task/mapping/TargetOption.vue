@@ -4,12 +4,13 @@
 
     <div
       v-if="isConnected"
-      class="absolute z-10 inset-y-0 left-0 inline-flex flex-col justify-center cursor-pointer"
+      class="absolute z-10 inset-y-0 left-0 inline-flex flex-col justify-center"
+      :class="[disabled ? 'cursor-default' : 'cursor-pointer']"
       @click="removeConnection"
     >
       <div class="p-0 z-0" :style="{ transform: 'translate(-' + 15 + 'px, ' + 0 + 'px)' }">
         <div class="flex flex-col items-center justify-center border-2 w-8 h-8 rounded-full bg-white">
-          <IconClose class="w-4 h-4"></IconClose>
+          <IconClose v-if="!disabled" class="w-4 h-4"></IconClose>
         </div>
       </div>
     </div>

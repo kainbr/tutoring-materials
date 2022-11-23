@@ -8,7 +8,7 @@
     >
       <div
         class="p-0 z-0"
-        :class="[isDragging ? 'cursor-grab' : 'cursor-pointer', isDragging ? 'drop-shadow-md' : '']"
+        :class="[disabled ? 'cursor-default' : (isDragging ? 'cursor-grab' : 'cursor-pointer'), isDragging ? 'drop-shadow-md' : '']"
         :style="{
           transform: 'translate(' + (xTransform + 17) + 'px, ' + yTransform + 'px)',
         }"
