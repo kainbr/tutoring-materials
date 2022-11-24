@@ -181,7 +181,7 @@
             <IconArrowRight></IconArrowRight>
             <select
               :value="mapping.target"
-              @input="updateEvaluationMapping(mapping.source, $event.target.value)"
+              @input="(e) => updateEvaluationMapping(e, mapping.source)"
               class="px-1.5 py-0.5 block focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
             >
               <option v-for="option in content?.target" :key="option.id" :value="option.id">
@@ -446,7 +446,8 @@ export default defineComponent({
       }
     };
 
-    const updateEvaluationMapping = (sourceId: string, targetId: string) => {
+    const updateEvaluationMapping = (e: Event, sourceId: string) => {
+      const targetId = (e.target as HTMLInputElement)?.value;
       update({
         evaluation: {
           ...props.evaluation,
