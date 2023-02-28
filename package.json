@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "files": [
-    "dist"
+    "dist", "src"
   ],
   "main": "./dist/tutoring-materials.umd.cjs",
   "module": "./dist/tutoring-materials.js",
