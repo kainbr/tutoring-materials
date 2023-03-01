@@ -88,14 +88,14 @@
           <input
             :checked="evaluation.solution.find((s) => s.id === option.id)?.value === false || false"
             type="radio"
-            class="mx-1 h-fit my-2.5"
+            class="mx-1 my-2.5"
             @input="updateEvaluationOptionValue(option, false)"
             v-tippy="'False'"
           />
           <input
             :checked="evaluation.solution.find((s) => s.id === option.id)?.value === true || false"
             type="radio"
-            class="mx-1 h-fit my-2.5"
+            class="mx-1 my-2.5"
             @input="updateEvaluationOptionValue(option, true)"
             v-tippy="'True'"
           />

@@ -53,7 +53,7 @@
                     <input
                       :checked="evaluation.solution.find((s) => s.id === region.id)?.value || false"
                       type="checkbox"
-                      class="mx-1 h-fit my-2"
+                      class="mx-1 my-2"
                       :disabled="content.regions.length <= 1"
                     />
                     Correct

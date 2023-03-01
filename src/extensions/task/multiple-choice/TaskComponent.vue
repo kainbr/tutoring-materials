@@ -13,7 +13,7 @@
         >
           <input
             type="checkbox"
-            class="mx-2 h-fit my-2.5"
+            class="mx-2 my-2.5"
             :checked="isOptionChecked(content[index])"
             :disabled="['correct', 'final-incorrect'].includes(state.state)"
           />
@@ -32,7 +32,7 @@
           <input
             :checked="evaluation.solution.find((s) => s.id === option.id)?.value || false"
             type="checkbox"
-            class="mx-1 h-fit my-2"
+            class="mx-1 my-2"
             @input="toggleEvaluationOptionValue(option)"
           />
         </div>
