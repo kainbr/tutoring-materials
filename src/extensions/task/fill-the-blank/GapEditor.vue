@@ -3,7 +3,7 @@
     <!-- Menu -->
     <div
       v-if="isEditor"
-      class="flex p-1 border rounded-t-lg justify-between items-center bg-slate-50"
+      class="flex p-1 border rounded-t-lg justify-between items-center bg-gray-50"
     >
       <MenuSectionTypography :editor="editor" />
       <div class="flex flex-row gap-2">

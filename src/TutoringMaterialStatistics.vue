@@ -20,7 +20,7 @@
       </div>
       <div class="hidden sm:block">
         <div class="border-b border-gray-200">
-          <nav class="-mb-px flex bg-slate-50" aria-label="Tabs">
+          <nav class="-mb-px flex bg-gray-50" aria-label="Tabs">
             <a
               :class="[
                 selectedTab === 'Events'
@@ -30,7 +30,7 @@
               ]"
               :aria-current="selectedTab === 'Events' ? 'page' : undefined"
               @click="selectedTab = 'Events'"
-              >{{ $t("statistics.tab-option-events") }}</a
+            >{{ $t("statistics.tab-option-events") }}</a
             >
             <a
               :class="[
@@ -41,7 +41,7 @@
               ]"
               :aria-current="selectedTab === 'Statistics' ? 'page' : undefined"
               @click="selectedTab = 'Statistics'"
-              >{{ $t("statistics.tab-option-statistics") }}</a
+            >{{ $t("statistics.tab-option-statistics") }}</a
             >
           </nav>
         </div>
@@ -54,7 +54,7 @@
     <!-- Events -->
     <div v-if="selectedTab === 'Events'" class="flex flex-row grow overflow-auto">
       <div class="flex flex-col border-r w-68">
-        <div class="flex-none p-1.5 bg-slate-50 border-b">
+        <div class="flex-none p-1.5 bg-gray-50 border-b">
           <input class="w-full text-sm p-1" placeholder="Filter" type="text" disabled />
         </div>
         <div class="grow">
@@ -118,8 +118,8 @@
           </dl>
           <div>
             <pre v-if="!!selectedEvent?.facts" class="mt-1 text-xs text-gray-900">{{
-              selectedEvent?.facts
-            }}</pre>
+                selectedEvent?.facts
+              }}</pre>
           </div>
           <dl class="mt-2">
             <dt class="text-sm font-medium text-gray-500">
@@ -129,8 +129,8 @@
           </dl>
           <div>
             <pre v-if="!!selectedEvent?.data" class="mt-1 text-xs text-gray-900">{{
-              selectedEvent?.data
-            }}</pre>
+                selectedEvent?.data
+              }}</pre>
           </div>
         </div>
       </div>
@@ -154,27 +154,27 @@ export default defineComponent({
   props: {
     events: {
       type: Array as PropType<EmittedEvent[]>,
-      required: true,
-    },
+      required: true
+    }
   },
 
   data() {
     return {
       selectedTab: "Events",
-      selectedEvent: null as EmittedEvent | null,
+      selectedEvent: null as EmittedEvent | null
     };
   },
 
   computed: {
     filteredEventsPlayer(): EmittedEvent[] {
       return this.events.map((e: EmittedEvent) => e);
-    },
+    }
   },
 
   methods: {
     dayjs(ts: number) {
       return dayjs(ts);
-    },
-  },
+    }
+  }
 });
 </script>

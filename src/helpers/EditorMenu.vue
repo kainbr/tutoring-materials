@@ -1,6 +1,6 @@
 <template>
   <div class="relative">
-    <div class="p-2 bg-slate-50 rounded-t-lg">
+    <div class="p-2 bg-gray-50">
       <div class="flex flex-row flex-nowrap w-full justify-between">
         <div class="flex flex-row divide-x-2">
           <MenuSectionTypography :editor="editor" class="pr-2 flex flex-nowrap" />
@@ -12,8 +12,8 @@
           <MenuSectionList :editor="editor" class="px-2 flex flex-nowrap" />
         </div>
 
-        <div class="flex flex-row divide-x-2">
-          <MenuSectionHistory :editor="editor" class="pl-2 flex flex-nowrap" />
+        <div class="flex flex-row divide-x-2 items-center mr-6">
+          <MenuModeSelector :is-preview="isPreview" @update:is-preview="$emit('update:is-preview', $event)"></MenuModeSelector>
         </div>
       </div>
 
@@ -21,24 +21,27 @@
         <div class="flex flex-row divide-x-2">
           <MenuSectionParagraphs :editor="editor" class="pr-3 flex flex-nowrap" />
 
-          <MenuSectionCustom :editor="editor" class="pl-2 pr-3 flex flex-nowrap" />
+          <MenuSectionCustom :editor="editor" class="pl-2 pr-2 flex flex-nowrap" />
+
+          <MenuSectionFile :editor="editor" class="pl-2 pr-2 flex flex-nowrap" />
         </div>
 
         <!-- More -->
         <div class="flex flex-row divide-x-2">
-          <MenuSectionFile :editor="editor" class="pl-2 flex flex-nowrap" />
+          <MenuSectionHistory :editor="editor" class="pl-2 pr-3 flex flex-nowrap" />
         </div>
       </div>
     </div>
 
     <!-- Image Sub Menu -->
-    <div id="menu-sub" class="absolute bg-slate-50 flex justify-between w-full z-10 border-b-2" />
+    <div id="menu-sub" class="absolute bg-gray-50 flex justify-between w-full z-10 border-b" />
   </div>
 </template>
 
 <!--suppress JSUnresolvedVariable -->
 <script lang="ts">
 import { defineComponent } from "vue";
+import MenuModeSelector from "@/helpers/menu/MenuModeSelector.vue";
 import MenuSectionAlignment from "@/helpers/menu/MenuSectionAlignment.vue";
 import MenuSectionCustom from "@/helpers/menu/MenuSectionCustom.vue";
 import MenuSectionFile from "@/helpers/menu/MenuSectionFile.vue";
@@ -54,6 +57,7 @@ export default defineComponent({
   name: "EditorMenu",
 
   components: {
+    MenuModeSelector,
     MenuSectionAlignment,
     MenuSectionCustom,
     MenuSectionFile,
@@ -61,14 +65,18 @@ export default defineComponent({
     MenuSectionIndent,
     MenuSectionList,
     MenuSectionParagraphs,
-    MenuSectionTypography,
+    MenuSectionTypography
   },
 
   props: {
     editor: {
       type: Object as PropType<Editor>,
-      required: true,
+      required: true
     },
+    isPreview: {
+      type: Boolean,
+      default: false
+    }
   },
 });
 </script>

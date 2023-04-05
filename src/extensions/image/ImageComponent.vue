@@ -9,9 +9,9 @@
         :class="[
           node.attrs.float === 'left' ? 'mr-4' : '',
           node.attrs.float === 'right' ? 'ml-4' : '',
-          editor.isEditable ? 'border-4 ' + (selected ? 'border-amber-400' : 'border-white') : '',
+          isEditableReactive ? 'border-4 ' + (selected ? 'border-amber-400' : 'border-white') : '',
         ]"
-        :draggable="editor.isEditable"
+        :draggable="isEditableReactive"
         :style="
           'width: ' +
           (node.attrs.size === 'full' ? '100%' : node.attrs.size + 'px') +
@@ -154,7 +154,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, inject } from "vue";
 import { NodeViewWrapper } from "@tiptap/vue-3";
 import type { PropType } from "vue";
 import type { NodeViewProps } from "@tiptap/core";
@@ -176,6 +176,11 @@ export default defineComponent({
       required: true,
     },
     deleteNode: { type: Function as PropType<NodeViewProps["deleteNode"]>, required: true },
+  },
+
+  setup(props) {
+    const isEditableReactive: Boolean = inject("isEditableReactive", props.editor.isEditable);
+    return { isEditableReactive };
   },
 
   computed: {

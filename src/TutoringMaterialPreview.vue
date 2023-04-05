@@ -7,7 +7,7 @@
     :key="value.label"
     :class="['z-[' + index + '] ' + (index !== 0 ? 'border-x-2' : '')]"
     :style="'width: ' + (isPortrait ? value.width + 'px' : value.height + 'px')"
-    class="absolute left-1/2 transform -translate-x-1/2 bg-slate-200 hover:bg-slate-300 h-5 border-slate-50 cursor-pointer"
+    class="absolute left-1/2 transform -translate-x-1/2 bg-gray-200 hover:bg-gray-300 h-5 border-slate-50 cursor-pointer"
     @click="updateDimensions(value.width, value.height)"
     @mouseleave="hoverLabel = null"
     @mouseover="hoverLabel = value.label"

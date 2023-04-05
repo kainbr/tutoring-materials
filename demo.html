@@ -62,6 +62,7 @@
         <!-- Main editor -->
         <main class="w-full flex flex-wrap gap-3">
           <div class="h-[850px] w-[628px] mx-auto">
+            <!--suppress VueMissingComponentImportInspection -->
             <tutoring-material-editor
               v-model:content="content"
               :is-editor="true"
@@ -80,6 +81,7 @@
 
           <!-- Statistics -->
           <div class="h-[850px] max-h-[850px] w-[628px] mx-auto">
+            <!--suppress VueMissingComponentImportInspection -->
             <tutoring-material-statistics :events="events"></tutoring-material-statistics>
           </div>
         </main>
@@ -94,7 +96,8 @@
         </header>
 
         <!-- Main Player -->
-        <main class="w-full border bg-slate-50 shadow">
+        <main class="w-full border bg-gray-50 shadow">
+          <!--suppress VueMissingComponentImportInspection -->
           <tutoring-material-preview
             v-if="!isReloading"
             :key="previewKey"

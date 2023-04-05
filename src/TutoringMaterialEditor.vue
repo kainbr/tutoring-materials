@@ -3,8 +3,10 @@
     :content="content"
     :state="state"
     :is-editor="isEditor"
+    :is-preview="isPreview"
     :task-options="taskOptions"
     @update:content="$emit('update:content', $event)"
+    @update:is-preview="$emit('update:is-preview', $event)"
     @update:state="updateState"
   ></TutoringMaterial>
 </template>
@@ -23,7 +25,7 @@ export default defineComponent({
   name: "TutoringMaterialEditor",
 
   components: {
-    TutoringMaterial,
+    TutoringMaterial
   },
 
   props: {
@@ -37,40 +39,45 @@ export default defineComponent({
               type: "document",
               content: [
                 {
-                  type: "paragraph",
-                },
-              ],
-            },
-          ],
+                  type: "paragraph"
+                }
+              ]
+            }
+          ]
         };
-      },
+      }
     },
 
     isEditor: {
       type: Boolean,
-      default: false,
+      default: false
+    },
+
+    isPreview: {
+      type: Boolean,
+      default: false
     },
 
     taskOptions: {
       type: Object as PropType<Partial<TaskOptions>>,
       default() {
         return {};
-      },
-    },
+      }
+    }
   },
 
-  emits: ["update:content"],
+  emits: ["update:content", "update:is-preview"],
 
   data() {
     return {
-      state: undefined as { tasks: TaskState[]; feedbacks: Feedback[] } | undefined,
+      state: undefined as { tasks: TaskState[]; feedbacks: Feedback[] } | undefined
     };
   },
 
   methods: {
     updateState($event: { tasks: TaskState[]; feedbacks: Feedback[] }) {
       this.state = { ...$event };
-    },
-  },
+    }
+  }
 });
 </script>

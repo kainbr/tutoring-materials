@@ -3,19 +3,19 @@
   <div ref="container" class="h-full w-full">
     <div
       v-if="editor"
-      :class="{ 'border-2 shadow rounded-lg': isEditor }"
       class="flex flex-col h-full w-full"
     >
-      <EditorMenu v-if="isEditor" :editor="editor" />
+      <EditorMenu v-if="isEditor" :is-preview="isPreview" @update:is-preview="$emit('update:is-preview', $event)"
+                  :editor="editor" />
 
       <EditorContent
         :class="editorContainerClasses"
         :editor="editor"
-        class="w-full h-full mx-auto z-0 p-4 prose [&_p]:mt-0 [&_h2]:mt-0 [&_h3]:mt-0 [&_blockquote]:mt-0 [&_pre]:mt-0 [&_ul]:mt-0 [&_ol]:mt-0 [&_li]:mt-0"
+        class="w-full h-full relative mx-auto z-0 p-4 prose [&_p]:mt-0 [&_h2]:mt-0 [&_h3]:mt-0 [&_blockquote]:mt-0 [&_pre]:mt-0 [&_ul]:mt-0 [&_ol]:mt-0 [&_li]:mt-0"
       >
       </EditorContent>
 
-      <EditorFooter v-if="isEditor" :editor="editor" class="border-t-2" />
+      <EditorFooter v-if="isEditor" :editor="editor" class="border-t" />
 
       <div
         :class="{ 'mt-[5.5rem]': isEditor }"
@@ -52,7 +52,7 @@ export default defineComponent({
     NotificationContainerComponent,
     EditorFooter,
     EditorContent,
-    EditorMenu,
+    EditorMenu
   },
 
   props: {
@@ -66,13 +66,13 @@ export default defineComponent({
               type: "document",
               content: [
                 {
-                  type: "paragraph",
-                },
-              ],
-            },
-          ],
+                  type: "paragraph"
+                }
+              ]
+            }
+          ]
         };
-      },
+      }
     },
 
     state: {
@@ -80,25 +80,30 @@ export default defineComponent({
       default() {
         return {
           tasks: [],
-          feedbacks: [],
+          feedbacks: []
         };
-      },
+      }
     },
 
     isEditor: {
       type: Boolean,
-      default: false,
+      default: false
+    },
+
+    isPreview: {
+      type: Boolean,
+      default: false
     },
 
     taskOptions: {
       type: Object as PropType<Partial<TaskOptions>>,
       default() {
         return {};
-      },
-    },
+      }
+    }
   },
 
-  emits: ["update:content", "update:state", "event"],
+  emits: ["update:content", "update:is-preview", "update:state", "event"],
 
   setup(props, context) {
     const startTimestamp: number = Date.now();
@@ -126,7 +131,7 @@ export default defineComponent({
         name: "document-created",
         parent: null,
         conditions: [],
-        label: { message: "global.event.type-document-created" },
+        label: { message: "global.event.type-document-created" }
       });
 
       eventBus.emit("interaction", {
@@ -135,11 +140,11 @@ export default defineComponent({
         facts: {},
         data: {
           startTimestamp: startTimestamp,
-          endTimestamp: Date.now(),
+          endTimestamp: Date.now()
         },
         label: {
-          message: "global.event.type-document-created",
-        },
+          message: "global.event.type-document-created"
+        }
       });
     });
 
@@ -148,8 +153,8 @@ export default defineComponent({
       container,
       editorContainerClasses,
       width,
-      height,
+      height
     };
-  },
+  }
 });
 </script>

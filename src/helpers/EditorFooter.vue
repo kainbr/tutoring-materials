@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-slate-50 rounded-b-lg">
+  <div class="bg-gray-50">
     <div class="w-full">
       <div class="mx-auto w-full py-2 max-w flex flex-row flex-wrap gap-0.5">
         <Disclosure v-slot="{ open }">

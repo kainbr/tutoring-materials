@@ -11,7 +11,7 @@
     <div class="flex flex-col w-full rounded-md py-2">
       <!-- Configuration menu -->
       <div
-        v-if="editor.isEditable"
+        v-if="isEditableReactive"
         class="flex flex-row items-center pb-2 mb-2 border-b-2 border-slate-300"
         contenteditable="false"
       >
@@ -36,7 +36,7 @@
                     {{
                       $t(
                         "editor.infobox.label-" +
-                          iconOptions.find((option) => option === node.attrs.icon)
+                        iconOptions.find((option) => option === node.attrs.icon)
                       )
                     }}
                   </span>
@@ -102,7 +102,7 @@
                     {{
                       $t(
                         "editor.infobox.color-label-" +
-                          colorOptions.find((option) => option === node.attrs.color)
+                        colorOptions.find((option) => option === node.attrs.color)
                       )
                     }}
                   </span>
@@ -202,7 +202,7 @@
 
 <script lang="ts">
 /* eslint-disable vue/no-unused-components */
-import { defineComponent } from "vue";
+import { defineComponent, inject } from "vue";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/vue";
 import { NodeViewContent, NodeViewWrapper } from "@tiptap/vue-3";
 import IconAlarm from "@/extensions/infobox/icons/IconAlarm.vue";
@@ -234,7 +234,7 @@ export default defineComponent({
     Listbox,
     ListboxButton,
     ListboxOptions,
-    ListboxOption,
+    ListboxOption
   },
 
   props: {
@@ -246,9 +246,14 @@ export default defineComponent({
     getPos: { type: Function as PropType<NodeViewProps["getPos"]>, required: true },
     updateAttributes: {
       type: Function as PropType<NodeViewProps["updateAttributes"]>,
-      required: true,
+      required: true
     },
-    deleteNode: { type: Function as PropType<NodeViewProps["deleteNode"]>, required: true },
+    deleteNode: { type: Function as PropType<NodeViewProps["deleteNode"]>, required: true }
+  },
+
+  setup(props) {
+    const isEditableReactive: Boolean = inject("isEditableReactive", props.editor.isEditable);
+    return { isEditableReactive };
   },
 
   data: () => {
@@ -259,9 +264,9 @@ export default defineComponent({
         "icon-question-mark",
         "icon-alarm",
         "icon-check",
-        "icon-light-bulb",
-      ],
+        "icon-light-bulb"
+      ]
     };
-  },
+  }
 });
 </script>

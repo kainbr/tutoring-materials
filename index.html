@@ -64,10 +64,12 @@
 
         <!-- Main editor -->
         <main class="w-full flex flex-wrap gap-3">
-          <div class="h-[850px] w-[628px] mx-auto">
+          <div class="h-[700px] w-[658px] mx-auto">
+            <!--suppress VueMissingComponentImportInspection -->
             <tutoring-material-editor
               v-model:content="content"
               :is-editor="true"
+              :is-preview="isPreview"
               :task-limit="3"
               :task-options="{
             textSubmitButton: 'Prüfen',
@@ -78,11 +80,13 @@
             titleFinalIncorrectAnswer: 'Falsche Antwort',
             textFinalIncorrectAnswer: 'Schaue dir die Lösung an.',
               }"
+              @update:is-preview="isPreview = $event"
             ></tutoring-material-editor>
           </div>
 
           <!-- Statistics -->
-          <div class="h-[850px] max-h-[850px] w-[628px] mx-auto">
+          <div class="h-[650px] max-h-[850px] w-[628px] mx-auto">
+            <!--suppress VueMissingComponentImportInspection -->
             <tutoring-material-statistics :events="events"></tutoring-material-statistics>
           </div>
         </main>
@@ -98,6 +102,7 @@
 
         <!-- Main Player -->
         <main class="w-full border bg-slate-50 shadow">
+          <!--suppress VueMissingComponentImportInspection -->
           <tutoring-material-preview
             v-if="!isReloading"
             :key="previewKey"
@@ -157,6 +162,7 @@
             state: undefined,
             events: [],
             previewKey: 0,
+            isPreview: false,
             isReloading: false,
             isSidebarOpen: false,
           };

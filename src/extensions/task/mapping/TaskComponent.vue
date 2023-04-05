@@ -266,7 +266,7 @@ import type {
   MAPProps,
   MAPEmits,
   MAPContent,
-  MAPOption,
+  MAPOption
 } from "@/extensions/task/mapping/types";
 import type { PropType, Ref } from "vue";
 
@@ -290,42 +290,42 @@ export default defineComponent({
     InlineEditor,
     TaskScaffold,
     OptionsDefaults,
-    OptionsFormEnum,
+    OptionsFormEnum
   },
 
   props: {
     id: {
       type: String,
-      required: true,
+      required: true
     },
     editor: {
       type: Object as PropType<Editor>,
-      required: true,
+      required: true
     },
     options: {
       type: Object as PropType<MAPOptions>,
       default() {
         return {};
-      },
+      }
     },
     content: {
       type: Object as PropType<MAPContent>,
       default() {
         return {};
-      },
+      }
     },
     evaluation: {
       type: Object as PropType<MAPEvaluation>,
       default() {
         return {};
-      },
+      }
     },
     state: {
       type: Object as PropType<MAPState>,
       default() {
         return {};
-      },
-    },
+      }
+    }
   },
 
   emits: ["update", "submit"],
@@ -355,14 +355,14 @@ export default defineComponent({
       const content = isSourceOption ? props.content?.source || [] : props.content?.target || [];
       content.push({
         id: uuid(),
-        content: { type: "doc", content: [{ type: "paragraph" }] },
+        content: { type: "doc", content: [{ type: "paragraph" }] }
       });
       update({
         content: {
           ...props.content,
           source: isSourceOption ? content : props.content?.source,
-          target: !isSourceOption ? content : props.content?.target,
-        },
+          target: !isSourceOption ? content : props.content?.target
+        }
       });
     };
 
@@ -376,15 +376,15 @@ export default defineComponent({
           ...props.content,
           source: isSourceOption
             ? props.content?.source.map((o) =>
-                option?.id === o.id ? { ...o, content: answerOptionContent } : o
-              )
+              option?.id === o.id ? { ...o, content: answerOptionContent } : o
+            )
             : props.content?.source,
           target: !isSourceOption
             ? props.content?.target.map((o) =>
-                option?.id === o.id ? { ...o, content: answerOptionContent } : o
-              )
-            : props.content?.target,
-        },
+              option?.id === o.id ? { ...o, content: answerOptionContent } : o
+            )
+            : props.content?.target
+        }
       });
     };
 
@@ -397,8 +397,8 @@ export default defineComponent({
           content: {
             ...props.content,
             source: isSourceOption ? content : props.content?.source,
-            target: !isSourceOption ? content : props.content?.target,
-          },
+            target: !isSourceOption ? content : props.content?.target
+          }
         });
       }
     };
@@ -412,8 +412,8 @@ export default defineComponent({
           content: {
             ...props.content,
             source: isSourceOption ? content : props.content?.source,
-            target: !isSourceOption ? content : props.content?.target,
-          },
+            target: !isSourceOption ? content : props.content?.target
+          }
         });
       }
     };
@@ -426,8 +426,8 @@ export default defineComponent({
           content: {
             ...props.content,
             source: isSourceOption ? content : props.content?.source,
-            target: !isSourceOption ? content : props.content?.target,
-          },
+            target: !isSourceOption ? content : props.content?.target
+          }
         });
       }
     };
@@ -440,8 +440,8 @@ export default defineComponent({
             evaluation: {
               name: newName,
               solution:
-                !!props.evaluation && !!props.evaluation.solution ? props.evaluation.solution : [],
-            },
+                !!props.evaluation && !!props.evaluation.solution ? props.evaluation.solution : []
+            }
           });
       }
     };
@@ -459,8 +459,8 @@ export default defineComponent({
             } else {
               return s;
             }
-          }),
-        },
+          })
+        }
       });
     };
 
@@ -492,10 +492,10 @@ export default defineComponent({
                 ...props.evaluation.solution,
                 {
                   source: sourceNode.id,
-                  target: targetNode.id,
-                },
-              ],
-            },
+                  target: targetNode.id
+                }
+              ]
+            }
           });
         }
       }
@@ -535,10 +535,10 @@ export default defineComponent({
               ),
               {
                 source: sourceElement.value,
-                target: targetElement.value,
-              },
-            ],
-          },
+                target: targetElement.value
+              }
+            ]
+          }
         });
       }
       sourceElement.value = null;
@@ -556,7 +556,8 @@ export default defineComponent({
       lines.value = lines.value.filter((line) => {
         if (
           width.value < 400 ||
-          !props.state.answer.find((s) => s.source === line.source && s.target === line.target)
+          !props.state.answer.find((s) => s.source === line.source && s.target === line.target) ||
+          props.editor.isEditable
         ) {
           line.line.remove();
           return false;
@@ -567,12 +568,12 @@ export default defineComponent({
             line.line.setOptions({
               start: LeaderLine.pointAnchor(sourceRef.$el, {
                 x: sourceRef.$el.getBoundingClientRect().width + 13,
-                y: sourceRef.$el.getBoundingClientRect().height / 2,
+                y: sourceRef.$el.getBoundingClientRect().height / 2
               }),
               end: LeaderLine.pointAnchor(targetRef.$el, {
                 x: -13,
-                y: targetRef.$el.getBoundingClientRect().height / 2,
-              }),
+                y: targetRef.$el.getBoundingClientRect().height / 2
+              })
             });
           }
           return true;
@@ -591,18 +592,18 @@ export default defineComponent({
             const newLine = new LeaderLine(
               LeaderLine.pointAnchor(sourceRef.$el, {
                 x: sourceRef.$el.getBoundingClientRect().width + 13,
-                y: sourceRef.$el.getBoundingClientRect().height / 2,
+                y: sourceRef.$el.getBoundingClientRect().height / 2
               }),
               LeaderLine.pointAnchor(targetRef.$el, {
                 x: -13,
-                y: targetRef.$el.getBoundingClientRect().height / 2,
+                y: targetRef.$el.getBoundingClientRect().height / 2
               }),
               {
                 startPlug: "behind",
                 startSocket: "right",
                 endPlug: "behind",
                 endSocket: "left",
-                color: "#38bdf8",
+                color: "#38bdf8"
               }
             );
             lines.value = [
@@ -610,8 +611,8 @@ export default defineComponent({
               {
                 source: answer.source,
                 target: answer.target,
-                line: newLine,
-              },
+                line: newLine
+              }
             ];
           }
         }
@@ -628,11 +629,11 @@ export default defineComponent({
             )
           ) {
             line.line.setOptions({
-              color: "#dc2626",
+              color: "#dc2626"
             });
           } else {
             line.line.setOptions({
-              color: "#16a34a",
+              color: "#16a34a"
             });
           }
         }
@@ -649,8 +650,8 @@ export default defineComponent({
       update({
         state: {
           ...props.state,
-          answer: props.state.answer.filter((a) => a.target !== id),
-        },
+          answer: props.state.answer.filter((a) => a.target !== id)
+        }
       });
     };
 
@@ -676,8 +677,8 @@ export default defineComponent({
       updateDraggingPosition,
       stopDragging,
       cancelDragging,
-      removeConnection,
+      removeConnection
     };
-  },
+  }
 });
 </script>
