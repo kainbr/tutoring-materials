@@ -100,7 +100,6 @@
         "label-true": "True Label"
       },
       "type-description": "Task Type",
-      "type-drag-and-drop": "Drag-and-drop",
       "type-fill-the-blank": "Fill in the blank",
       "type-find-hotspots": "Find hotspot(s)",
       "type-mapping": "Mapping",

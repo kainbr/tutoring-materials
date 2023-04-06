@@ -14,11 +14,9 @@ import { TaskSingleChoice } from "@/extensions/task/single-choice";
 import { TaskMultipleChoice } from "@/extensions/task/multiple-choice";
 import { TaskTrueFalse } from "@/extensions/task/true-false";
 import { TaskFillTheBlank } from "@/extensions/task/fill-the-blank";
-
-import type { IndentOptions } from "@/extensions/indent";
 import { TaskFindHotspots } from "@/extensions/task/find-hotspots";
-import { TaskDragAndDrop } from "@/extensions/task/drag-and-drop";
 import { TaskMapping } from "@/extensions/task/mapping";
+import type { IndentOptions } from "@/extensions/indent";
 
 export interface TutoringMaterialOptions {
   isEditor: boolean;
@@ -117,10 +115,6 @@ export const TutoringMaterial = Extension.create<TutoringMaterialOptions>({
 
     if (this.options.taskMapping !== false) {
       extensions.push(TaskMapping.configure(this.options?.taskMapping));
-    }
-
-    if (this.options.taskDragAndDrop !== false) {
-      extensions.push(TaskDragAndDrop.configure(this.options?.taskDragAndDrop));
     }
 
     return extensions;

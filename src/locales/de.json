@@ -100,7 +100,6 @@
         "label-true": "Richtig Beschriftung"
       },
       "type-description": "Aufgabentyp",
-      "type-drag-and-drop": "Drag-and-drop",
       "type-fill-the-blank": "Lückentext",
       "type-find-hotspots": "Bildmarkierung(en)",
       "type-mapping": "Zuordnung",

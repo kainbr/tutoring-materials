@@ -72,18 +72,10 @@
             </MenuItem>
             <MenuItem>
               <button
-                class="min-w-max hover:bg-black w-full hover:text-white focus:outline-none font-medium text-sm p-1 text-center inline-flex items-center justify-end px-2"
+                class="min-w-max hover:bg-black w-full hover:text-white focus:outline-none rounded-b-md font-medium text-sm p-1 text-center inline-flex items-center justify-end px-2"
                 @click="editor.commands.setMappingTask()"
               >
                 {{ $t("editor.task.type-mapping") }}
-              </button>
-            </MenuItem>
-            <MenuItem>
-              <button
-                class="min-w-max hover:bg-black w-full hover:text-white focus:outline-none rounded-b-md font-medium text-sm p-1 text-center inline-flex items-center justify-end px-2"
-                @click="editor.commands.setDragAndDropTask()"
-              >
-                {{ $t("editor.task.type-drag-and-drop") }}
               </button>
             </MenuItem>
           </MenuItems>
