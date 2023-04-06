@@ -8,11 +8,11 @@
       <EditorMenu v-if="isEditor" :is-preview="isPreview" @update:is-preview="$emit('update:is-preview', $event)"
                   @reset:state="$emit('update:state', {tasks: [], feedbacks: []})" :editor="editor" />
 
-      <div class="h-full overflow-y-auto">
+      <div class="h-full overflow-y-auto p-4">
         <EditorContent
           :editor="editor"
-          :class="{'overflow-hidden bg-white shadow sm:rounded-lg m-4': isEditor && isPreview, 'h-full': isEditor && !isPreview}"
-          class="w-full relative mx-auto z-0 p-4 prose [&_p]:mt-0 [&_h2]:mt-0 [&_h3]:mt-0 [&_blockquote]:mt-0 [&_pre]:mt-0 [&_ul]:mt-0 [&_ol]:mt-0 [&_li]:mt-0"
+          :class="{'overflow-hidden bg-white shadow sm:rounded-lg m-4 p-4': isEditor && isPreview, 'h-full': isEditor && !isPreview}"
+          class="w-full relative mx-auto z-0 prose [&_p]:mt-0 [&_h2]:mt-0 [&_h3]:mt-0 [&_blockquote]:mt-0 [&_pre]:mt-0 [&_ul]:mt-0 [&_ol]:mt-0 [&_li]:mt-0"
         >
         </EditorContent>
       </div>
