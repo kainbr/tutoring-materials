@@ -13,11 +13,12 @@
         >
           <input
             type="checkbox"
-            class="mx-2 my-2.5"
+            class="mx-2 my-2.5 enabled:cursor-pointer"
             :checked="isOptionChecked(content[index])"
             :disabled="['correct', 'final-incorrect'].includes(state.state)"
           />
-          <div style="flex-grow: 1" class="py-1">
+          <div style="flex-grow: 1" class="py-1"
+               :class="{'cursor-pointer':!['correct', 'final-incorrect'].includes(state.state)}">
             <InlineEditor :content="!!content ? content[index].content : undefined" />
           </div>
         </div>
@@ -149,7 +150,7 @@ import { formatState } from "@/extensions/task/multiple-choice/format/state";
 import { formatEvents } from "@/extensions/task/multiple-choice/format/events";
 import {
   formatEvaluation,
-  evaluationOptions,
+  evaluationOptions
 } from "@/extensions/task/multiple-choice/format/evaluation";
 import { isEqual } from "lodash-es";
 import { useTask } from "@/extensions/task/helpers";
@@ -162,7 +163,7 @@ import type {
   MCOptions,
   MCState,
   MCProps,
-  MCEmits,
+  MCEmits
 } from "@/extensions/task/multiple-choice/types";
 import type { Editor } from "@tiptap/vue-3";
 import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
@@ -183,42 +184,42 @@ export default defineComponent({
     InlineEditor,
     TaskScaffold,
     OptionsDefaults,
-    OptionsFormEnum,
+    OptionsFormEnum
   },
 
   props: {
     id: {
       type: String,
-      required: true,
+      required: true
     },
     editor: {
       type: Object as PropType<Editor>,
-      required: true,
+      required: true
     },
     options: {
       type: Object as PropType<MCOptions>,
       default() {
         return {};
-      },
+      }
     },
     content: {
       type: Array as PropType<MCOption[]>,
       default() {
         return [];
-      },
+      }
     },
     evaluation: {
       type: Object as PropType<MCEvaluation>,
       default() {
         return {};
-      },
+      }
     },
     state: {
       type: Object as PropType<MCState>,
       default() {
         return {};
-      },
-    },
+      }
+    }
   },
 
   emits: ["update", "submit"],
@@ -259,8 +260,8 @@ export default defineComponent({
           update({
             state: {
               ...props.state,
-              answer: newAnswer,
-            },
+              answer: newAnswer
+            }
           });
 
           eventBus.emit("interaction", {
@@ -269,13 +270,13 @@ export default defineComponent({
             facts: {},
             label: {
               message: "global.event.type-answer-changed",
-              hexIcon: calculateHexIcon(props.id),
+              hexIcon: calculateHexIcon(props.id)
             },
             data: {
               ...props.state,
               answer: newAnswer,
-              oldAnswer: oldAnswer,
-            },
+              oldAnswer: oldAnswer
+            }
           });
         }
       }
@@ -319,7 +320,7 @@ export default defineComponent({
         type: "feedback-hint",
         label: {
           message: "global.feedback.type-feedback-hint",
-          hexIcon: calculateHexIcon(uid),
+          hexIcon: calculateHexIcon(uid)
         },
         config: {
           reference: reference,
@@ -331,13 +332,13 @@ export default defineComponent({
                 content: [
                   {
                     type: "text",
-                    text: "Hello world!",
-                  },
-                ],
-              },
-            ],
-          },
-        },
+                    text: "Hello world!"
+                  }
+                ]
+              }
+            ]
+          }
+        }
       };
 
       const trigger: EventTrigger = {
@@ -349,10 +350,10 @@ export default defineComponent({
             id: uuid(),
             fact: reference + "-selected",
             operation: "equal",
-            value: !props.evaluation.solution.find((option) => option.id === reference)?.value,
-          },
+            value: !props.evaluation.solution.find((option) => option.id === reference)?.value
+          }
         ],
-        feedbacks: [uid],
+        feedbacks: [uid]
       };
 
       props.editor.chain().addFeedback(hintFeedback).addEventTrigger(trigger).run();
@@ -366,8 +367,8 @@ export default defineComponent({
             evaluation: {
               name: newName,
               solution:
-                !!props.evaluation && !!props.evaluation.solution ? props.evaluation.solution : [],
-            },
+                !!props.evaluation && !!props.evaluation.solution ? props.evaluation.solution : []
+            }
           });
       }
     };
@@ -386,8 +387,8 @@ export default defineComponent({
       update,
       updateAnswerOptionContent,
       toggleEvaluationOptionValue,
-      updateEvaluationName,
+      updateEvaluationName
     };
-  },
+  }
 });
 </script>

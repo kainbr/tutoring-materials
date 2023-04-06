@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-50">
+  <div class="bg-gray-50" v-if="!isPreview">
     <div class="w-full">
       <div class="mx-auto w-full py-2 max-w flex flex-row flex-wrap gap-0.5">
         <Disclosure v-slot="{ open }">
@@ -8,8 +8,8 @@
           >
             <IconDropDown :class="open ? '' : '-rotate-90 transform'" />
             <span class="ml-3 text-base font-normal">{{
-              $t("editor.footer.headline-feedback")
-            }}</span>
+                $t("editor.footer.headline-feedback")
+              }}</span>
           </DisclosureButton>
 
           <!-- Notification -->
@@ -51,8 +51,8 @@
           >
             <IconDropDown :class="open ? '' : '-rotate-90 transform'" />
             <span class="ml-3 text-base font-normal">{{
-              $t("editor.footer.headline-trigger")
-            }}</span>
+                $t("editor.footer.headline-trigger")
+              }}</span>
           </DisclosureButton>
 
           <EditorMenuButton class="mr-2" :on-inactive-click="addEventTrigger">
@@ -99,14 +99,18 @@ export default defineComponent({
     EditorMenuButton,
     Disclosure,
     DisclosureButton,
-    DisclosurePanel,
+    DisclosurePanel
   },
 
   props: {
     editor: {
       type: Object as PropType<Editor>,
-      required: true,
+      required: true
     },
+    isPreview: {
+      type: Boolean,
+      default: false
+    }
   },
 
   setup(props) {
@@ -116,11 +120,11 @@ export default defineComponent({
         event: null,
         parent: null,
         rules: [],
-        feedbacks: [],
+        feedbacks: []
       });
     };
 
     return { addEventTrigger };
-  },
+  }
 });
 </script>

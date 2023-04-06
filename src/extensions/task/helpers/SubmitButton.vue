@@ -7,7 +7,7 @@
           v-if="['correct', 'incorrect', 'final-incorrect'].includes(state.state)"
           class="text-base font-medium"
           :class="titleColor"
-          >{{ title }}</span
+        >{{ title }}</span
         >
       </Transition>
       <Transition appear>
@@ -29,10 +29,11 @@
       </Transition>
     </div>
 
-    <div class="flex items-center basis-full" :class="{ 'basis-2/5 px-2': width > 500 }" v-if="!options.hideSubmitButton">
+    <div class="flex w-full items-center basis-full justify-center mt-1" :class="{ 'basis-2/5 px-2': width > 500 }"
+         v-if="!options.hideSubmitButton">
       <button
         v-if="['init', 'incorrect'].includes(state.state)"
-        class="inline-flex items-center w-full mt-3 px-3 py-2 justify-center border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        class="px-5 py-2 justify-center border shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
         type="button"
         :disabled="!options.allowEmptyAnswerSubmission && state.empty"
         @click="submit(state)"
@@ -65,28 +66,28 @@ export default defineComponent({
   props: {
     editor: {
       type: Object as PropType<Editor>,
-      required: true,
+      required: true
     },
     id: {
       type: String,
-      required: true,
+      required: true
     },
     type: {
       type: String,
-      required: true,
+      required: true
     },
     options: {
       type: Object as PropType<TaskOptions>,
-      required: true,
+      required: true
     },
     evaluation: {
       type: Object as PropType<TaskEvaluation>,
-      required: true,
+      required: true
     },
     state: {
       type: Object as PropType<TaskState>,
-      required: true,
-    },
+      required: true
+    }
   },
 
   setup(props) {
@@ -107,7 +108,7 @@ export default defineComponent({
         "p-3": props.state.state !== "init",
         "bg-green-50": props.state.state === "correct",
         "bg-yellow-50": props.state.state === "incorrect",
-        "bg-red-50": props.state.state === "final-incorrect",
+        "bg-red-50": props.state.state === "final-incorrect"
       };
     });
 
@@ -128,7 +129,7 @@ export default defineComponent({
       return {
         "text-green-800": props.state.state === "correct",
         "text-yellow-800": props.state.state === "incorrect",
-        "text-red-800": props.state.state === "final-incorrect",
+        "text-red-800": props.state.state === "final-incorrect"
       };
     });
 
@@ -149,7 +150,7 @@ export default defineComponent({
       return {
         "text-green-700": props.state.state === "correct",
         "text-yellow-700": props.state.state === "incorrect",
-        "text-red-700": props.state.state === "final-incorrect",
+        "text-red-700": props.state.state === "final-incorrect"
       };
     });
 
@@ -161,9 +162,9 @@ export default defineComponent({
       titleColor,
       text,
       submit,
-      width,
+      width
     };
-  },
+  }
 });
 </script>
 

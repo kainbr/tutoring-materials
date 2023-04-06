@@ -13,11 +13,12 @@
         >
           <input
             type="radio"
-            class="mx-2 my-2.5"
+            class="mx-2 my-2.5 enabled:cursor-pointer"
             :checked="isOptionChecked(content[index])"
             :disabled="['correct', 'final-incorrect'].includes(state.state)"
           />
-          <div style="flex-grow: 1" class="py-1">
+          <div style="flex-grow: 1" class="py-1"
+               :class="{'cursor-pointer':!['correct', 'final-incorrect'].includes(state.state)}">
             <InlineEditor :content="!!content ? content[index].content : undefined" />
           </div>
         </div>
@@ -149,7 +150,7 @@ import { formatState } from "@/extensions/task/single-choice/format/state";
 import { formatEvents } from "@/extensions/task/single-choice/format/events";
 import {
   formatEvaluation,
-  evaluationOptions,
+  evaluationOptions
 } from "@/extensions/task/single-choice/format/evaluation";
 import { isEqual } from "lodash-es";
 import { useTask } from "@/extensions/task/helpers";
@@ -162,7 +163,7 @@ import type {
   SCOptions,
   SCState,
   SCProps,
-  SCEmits,
+  SCEmits
 } from "@/extensions/task/single-choice/types";
 import type { Editor } from "@tiptap/vue-3";
 import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
@@ -183,42 +184,42 @@ export default defineComponent({
     InlineEditor,
     TaskScaffold,
     OptionsDefaults,
-    OptionsFormEnum,
+    OptionsFormEnum
   },
 
   props: {
     id: {
       type: String,
-      required: true,
+      required: true
     },
     editor: {
       type: Object as PropType<Editor>,
-      required: true,
+      required: true
     },
     options: {
       type: Object as PropType<SCOptions>,
       default() {
         return {};
-      },
+      }
     },
     content: {
       type: Array as PropType<SCOption[]>,
       default() {
         return [];
-      },
+      }
     },
     evaluation: {
       type: Object as PropType<SCEvaluation>,
       default() {
         return {};
-      },
+      }
     },
     state: {
       type: Object as PropType<SCState>,
       default() {
         return {};
-      },
-    },
+      }
+    }
   },
 
   emits: ["update", "submit"],
@@ -254,7 +255,7 @@ export default defineComponent({
         const newAnswer = props.content.map((o: SCOption) => {
           return {
             id: o.id,
-            value: o.id === option.id,
+            value: o.id === option.id
           };
         });
 
@@ -262,8 +263,8 @@ export default defineComponent({
           update({
             state: {
               ...props.state,
-              answer: newAnswer,
-            },
+              answer: newAnswer
+            }
           });
 
           eventBus.emit("interaction", {
@@ -272,13 +273,13 @@ export default defineComponent({
             facts: {},
             label: {
               message: "global.event.type-answer-changed",
-              hexIcon: calculateHexIcon(props.id),
+              hexIcon: calculateHexIcon(props.id)
             },
             data: {
               ...props.state,
               answer: newAnswer,
-              oldAnswer: oldAnswer,
-            },
+              oldAnswer: oldAnswer
+            }
           });
         }
       }
@@ -322,7 +323,7 @@ export default defineComponent({
         type: "feedback-hint",
         label: {
           message: "global.feedback.type-feedback-hint",
-          hexIcon: calculateHexIcon(uid),
+          hexIcon: calculateHexIcon(uid)
         },
         config: {
           reference: reference,
@@ -334,13 +335,13 @@ export default defineComponent({
                 content: [
                   {
                     type: "text",
-                    text: "Hello world!",
-                  },
-                ],
-              },
-            ],
-          },
-        },
+                    text: "Hello world!"
+                  }
+                ]
+              }
+            ]
+          }
+        }
       };
 
       const trigger: EventTrigger = {
@@ -352,10 +353,10 @@ export default defineComponent({
             id: uuid(),
             fact: reference + "-selected",
             operation: "equal",
-            value: !props.evaluation.solution.find((option) => option.id === reference)?.value,
-          },
+            value: !props.evaluation.solution.find((option) => option.id === reference)?.value
+          }
         ],
-        feedbacks: [uid],
+        feedbacks: [uid]
       };
 
       props.editor.chain().addFeedback(hintFeedback).addEventTrigger(trigger).run();
@@ -369,8 +370,8 @@ export default defineComponent({
             evaluation: {
               name: newName,
               solution:
-                !!props.evaluation && !!props.evaluation.solution ? props.evaluation.solution : [],
-            },
+                !!props.evaluation && !!props.evaluation.solution ? props.evaluation.solution : []
+            }
           });
       }
     };
@@ -389,8 +390,8 @@ export default defineComponent({
       update,
       updateAnswerOptionContent,
       updateAnswerOptionValue,
-      updateEvaluationName,
+      updateEvaluationName
     };
-  },
+  }
 });
 </script>

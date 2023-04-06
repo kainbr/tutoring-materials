@@ -6,16 +6,18 @@
       class="flex flex-col h-full w-full"
     >
       <EditorMenu v-if="isEditor" :is-preview="isPreview" @update:is-preview="$emit('update:is-preview', $event)"
-                  :editor="editor" />
+                  @reset:state="$emit('update:state', {tasks: [], feedbacks: []})" :editor="editor" />
 
-      <EditorContent
-        :class="editorContainerClasses"
-        :editor="editor"
-        class="w-full h-full relative mx-auto z-0 p-4 prose [&_p]:mt-0 [&_h2]:mt-0 [&_h3]:mt-0 [&_blockquote]:mt-0 [&_pre]:mt-0 [&_ul]:mt-0 [&_ol]:mt-0 [&_li]:mt-0"
-      >
-      </EditorContent>
+      <div class="h-full overflow-y-auto">
+        <EditorContent
+          :editor="editor"
+          :class="{'overflow-hidden bg-white shadow sm:rounded-lg m-4': isEditor && isPreview}"
+          class="w-full relative mx-auto z-0 p-4 prose [&_p]:mt-0 [&_h2]:mt-0 [&_h3]:mt-0 [&_blockquote]:mt-0 [&_pre]:mt-0 [&_ul]:mt-0 [&_ol]:mt-0 [&_li]:mt-0"
+        >
+        </EditorContent>
+      </div>
 
-      <EditorFooter v-if="isEditor" :editor="editor" class="border-t" />
+      <EditorFooter v-if="isEditor" :editor="editor" :is-preview="isPreview" class="border-t" />
 
       <div
         :class="{ 'mt-[5.5rem]': isEditor }"

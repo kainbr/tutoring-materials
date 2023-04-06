@@ -210,7 +210,7 @@
     "headline-preview": "Preview"
   },
   "preview": {
-    "button-reset-task": "Reset Task",
+    "button-reset-task": "Reset state",
     "button-rotate-player": "Rotate screen",
     "button-send-notification": "Send notification"
   },
