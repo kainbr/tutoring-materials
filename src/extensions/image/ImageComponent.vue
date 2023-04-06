@@ -179,7 +179,7 @@ export default defineComponent({
   },
 
   setup(props) {
-    const isEditableReactive: Boolean = inject("isEditableReactive", props.editor.isEditable);
+    const isEditableReactive = inject("isEditableReactive", props.editor.isEditable);
     return { isEditableReactive };
   },
 

@@ -2,10 +2,6 @@
 import { directive } from "vue-tippy";
 import { version } from "../package.json";
 import TutoringMaterial from "@/TutoringMaterial.vue";
-import TutoringMaterialEditor from "@/TutoringMaterialEditor.vue";
-import TutoringMaterialPlayer from "@/TutoringMaterialPlayer.vue";
-import TutoringMaterialPreview from "@/TutoringMaterialPreview.vue";
-import TutoringMaterialStatistics from "@/TutoringMaterialStatistics.vue";
 import i18n from "@/i18n";
 
 import "tippy.js/dist/tippy.css";
@@ -23,10 +19,6 @@ export default {
     app.directive("tippy", directive);
 
     app.component("TutoringMaterial", TutoringMaterial);
-    app.component("TutoringMaterialEditor", TutoringMaterialEditor);
-    app.component("TutoringMaterialPlayer", TutoringMaterialPlayer);
-    app.component("TutoringMaterialPreview", TutoringMaterialPreview);
-    app.component("TutoringMaterialStatistics", TutoringMaterialStatistics);
   },
   version: version,
 };
