@@ -160,7 +160,6 @@
 import { BubbleMenu, Editor, EditorContent } from "@tiptap/vue-3";
 import { Color } from "@tiptap/extension-color";
 import { defineComponent, onBeforeUnmount, ref, watch } from "vue";
-import { Math } from "@/extensions/math";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { Subscript } from "@tiptap/extension-subscript";
@@ -303,7 +302,6 @@ export default defineComponent({
               }),
             ]
           : []),
-        Math,
         Placeholder.configure({
           placeholder: () => t("editor.placeholder-text"),
         }),

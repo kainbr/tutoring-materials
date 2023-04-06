@@ -8,7 +8,6 @@ import { FeedbackMark } from "@/extensions/feedback/mark";
 import { FeedbackNotification } from "@/extensions/feedback/notification";
 import { Indent } from "@/extensions/indent";
 import { Infobox } from "@/extensions/infobox";
-import { Math } from "@/extensions/math";
 import { TaskExtension } from "@/extensions/task";
 import { TaskSingleChoice } from "@/extensions/task/single-choice";
 import { TaskMultipleChoice } from "@/extensions/task/multiple-choice";
@@ -23,7 +22,6 @@ export interface TutoringMaterialOptions {
   image: false;
   indent: Partial<IndentOptions> | false;
   infobox: false;
-  math: false;
   feedbackHint: false;
   feedbackMark: false;
   feedbackNotification: false;
@@ -33,7 +31,6 @@ export interface TutoringMaterialOptions {
   taskFillTheBlank: false;
   taskFindHotspots: false;
   taskMapping: false;
-  taskDragAndDrop: false;
 }
 
 export const TutoringMaterial = Extension.create<TutoringMaterialOptions>({
@@ -67,11 +64,6 @@ export const TutoringMaterial = Extension.create<TutoringMaterialOptions>({
 
     if (this.options.infobox !== false) {
       extensions.push(Infobox.configure(this.options?.infobox));
-    }
-
-    // noinspection PointlessBooleanExpressionJS
-    if (this.options.math !== false) {
-      extensions.push(Math.configure(this.options?.math));
     }
 
     // Feedbacks
