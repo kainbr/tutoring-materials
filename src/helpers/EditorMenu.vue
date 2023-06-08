@@ -40,7 +40,7 @@
     </div>
 
     <!-- Image Sub Menu -->
-    <div id="menu-sub" class="absolute bg-gray-50 flex justify-between w-full z-10 border-b" />
+    <div id="menu-sub" class="absolute bg-gray-50 flex justify-between w-full border-b" />
   </div>
 </template>
 
