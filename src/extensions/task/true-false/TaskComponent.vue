@@ -145,8 +145,8 @@
               <input
                 type="text"
                 class="text-sm p-1"
-                :value="options.trueLabel"
-                @input="updateTrueLabel"
+                :value="options.falseLabel"
+                @input="updateFalseLabel"
               />
             </div>
             <div class="flex flex-row">
@@ -156,8 +156,8 @@
               <input
                 type="text"
                 class="text-sm p-1"
-                :value="options.falseLabel"
-                @input="updateFalseLabel"
+                :value="options.trueLabel"
+                @input="updateTrueLabel"
               />
             </div>
           </div>
