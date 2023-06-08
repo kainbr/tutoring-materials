@@ -47,7 +47,7 @@
       <tutoring-material
         :content="content"
         :state="state"
-        :is-editor="true"
+        :is-editor="isEditor"
         :is-preview="isPreview"
         :task-limit="3"
         :task-options="{
@@ -79,7 +79,8 @@
         state: undefined,
         events: [],
         previewKey: 0,
-        isPreview: false,
+        isEditor: true,
+        isPreview: true,
         isReloading: false,
         isSidebarOpen: false
       };

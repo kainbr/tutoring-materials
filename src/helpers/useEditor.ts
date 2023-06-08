@@ -63,7 +63,7 @@ export default function(
     ],
     content: props.content,
     autofocus: false,
-    editable: props.isEditor,
+    editable: props.isEditor && !props.isPreview,
     injectCSS: false,
     onCreate: () => {
       if (props.isEditor) {
