@@ -1,106 +1,93 @@
 <template>
   <node-view-wrapper class="inline">
-    <Popover v-if="editor.isEditable" class="w-fit inline-block">
-      <PopoverButton
-        class="cursor-pointer border border-blue-700 rounded-lg bg-white py-0 px-2 text-left shadow-md"
-        @click="isModalOpen = true"
-      >
-        <LabelComponent
-          :label="{
+    <div v-if="editor.isEditable" class="w-fit inline-block">
+      <tippy tag="button" trigger="click" theme="light-border" interactive>
+        <template #default>
+          <div
+            class="cursor-pointer border border-blue-700 rounded-lg bg-white py-0 px-2 text-left shadow-md hover:bg-gray-50">
+            <LabelComponent
+              :label="{
             message: 'editor.task.fill-the-blank.label-edit-options',
             hexIcon: getHexIconLabel(),
           }"
-        />
-      </PopoverButton>
-
-      <PopoverPanel
-        class="absolute z-50 mt-1 max-h-60 w-fit overflow-auto rounded-md bg-white p-0 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-      >
-        <div v-for="(option, index) in node.attrs.options" :key="option.id">
-          <div class="flex flex-row text-gray-900 select-none p-1 gap-2 mx-1">
-            <input
-              type="checkbox"
-              :checked="isAnswerOptionChecked(option.id)"
-              :disabled="isAnswerOptionDisabled(option.id)"
-              @click="toggleSelectOptionEvaluation(option.id)"
             />
+            {{ node.attrs.options.length }}
+          </div>
+        </template>
+        <template #content>
+          <div class="max-h-60 w-fit overflow-auto p-0 text-base">
+            <div v-for="(option, index) in node.attrs.options" :key="option.id">
+              <div class="flex flex-row text-gray-900 select-none p-1 gap-2 mx-1">
+                <input
+                  type="checkbox"
+                  :checked="isAnswerOptionChecked(option.id)"
+                  :disabled="isAnswerOptionDisabled(option.id)"
+                  @click="toggleSelectOptionEvaluation(option.id)"
+                />
 
-            <input
-              type="text"
-              placeholder="Option Text"
-              :value="option.text"
-              @input="updateSelectOptionText(option.id, $event)"
-            />
-            <div class="flex flex-row gap-0.5">
-              <EditorMenuButton :disabled="index === 0" @click="moveUpOption(index, option.id)">
-                <IconArrowUp />
-              </EditorMenuButton>
-              <EditorMenuButton
-                :disabled="!node.attrs.options || index === node.attrs.options.length - 1"
-                @click="moveDownOption(index, option.id)"
-              >
-                <IconArrowDown />
-              </EditorMenuButton>
-              <EditorMenuButton
-                :disabled="node.attrs.options.length <= 1"
-                @click="removeSelectOption(option.id)"
-              >
-                <IconTrash />
-              </EditorMenuButton>
+                <input
+                  type="text"
+                  placeholder="Option Text"
+                  :value="option.text"
+                  @input="updateSelectOptionText(option.id, $event)"
+                />
+                <div class="flex flex-row gap-0.5">
+                  <EditorMenuButton :disabled="index === 0" @click="moveUpOption(index, option.id)">
+                    <IconArrowUp />
+                  </EditorMenuButton>
+                  <EditorMenuButton
+                    :disabled="!node.attrs.options || index === node.attrs.options.length - 1"
+                    @click="moveDownOption(index, option.id)"
+                  >
+                    <IconArrowDown />
+                  </EditorMenuButton>
+                  <EditorMenuButton
+                    :disabled="node.attrs.options.length <= 1"
+                    @click="removeSelectOption(option.id)"
+                  >
+                    <IconTrash />
+                  </EditorMenuButton>
+                </div>
+              </div>
+            </div>
+            <div class="flex w-full items-center justify-center p-1">
+              <button class="mx-4" @click="addSelectOption">+ Add option</button>
             </div>
           </div>
-        </div>
-        <div class="flex w-full items-center justify-center p-1">
-          <button class="mx-4" @click="addSelectOption">+ Add option</button>
-        </div>
-      </PopoverPanel>
-    </Popover>
-    <Listbox
-      v-else
-      :model-value="state?.answer?.find((a) => a.id === node.attrs.id)?.value || undefined"
-      @update:model-value="updateAnswer"
-    >
-      <div class="relative w-fit inline-block">
-        <ListboxButton
-          class="relative border border-blue-700 rounded-lg bg-white py-0 pl-2 pr-8 text-left shadow-md"
-          :class="{
-            'border border-green-700 bg-green-100':
+        </template>
+      </tippy>
+    </div>
+    <div v-else class="w-fit inline-block">
+      <tippy tag="button" trigger="click" theme="light-border" interactive>
+        <template #default>
+          <div
+            class="inline-flex flex-row block border border-blue-700 rounded-lg bg-white py-0 px-2 text-left shadow-md"
+            :class="{
+            'hover:bg-gray-50': ['init', 'incorrect'].includes(state?.state),
+            'border-2 border-green-700 bg-green-100':
               (['correct', 'final-incorrect'].includes(state.state) ||
                 !!state.correctGaps?.includes(node.attrs.id)) &&
               isCorrectAnswerOption(state.answer.find((a) => a.id === node.attrs.id)?.value),
-            'border border-red-700 bg-red-100':
+            'border-2 border-red-700 bg-red-100':
               (['correct', 'final-incorrect'].includes(state.state) ||
                 !!state.correctGaps?.includes(node.attrs.id)) &&
               isIncorrectAnswerOption(state.answer.find((a) => a.id === node.attrs.id)?.value),
-          }"
-        >
-          <span class="block truncate">{{ selectedValue }}</span>
-          <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-            <IconDropDown class="h-4 w-4 text-gray-400" aria-hidden="true" />
-          </span>
-        </ListboxButton>
-        <ListboxOptions
-          class="absolute z-50 mt-2 max-h-60 min-w-full w-fit overflow-auto rounded-md bg-white p-0 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-        >
-          <ListboxOption
-            v-for="(option, index) in node.attrs.options"
-            v-slot="{ active, selected }"
-            :key="option.id"
-            :value="option.id"
-            :disabled="
-              ['correct', 'final-incorrect'].includes(state.state) ||
-              !!state.correctGaps?.includes(node.attrs.id)
-            "
-            as="template"
-          >
-            <div
-              :class="[
-                active && ['init', 'incorrect'].includes(state?.state)
+          }">
+            <span class="block truncate">{{ selectedValue }}</span>
+            <span class="pointer-events-none inset-y-0 right-0 flex items-center pl-1">
+              <IconDropDown class="h-4 w-4 text-gray-400" aria-hidden="true" />
+            </span>
+          </div>
+        </template>
+        <template #content class="p-0">
+          <div class="max-h-60 w-fit overflow-auto p-0 text-base">
+            <div v-for="(option, index) in node.attrs.options" :key="option.id">
+              <div
+                :class="[
+                !!state.correctGaps?.includes(node.attrs.id) &&
+                ['init', 'incorrect'].includes(state?.state)
                   ? 'bg-amber-100 text-amber-900'
                   : 'text-gray-900',
-                selected && ['init', 'incorrect'].includes(state?.state)
-                  ? 'bg-amber-100 text-amber-900'
-                  : '',
                 'relative  select-none p-2',
                 (['correct', 'final-incorrect'].includes(state.state) ||
                   !!state.correctGaps?.includes(node.attrs.id)) &&
@@ -113,15 +100,18 @@
                   ? 'bg-red-100'
                   : 'cursor-pointer',
               ]"
-            >
-              <span :class="['block truncate']">
-                {{ option.text || "(" + (index + 1) + ")" }}
-              </span>
+                @click="['init', 'incorrect'].includes(state?.state) ? updateAnswer(option.id) : ''">
+                <span class="block truncate"
+                      :class="{'font-semibold': state.answer.find((a) => a.id === node.attrs.id)?.value  === option.id,
+                      'hover:font-semibold': ['init', 'incorrect'].includes(state?.state) }">
+                  {{ option.text || "(" + (index + 1) + ")" }}
+                </span>
+              </div>
             </div>
-          </ListboxOption>
-        </ListboxOptions>
-      </div>
-    </Listbox>
+          </div>
+        </template>
+      </tippy>
+    </div>
   </node-view-wrapper>
 </template>
 
@@ -139,9 +129,10 @@ import {
   Listbox,
   ListboxButton,
   ListboxOption,
-  ListboxOptions,
+  ListboxOptions
 } from "@headlessui/vue";
 import { v4 as uuid } from "uuid";
+import { Tippy } from "vue-tippy";
 
 import IconArrowDown from "@/helpers/icons/IconArrowDown.vue";
 import IconArrowUp from "@/helpers/icons/IconArrowUp.vue";
@@ -153,6 +144,7 @@ import type { InjectedAnswer } from "@/extensions/task/fill-the-blank/TaskCompon
 
 export default defineComponent({
   components: {
+    Tippy,
     EditorMenuButton,
     IconTrash,
     LabelComponent,
@@ -166,7 +158,7 @@ export default defineComponent({
     Listbox,
     ListboxButton,
     ListboxOption,
-    ListboxOptions,
+    ListboxOptions
   },
 
   props: {
@@ -177,9 +169,9 @@ export default defineComponent({
     getPos: { type: Function as PropType<NodeViewProps["getPos"]>, required: true },
     updateAttributes: {
       type: Function as PropType<NodeViewProps["updateAttributes"]>,
-      required: true,
+      required: true
     },
-    deleteNode: { type: Function as PropType<NodeViewProps["deleteNode"]>, required: true },
+    deleteNode: { type: Function as PropType<NodeViewProps["deleteNode"]>, required: true }
   },
 
   setup(props) {
@@ -215,7 +207,7 @@ export default defineComponent({
       props.updateAttributes({
         options: props.node.attrs.options.map((o: { id: string; text: string }) => {
           return o.id === optionId ? { ...o, text } : o;
-        }),
+        })
       });
     };
 
@@ -239,7 +231,7 @@ export default defineComponent({
       props.updateAttributes({
         options: props.node.attrs.options.filter(
           (o: { id: string; text: string }) => o.id !== optionId
-        ),
+        )
       });
     };
 
@@ -269,7 +261,7 @@ export default defineComponent({
       });
 
       updateState({
-        answer: newAnswer,
+        answer: newAnswer
       });
 
       emitAnswerChangedEvent(newAnswer, oldAnswer);
@@ -320,8 +312,8 @@ export default defineComponent({
       return (
         props.node.attrs.options.length === 1 ||
         (!!evaluation.value.solution
-          .find((s) => s.id === props.node.attrs.id)
-          ?.options.find((o) => o.id === id)?.value &&
+            .find((s) => s.id === props.node.attrs.id)
+            ?.options.find((o) => o.id === id)?.value &&
           evaluation.value.solution
             .find((s) => s.id === props.node.attrs.id)
             ?.options.filter((o) => o.value).length === 1)
@@ -347,8 +339,8 @@ export default defineComponent({
       toggleSelectOptionEvaluation,
       updateAnswer,
       updateEvaluation,
-      updateSelectOptionText,
+      updateSelectOptionText
     };
-  },
+  }
 });
 </script>

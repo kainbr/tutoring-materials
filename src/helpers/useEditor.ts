@@ -64,7 +64,7 @@ export default function(
     content: props.content,
     autofocus: false,
     editable: props.isEditor,
-    injectCSS: true,
+    injectCSS: false,
     onCreate: () => {
       if (props.isEditor) {
         context.emit("update:content", editor.getJSON());

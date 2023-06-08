@@ -1,6 +1,10 @@
 @tailwind base;
 @tailwind components;
 
+.ProseMirror {
+  position: static !important;
+}
+
 .ProseMirror-focused {
   outline: none;
 }
