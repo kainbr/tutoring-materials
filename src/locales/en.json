@@ -84,7 +84,9 @@
         "title-target-nodes": "Target nodes"
       },
       "multiple-choice": {
-        "evaluation-all-match": "All options are un-/selected correctly"
+        "config-label-show-partially-correct-count": "Show number of correctly selected options",
+        "evaluation-all-match": "All options are un-/selected correctly",
+        "label-partially-correct-count": "You have chosen {partiallyCorrect} correct and {partiallyIncorrect} incorrect from one correct answer. | You have chosen {partiallyCorrect} correct and {partiallyIncorrect} incorrect from {n} correct answers."
       },
       "single-choice": {
         "evaluation-all-match": "All options are un-/selected correctly"

@@ -1,14 +1,15 @@
 import type { MCFormatFunction } from "@/extensions/task/multiple-choice/types";
 
-export const formatOptions: MCFormatFunction = function (data) {
+export const formatOptions: MCFormatFunction = function(data) {
+  const defaultOptions = {
+    shuffle: false,
+    showPartiallyCorrectCount: true
+  };
+
   data.options = {
-    ...defaultMultipleChoiceOptions,
-    ...data.options,
+    ...defaultOptions,
+    ...data.options
   };
 
   return data;
-};
-
-export const defaultMultipleChoiceOptions = {
-  shuffle: false,
 };

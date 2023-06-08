@@ -12,8 +12,6 @@ import type { App } from "vue";
 
 export default {
   install: (app: App) => {
-    app.config.unwrapInjectedRef = true;
-
     app.use(i18n);
 
     app.directive("tippy", directive);

@@ -23,6 +23,16 @@
           </div>
         </div>
       </div>
+      <span v-if="options?.showPartiallyCorrectCount && ['incorrect'].includes(state.state)"
+            class="pl-3 text-sm text-slate-400">
+        {{
+          $t("editor.task.multiple-choice.label-partially-correct-count", {
+            n: numberCorrectOptions,
+            partiallyCorrect: numberCorrectlySelectedOptionsFromPreviousSubmit,
+            partiallyIncorrect: numberIncorrectlySelectedOptionsFromPreviousSubmit
+          })
+        }}
+      </span>
     </template>
 
     <!-- Content -->
@@ -113,6 +123,13 @@
     <!-- Options -->
     <template #options>
       <div v-if="options" class="mt-1 flex flex-col gap-2">
+        <OptionsFormBoolean
+          v-if="options?.showPartiallyCorrectCount !== undefined"
+          :label="$t('editor.task.multiple-choice.config-label-show-partially-correct-count')"
+          :value="options.showPartiallyCorrectCount"
+          name="showPartiallyCorrectCount"
+          @update:value="update({ options: { ...options, showPartiallyCorrectCount: $event }})"
+        ></OptionsFormBoolean>
         <OptionsDefaults
           :options="options"
           allow-empty-answer-submission
@@ -129,7 +146,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from "vue";
+import { computed, defineComponent, inject } from "vue";
 
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import IconAdd from "@/helpers/icons/IconAdd.vue";
@@ -141,6 +158,7 @@ import IconTrash from "@/helpers/icons/IconTrash.vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
 import TaskScaffold from "@/extensions/task/helpers/TaskScaffold.vue";
 import OptionsDefaults from "@/extensions/task/helpers/OptionsDefaults.vue";
+import OptionsFormBoolean from "@/extensions/task/helpers/OptionsFormBoolean.vue";
 import OptionsFormEnum from "@/extensions/task/helpers/OptionsFormEnum.vue";
 
 import { calculateHexIcon } from "@/helpers/util";
@@ -153,6 +171,7 @@ import {
   evaluationOptions
 } from "@/extensions/task/multiple-choice/format/evaluation";
 import { isEqual } from "lodash-es";
+import { useListOptions } from "@/extensions/task/helpers/listOptions";
 import { useTask } from "@/extensions/task/helpers";
 import { v4 as uuid } from "uuid";
 
@@ -168,7 +187,8 @@ import type {
 import type { Editor } from "@tiptap/vue-3";
 import type { EventTrigger, Feedback } from "@/extensions/feedback/types";
 import type { InjectedEventBus } from "@/helpers/useEventBus";
-import { useListOptions } from "@/extensions/task/helpers/listOptions";
+import type { TaskState } from "@/extensions/task/types";
+import type { InjectedSubmit } from "@/extensions/task/base/TaskComponent.vue";
 
 export default defineComponent({
   name: "TaskMultipleChoice",
@@ -184,6 +204,7 @@ export default defineComponent({
     InlineEditor,
     TaskScaffold,
     OptionsDefaults,
+    OptionsFormBoolean,
     OptionsFormEnum
   },
 
@@ -226,6 +247,7 @@ export default defineComponent({
 
   setup(props, { emit }) {
     const { eventBus } = inject("eventBus") as InjectedEventBus;
+    const { submittedTaskStates } = inject("submit") as InjectedSubmit;
 
     const { update } = useTask<MCProps, MCEmits, MCOptions, MCOption[], MCEvaluation, MCState>(
       props,
@@ -373,6 +395,30 @@ export default defineComponent({
       }
     };
 
+    const numberCorrectOptions = computed(() => {
+      return props.evaluation?.solution?.filter((s) => s.value).length;
+    });
+
+    const numberCorrectlySelectedOptionsFromPreviousSubmit = computed(() => {
+      if (submittedTaskStates.value.length > 0) {
+        const lastItem: TaskState = submittedTaskStates.value[submittedTaskStates.value.length - 1];
+        return (lastItem as MCState).answer?.filter((a) => {
+          return props.evaluation?.solution.find((s) => s.id === a.id)?.value && a.value;
+        }).length;
+      }
+      return;
+    });
+
+    const numberIncorrectlySelectedOptionsFromPreviousSubmit = computed(() => {
+      if (submittedTaskStates.value.length > 0) {
+        const lastItem: TaskState = submittedTaskStates.value[submittedTaskStates.value.length - 1];
+        return (lastItem as MCState).answer?.filter((a) => {
+          return !props.evaluation?.solution.find((s) => s.id === a.id)?.value && a.value;
+        }).length;
+      }
+      return;
+    });
+
     return {
       addFeedbackHint,
       addOption,
@@ -381,9 +427,13 @@ export default defineComponent({
       isOptionChecked,
       moveUpOption,
       moveDownOption,
+      numberCorrectOptions,
+      numberCorrectlySelectedOptionsFromPreviousSubmit,
+      numberIncorrectlySelectedOptionsFromPreviousSubmit,
       removeOption,
       showCorrectAnswerOption,
       showIncorrectAnswerOption,
+      submittedTaskStates,
       update,
       updateAnswerOptionContent,
       toggleEvaluationOptionValue,

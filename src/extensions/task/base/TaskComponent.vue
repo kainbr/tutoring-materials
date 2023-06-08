@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject, onMounted, provide } from "vue";
+import { computed, defineComponent, inject, onMounted, provide, ref } from "vue";
 import { Editor, NodeViewContent, NodeViewWrapper } from "@tiptap/vue-3";
 import { calculateHexIcon } from "@/helpers/util";
 import IconClose from "@/helpers/icons/IconClose.vue";
@@ -83,6 +83,7 @@ import { evaluate } from "@/extensions/task/evaluate";
 
 export type InjectedSubmit = {
   submit: (state: TaskState) => void;
+  submittedTaskStates: Ref<TaskState[]>
 };
 
 export default defineComponent({
@@ -215,6 +216,7 @@ export default defineComponent({
      * Evaluate the response and determine the next state of the task
      * Possible values are: correct, incorrect and final-incorrect
      */
+    const submittedTaskStates: Ref<TaskState[]> = ref([]);
     const submit = async (state: TaskState) => {
       // Evaluate answer
       const { response, facts } = await evaluate(
@@ -240,12 +242,14 @@ export default defineComponent({
           newState = {
             ...state,
             state: "incorrect",
-            attempt: state.attempt + 1,
+            attempt: state.attempt + 1
           };
         }
       }
 
       updateTaskState(state, newState);
+
+      submittedTaskStates.value = [...submittedTaskStates.value, newState];
 
       // Emit event
       eventBus.emit("interaction", {
@@ -255,7 +259,7 @@ export default defineComponent({
           attempt: state.attempt,
           empty: state.empty,
           response,
-          ...facts,
+          ...facts
         },
         data: {
           ...state,
@@ -268,7 +272,7 @@ export default defineComponent({
       });
     };
 
-    provide("submit", { submit });
+    provide("submit", { submit, submittedTaskStates });
 
     const isEditableReactive: Boolean = inject("isEditableReactive", props.editor.isEditable);
 

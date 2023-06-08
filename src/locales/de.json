@@ -84,7 +84,9 @@
         "title-target-nodes": "Ziel Optionen"
       },
       "multiple-choice": {
-        "evaluation-all-match": "Alle Antwortoptionen sind korrekt aus-/abgewählt"
+        "config-label-show-partially-correct-count": "Anzahl an korrekt ausgewählten Optionen anzeigen",
+        "evaluation-all-match": "Alle Antwortoptionen sind korrekt aus-/abgewählt",
+        "label-partially-correct-count": "Du hast von einer richtigen Antwort {partiallyCorrect} korrekt und {partiallyIncorrect} inkorrekt ausgewählt. | Du hast von {n} richtigen Antworten {partiallyCorrect} korrekt und {partiallyIncorrect} inkorrekt ausgewählt."
       },
       "single-choice": {
         "evaluation-all-match": "Alle Antwortoptionen sind korrekt aus-/abgewählt"

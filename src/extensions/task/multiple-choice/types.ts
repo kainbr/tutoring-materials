@@ -48,6 +48,7 @@ export type MCEvaluationOption = TaskEvaluationOption;
 // Option
 export interface MCOptions extends TaskOptions {
   shuffle: boolean;
+  showPartiallyCorrectCount: boolean;
 }
 
 // State
