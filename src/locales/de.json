@@ -88,6 +88,9 @@
         "evaluation-all-match": "Alle Antwortoptionen sind korrekt aus-/abgewählt",
         "label-partially-correct-count": "Du hast von einer richtigen Antwort {partiallyCorrect} korrekt und {partiallyIncorrect} inkorrekt ausgewählt. | Du hast von {n} richtigen Antworten {partiallyCorrect} korrekt und {partiallyIncorrect} inkorrekt ausgewählt."
       },
+      "short-text": {
+        "evaluation-always-correct": "Immer richtig"
+      },
       "single-choice": {
         "evaluation-all-match": "Alle Antwortoptionen sind korrekt aus-/abgewählt"
       },
@@ -106,6 +109,7 @@
       "type-find-hotspots": "Bildmarkierung(en)",
       "type-mapping": "Zuordnung",
       "type-multiple-choice": "Multiple-Choice",
+      "type-short-text": "Kurzer Text",
       "type-single-choice": "Single-Choice",
       "type-true-false": "Richtig-Falsch"
     },

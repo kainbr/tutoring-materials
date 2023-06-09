@@ -70,6 +70,7 @@ import TrueFalse from "@/extensions/task/true-false/TaskComponent.vue";
 import FillTheBlank from "@/extensions/task/fill-the-blank/TaskComponent.vue";
 import FindHotspots from "@/extensions/task/find-hotspots/TaskComponent.vue";
 import Mapping from "@/extensions/task/mapping/TaskComponent.vue";
+import ShortText from "@/extensions/task/short-text/TaskComponent.vue";
 
 import type { Ref } from "vue";
 import type { EventOption } from "@/extensions/feedback/types";
@@ -98,6 +99,7 @@ export default defineComponent({
     FillTheBlank,
     FindHotspots,
     Mapping,
+    ShortText
   },
 
   props: {

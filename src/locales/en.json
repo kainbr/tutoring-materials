@@ -88,6 +88,9 @@
         "evaluation-all-match": "All options are un-/selected correctly",
         "label-partially-correct-count": "You have chosen {partiallyCorrect} correct and {partiallyIncorrect} incorrect from one correct answer. | You have chosen {partiallyCorrect} correct and {partiallyIncorrect} incorrect from {n} correct answers."
       },
+      "short-text": {
+        "evaluation-always-correct": "Always correct"
+      },
       "single-choice": {
         "evaluation-all-match": "All options are un-/selected correctly"
       },
@@ -106,6 +109,7 @@
       "type-find-hotspots": "Find hotspot(s)",
       "type-mapping": "Mapping",
       "type-multiple-choice": "Multiple-Choice",
+      "type-short-text": "Short Text",
       "type-single-choice": "Single-Choice",
       "type-true-false": "True-False"
     },

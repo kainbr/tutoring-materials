@@ -78,6 +78,14 @@
                 {{ $t("editor.task.type-mapping") }}
               </button>
             </MenuItem>
+            <MenuItem>
+              <button
+                class="min-w-max hover:bg-black w-full hover:text-white focus:outline-none rounded-b-md font-medium text-sm p-1 text-center inline-flex items-center justify-end px-2"
+                @click="editor.commands.setShortTextTask()"
+              >
+                {{ $t("editor.task.type-short-text") }}
+              </button>
+            </MenuItem>
           </MenuItems>
         </transition>
       </Menu>

@@ -16,6 +16,7 @@ import { TaskFillTheBlank } from "@/extensions/task/fill-the-blank";
 import { TaskFindHotspots } from "@/extensions/task/find-hotspots";
 import { TaskMapping } from "@/extensions/task/mapping";
 import type { IndentOptions } from "@/extensions/indent";
+import { TaskShortText } from "@/extensions/task/short-text";
 
 export interface TutoringMaterialOptions {
   isEditor: boolean;
@@ -31,6 +32,7 @@ export interface TutoringMaterialOptions {
   taskFillTheBlank: false;
   taskFindHotspots: false;
   taskMapping: false;
+  taskShortText: false;
 }
 
 export const TutoringMaterial = Extension.create<TutoringMaterialOptions>({
@@ -42,12 +44,12 @@ export const TutoringMaterial = Extension.create<TutoringMaterialOptions>({
     // Mandatory extensions
     extensions.push(
       BaseDocument.extend({
-        content: "document",
+        content: "document"
       })
     );
     extensions.push(
       Document.configure({
-        isEditor: !!this.options?.isEditor,
+        isEditor: !!this.options?.isEditor
       })
     );
     extensions.push(FeedbackExtension);
@@ -75,7 +77,7 @@ export const TutoringMaterial = Extension.create<TutoringMaterialOptions>({
       extensions.push(
         FeedbackMark.configure({
           ...(!!this.options?.feedbackMark ? this.options?.feedbackMark : {}),
-          showOutline: !!this.options?.isEditor,
+          showOutline: !!this.options?.isEditor
         })
       );
     }
@@ -109,6 +111,10 @@ export const TutoringMaterial = Extension.create<TutoringMaterialOptions>({
       extensions.push(TaskMapping.configure(this.options?.taskMapping));
     }
 
+    if (this.options.taskShortText !== false) {
+      extensions.push(TaskShortText.configure(this.options?.taskShortText));
+    }
+
     return extensions;
-  },
+  }
 });
