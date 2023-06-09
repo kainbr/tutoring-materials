@@ -14,7 +14,7 @@
           <div class="flex justify-items-start">
           <input
             type="radio"
-            class="mx-2 my-1.5 h-6 enabled:cursor-pointer"
+            class="m-2 enabled:cursor-pointer"
             :checked="isOptionChecked(content[index])"
             :disabled="['correct', 'final-incorrect'].includes(state.state)"
           />
