@@ -31,14 +31,15 @@
     <template #content>
       <div v-for="(option, index) in content" :key="option.id" class="flex flex-row gap-2">
         <div class="flex flex-row min-w-fit">
-          <span class="px-2 w-10 min-w-fit"> ({{ index + 1 }}) </span>
-          <input
-            :checked="evaluation.solution.find((s) => s.id === option.id)?.value || false"
-            type="radio"
-            class="mx-1 my-2"
-            @input="updateAnswerOptionValue(option)"
-          />
+          <span class="w-10 min-w-fit text-right"> {{ index + 1 }}. </span>
         </div>
+
+        <input
+          :checked="evaluation.solution.find((s) => s.id === option.id)?.value || false"
+          class="mx-1 my-2 h-fit"
+          type="radio"
+          @input="updateAnswerOptionValue(option)"
+        />
 
         <div class="grow [&_p]:my-1">
           <InlineEditor
@@ -114,7 +115,7 @@
 
     <!-- Options -->
     <template #options>
-      <div v-if="options" class="mt-1 flex flex-col gap-2">
+      <div v-if="options" class="mt-1 flex flex-col gap-1.5">
         <OptionsDefaults
           :options="options"
           allow-empty-answer-submission

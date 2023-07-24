@@ -101,8 +101,8 @@
       "title-triggers": "Event Trigger",
       "true-false": {
         "evaluation-all-match": "All options are un-/selected correctly",
-        "label-false": "False Label",
-        "label-true": "True Label"
+        "label-false": "False label description",
+        "label-true": "True label description"
       },
       "type-description": "Task Type",
       "type-fill-the-blank": "Fill in the blank",

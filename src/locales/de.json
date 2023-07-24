@@ -101,8 +101,8 @@
       "title-triggers": "Ereignisauslöser",
       "true-false": {
         "evaluation-all-match": "Alle Antwortoptionen sind korrekt aus-/abgewählt",
-        "label-false": "Falsch Beschriftung",
-        "label-true": "Richtig Beschriftung"
+        "label-false": "Falsch Label Beschriftung",
+        "label-true": "Richtig Label Beschriftung"
       },
       "type-description": "Aufgabentyp",
       "type-fill-the-blank": "Lückentext",

@@ -53,7 +53,7 @@
 
     <!-- Options -->
     <template #options>
-      <div v-if="options" class="mt-1 flex flex-col gap-2">
+      <div v-if="options" class="mt-1 flex flex-col gap-1.5">
         <OptionsFormString
           name="textSelectGapPlaceholder"
           :value="

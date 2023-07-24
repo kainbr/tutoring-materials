@@ -84,22 +84,23 @@
     <template #content>
       <div v-for="(option, index) in content" :key="option.id" class="flex flex-row gap-2">
         <div class="flex flex-row min-w-fit">
-          <span class="px-2 mt-0.5 w-10 min-w-fit"> ({{ index + 1 }}) </span>
-          <input
-            :checked="evaluation.solution.find((s) => s.id === option.id)?.value === false || false"
-            type="radio"
-            class="mx-1 my-2.5"
-            @input="updateEvaluationOptionValue(option, false)"
-            v-tippy="'False'"
-          />
-          <input
-            :checked="evaluation.solution.find((s) => s.id === option.id)?.value === true || false"
-            type="radio"
-            class="mx-1 my-2.5"
-            @input="updateEvaluationOptionValue(option, true)"
-            v-tippy="'True'"
-          />
+          <span class="w-10 min-w-fit text-right"> {{ index + 1 }}. </span>
         </div>
+
+        <input
+          v-tippy="'False'"
+          :checked="evaluation.solution.find((s) => s.id === option.id)?.value === false || false"
+          class="mx-1 my-2 h-fit"
+          type="radio"
+          @input="updateEvaluationOptionValue(option, false)"
+        />
+        <input
+          v-tippy="'True'"
+          :checked="evaluation.solution.find((s) => s.id === option.id)?.value === true || false"
+          class="mx-1 my-2 h-fit"
+          type="radio"
+          @input="updateEvaluationOptionValue(option, true)"
+        />
 
         <div class="grow [&_p]:my-1">
           <InlineEditor
@@ -140,7 +141,7 @@
           <div class="flex flex-col grow gap-1">
             <div class="flex flex-row">
               <div class="basis-1/3">
-                <label>{{ $t("editor.task.true-false.label-false") }} </label>
+                <label class="text-sm font-medium text-gray-700">{{ $t("editor.task.true-false.label-false") }} </label>
               </div>
               <input
                 type="text"
@@ -151,7 +152,7 @@
             </div>
             <div class="flex flex-row">
               <div class="basis-1/3">
-                <label>{{ $t("editor.task.true-false.label-true") }} </label>
+                <label class="text-sm font-medium text-gray-700">{{ $t("editor.task.true-false.label-true") }} </label>
               </div>
               <input
                 type="text"
@@ -198,7 +199,7 @@
 
     <!-- Options -->
     <template #options>
-      <div v-if="options" class="mt-1 flex flex-col gap-2">
+      <div v-if="options" class="mt-1 flex flex-col gap-1.5">
         <OptionsDefaults
           :options="options"
           allow-empty-answer-submission

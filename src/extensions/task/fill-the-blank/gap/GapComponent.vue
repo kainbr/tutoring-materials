@@ -4,7 +4,7 @@
       <tippy tag="button" trigger="click" theme="light-border" interactive>
         <template #default>
           <div
-            class="cursor-pointer border border-blue-700 rounded-lg bg-white py-0 px-2 text-left shadow-md hover:bg-gray-50">
+            class="cursor-pointer border border-blue-700 rounded-lg bg-white py-0.5 px-2 text-left shadow-md text-sm hover:bg-gray-50">
             <LabelComponent
               :label="{
             message: 'editor.task.fill-the-blank.label-edit-options',
@@ -61,7 +61,7 @@
       <tippy tag="button" trigger="click" theme="light-border" interactive>
         <template #default>
           <div
-            class="inline-flex flex-row block border border-blue-700 rounded-lg bg-white py-0 px-2 text-left shadow-md"
+            class="inline-flex flex-row block border border-blue-700 rounded-lg bg-white py-0.5 px-2 text-left shadow-md text-sm"
             :class="{
             'hover:bg-gray-50': ['init', 'incorrect'].includes(state?.state),
             'border-2 border-green-700 bg-green-100':
@@ -79,7 +79,7 @@
             </span>
           </div>
         </template>
-        <template #content class="p-0">
+        <template #content class="p-1">
           <div class="max-h-60 w-fit overflow-auto p-0 text-base">
             <div v-for="(option, index) in node.attrs.options" :key="option.id">
               <div
@@ -88,22 +88,22 @@
                 ['init', 'incorrect'].includes(state?.state)
                   ? 'bg-amber-100 text-amber-900'
                   : 'text-gray-900',
-                'relative  select-none p-2',
+                'relative select-none p-0.5',
                 (['correct', 'final-incorrect'].includes(state.state) ||
                   !!state.correctGaps?.includes(node.attrs.id)) &&
                 isCorrectAnswerOption(option.id)
                   ? 'bg-green-100'
-                  : 'cursor-pointer',
+                  : '',
                 (['correct', 'final-incorrect'].includes(state.state) ||
                   !!state.correctGaps?.includes(node.attrs.id)) &&
                 isIncorrectAnswerOption(option.id)
                   ? 'bg-red-100'
-                  : 'cursor-pointer',
+                  : '',
               ]"
                 @click="['init', 'incorrect'].includes(state?.state) ? updateAnswer(option.id) : ''">
-                <span class="block truncate"
-                      :class="{'font-semibold': state.answer.find((a) => a.id === node.attrs.id)?.value  === option.id,
-                      'hover:font-semibold': ['init', 'incorrect'].includes(state?.state) }">
+                <span :class="{'font-semibold': state.answer.find((a) => a.id === node.attrs.id)?.value  === option.id,
+                      'hover:font-semibold cursor-pointer': ['init', 'incorrect'].includes(state?.state) }"
+                      class="truncate">
                   {{ option.text || "(" + (index + 1) + ")" }}
                 </span>
               </div>

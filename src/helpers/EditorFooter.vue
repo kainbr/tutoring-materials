@@ -6,10 +6,10 @@
           <DisclosureButton
             class="flex flex-row grow items-center justify-start px-4 py-1 text-left text-sm font-medium focus:outline-none focus-visible:ring focus-visible:ring-opacity-75"
           >
-            <IconDropDown :class="open ? '' : '-rotate-90 transform'" />
-            <span class="ml-3 text-base font-normal">{{
+            <span class="mr-3 text-base font-normal">{{
                 $t("editor.footer.headline-feedback")
               }}</span>
+            <IconDropDown :class="open ? '' : '-rotate-90 transform'" />
           </DisclosureButton>
 
           <!-- Notification -->
@@ -49,10 +49,10 @@
           <DisclosureButton
             class="flex flex-row grow items-center justify-start px-4 py-1 text-left text-sm font-medium focus:outline-none focus-visible:ring focus-visible:ring-opacity-75"
           >
-            <IconDropDown :class="open ? '' : '-rotate-90 transform'" />
-            <span class="ml-3 text-base font-normal">{{
+            <span class="mr-3 text-base font-normal">{{
                 $t("editor.footer.headline-trigger")
               }}</span>
+            <IconDropDown :class="open ? '' : '-rotate-90 transform'" />
           </DisclosureButton>
 
           <EditorMenuButton class="mr-2" :on-inactive-click="addEventTrigger">

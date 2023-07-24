@@ -46,12 +46,12 @@
     <!-- Content -->
     <template #content>
       <div class="flex flex-row items-center pb-1">
-        <IconArrowRightOnRect class="h-5 pl-2 pr-4"></IconArrowRightOnRect>
+        <IconArrowRightOnRect class="h-5 pl-4 pr-3"></IconArrowRightOnRect>
         {{ $t("editor.task.mapping.title-source-nodes") }}
       </div>
       <div v-for="(option, index) in content?.source" :key="option.id" class="flex flex-row gap-2">
-        <div class="flex flex-row min-w-fit my-1">
-          <span class="px-2 w-10 min-w-fit"> ({{ index + 1 }}) </span>
+        <div class="flex flex-row min-w-fit my-1 text-right">
+          <span class="px-2 w-10 min-w-fit"> {{ index + 1 }}. </span>
         </div>
         <div class="grow [&_p]:my-1 [&_img]:my-0 max-h-40 overflow-auto my-1">
           <InlineEditor
@@ -96,12 +96,12 @@
       </div>
 
       <div class="flex flex-row items-center pb-1">
-        <IconArrowDownOnSquare class="h-5 pl-2 pr-4"></IconArrowDownOnSquare>
+        <IconArrowDownOnSquare class="h-5 pl-4 pr-3"></IconArrowDownOnSquare>
         {{ $t("editor.task.mapping.title-target-nodes") }}
       </div>
       <div v-for="(option, index) in content?.target" :key="option.id" class="flex flex-row gap-2">
-        <div class="flex flex-row min-w-fit my-1">
-          <span class="px-2 w-10 min-w-fit"> ({{ index + 1 }}) </span>
+        <div class="flex flex-row min-w-fit my-1 text-right">
+          <span class="px-2 w-10 min-w-fit"> {{ index + 1 }}. </span>
         </div>
         <div class="grow [&_p]:my-1 [&_img]:my-0 max-h-40 overflow-auto my-1">
           <InlineEditor
@@ -150,7 +150,7 @@
       </div>
 
       <div class="flex flex-row items-center pb-1">
-        <IconLink class="h-5 pl-2 pr-4"></IconLink>
+        <IconLink class="h-5 pl-4 pr-3"></IconLink>
         {{ $t("editor.task.mapping.title-correct-mappings") }}
       </div>
       <div
@@ -164,7 +164,8 @@
             <span class="mx-2"> {{ $t("editor.task.mapping.label-source-node") }} </span>
             <select
               v-model="mapping.source"
-              class="px-1.5 py-0.5 block focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500
+              focus:border-blue-500 block py-1 px-2"
               disabled
             >
               <option
@@ -175,17 +176,18 @@
                 :key="option.id"
                 :value="option.id"
               >
-                {{ content?.source.findIndex((o) => o.id === option.id) + 1 }}
+                {{ content?.source.findIndex((o) => o.id === option.id) + 1 }}.
               </option>
             </select>
             <IconArrowRight></IconArrowRight>
             <select
               :value="mapping.target"
               @input="(e) => updateEvaluationMapping(e, mapping.source)"
-              class="px-1.5 py-0.5 block focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500
+              focus:border-blue-500 block py-1 px-2"
             >
               <option v-for="option in content?.target" :key="option.id" :value="option.id">
-                {{ content?.target.findIndex((o) => o.id === option.id) + 1 }}
+                {{ content?.target.findIndex((o) => o.id === option.id) + 1 }}.
               </option>
             </select>
             <span class="mx-2"> {{ $t("editor.task.mapping.label-target-node") }} </span>
@@ -212,7 +214,7 @@
 
     <!-- Options -->
     <template #options>
-      <div v-if="options" class="mt-1 flex flex-col gap-2">
+      <div v-if="options" class="mt-1 flex flex-col gap-1.5">
         <OptionsDefaults
           :options="options"
           allow-empty-answer-submission

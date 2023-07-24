@@ -12,10 +12,11 @@
     </template>
 
     <!-- Content -->
-    <!--
     <template #content>
+      <span class="text-sm text-gray-400">
+        Nothing to specify.
+      </span>
     </template>
-    -->
 
     <!-- Evaluation -->
     <template #evaluation>
@@ -36,7 +37,7 @@
 
     <!-- Options -->
     <template #options>
-      <div v-if="options" class="mt-1 flex flex-col gap-2">
+      <div v-if="options" class="mt-1 flex flex-col gap-1.5">
         <OptionsDefaults
           :options="options"
           allow-empty-answer-submission

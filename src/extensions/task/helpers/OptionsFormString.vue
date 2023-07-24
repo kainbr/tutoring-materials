@@ -7,7 +7,7 @@
         :name="name"
         :value="value"
         :disabled="disabled"
-        class="w-full px-1.5 py-0.5 block focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
+        class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block py-1 px-2"
         @input="updateValue"
       />
     </template>

@@ -2,31 +2,34 @@
   <node-view-wrapper
     :class="[
       isEditableReactive
-        ? 'py-2 bg-orange-100 border border-orange-300 rounded-md px-4 mb-4'
-        : 'py-2',
+        ? 'border border-slate-200 shadow-lg rounded-md mb-2'
+        : '',
     ]"
     class="flex w-full"
   >
-    <div class="flex flex-col w-full">
+    <div :class="[isEditableReactive ? 'px-4 pb-2' : '']" class="flex flex-col w-full ">
       <div
         v-if="isEditableReactive"
-        class="flex flex-row items-center pb-2 mb-2 border-b-2 border-slate-300"
+        class="flex flex-row py-3 border-b border-gray-200"
         contenteditable="false"
       >
-        <div class="flex flex-row grow items-center gap-4">
+        <div class="flex flex-row grow items-center">
           <!-- eslint-disable vue/no-v-html -->
           <div data-drag-handle contenteditable="false" draggable="true" style="cursor: grab">
-            <span class="pl-2 pr-3" v-html="calculateHexIcon(node.attrs.id)" />
+            <span class="pl-1 pr-2 ml-1" v-html="calculateHexIcon(node.attrs.id)" />
           </div>
-          <div class="flex w-full justify-center">
-            <span>{{ $t("editor.task.type-" + node.attrs.type) }}</span>
+          <div class="flex w-full">
+            <span class="text-base font-semibold leading-6 text-gray-900">{{ $t("editor.task.type-" + node.attrs.type)
+              }}</span>
           </div>
-          <IconClose @click="removeTask"></IconClose>
+          <div class="px-1 cursor-pointer fill-gray-500 hover:fill-gray-600">
+            <IconClose @click="removeTask"></IconClose>
+          </div>
         </div>
       </div>
 
       <!-- Instruction -->
-      <div class="flex flex-row w-full [&_p]:my-0">
+      <div :class="[isEditableReactive ? 'py-2': '']" class="flex flex-row w-full [&_p]:my-0">
         <node-view-content class="w-full" />
       </div>
 

@@ -7,7 +7,7 @@
         :name="name"
         :disabled="disabled"
         :checked="value"
-        class="block focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
+        class="block focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300 mx-1.5"
         @change="updateValue"
       />
     </template>
