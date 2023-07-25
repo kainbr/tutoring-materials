@@ -58,6 +58,10 @@
     "task": {
       "config-description-allow-empty-answer-submission": "Wenn diese Option angewählt ist, dann können leere Antworten abgeschickt werden. ",
       "config-label-allow-empty-answer-submission": "Leere Antworten erlauben",
+      "config-label-disabled-check-timer": "Verzögerung vor Prüfen der Antwort",
+      "config-label-disabled-next-timer": "Verzögerung vor Fortsetzung",
+      "config-label-has-disabled-check-timer": "Prüfen der Antwort verzögern",
+      "config-label-has-disabled-next-timer": "Fortsetzung verzögern",
       "config-label-has-max-attempts": "Anzahl von Versuchen beschränken",
       "config-label-max-attempts": "Anzahl an Versuchen",
       "config-label-text-correct-answer": "Text korrekte Antwort",

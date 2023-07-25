@@ -2,7 +2,7 @@
   <TaskScaffold contenteditable="false" :editor="editor">
     <!-- Render -->
     <template #render>
-      <div v-if="!editor.isEditable && !!content?.img">
+      <div v-if="!editor.isEditable && !!content?.img" class="flex justify-center">
         <canvas ref="canvas" class="max-w-full cursor-pointer" @click="submitAnswer">
           <img ref="image" :src="content.img" alt="image" @load="initCanvas()" />
         </canvas>
@@ -95,6 +95,8 @@
         <OptionsDefaults
           :options="options"
           has-max-attempts
+          has-disabled-check-timer
+          has-disabled-next-timer
           has-submit-button
           has-correct-state
           has-incorrect-state

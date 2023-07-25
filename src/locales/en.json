@@ -58,6 +58,10 @@
     "task": {
       "config-description-allow-empty-answer-submission": "If this option is selected, empty answers can be submitted. ",
       "config-label-allow-empty-answer-submission": "Allow submission of empty answers",
+      "config-label-disabled-check-timer": "Delay before submission",
+      "config-label-disabled-next-timer": "Delay before continuation",
+      "config-label-has-disabled-check-timer": "Delay submission of answer",
+      "config-label-has-disabled-next-timer": "Delay continuation",
       "config-label-has-max-attempts": "Limit number of trials",
       "config-label-max-attempts": "Number of trials",
       "config-label-text-correct-answer": "Text correct answer",

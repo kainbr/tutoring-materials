@@ -22,9 +22,46 @@
     name="maxAttempts"
     :value="options.maxAttempts"
     :disabled="!options.hasMaxAttempts"
-    :min="1"
+    :min="0"
     :label="$t('editor.task.config-label-max-attempts')"
     @update:value="$emit('update:options', { ...options, maxAttempts: $event })"
+  ></OptionsFormNumber>
+
+  <!-- Disabled check button timer -->
+  <OptionsFormBoolean
+    v-if="hasDisabledCheckTimer"
+    :label="$t('editor.task.config-label-has-disabled-check-timer')"
+    :value="options.hasDisabledCheckTimer"
+    name="hasDisabledCheckTimer"
+    @update:value="$emit('update:options', { ...options, hasDisabledCheckTimer: $event })"
+  ></OptionsFormBoolean>
+  <OptionsFormNumber
+    v-if="hasDisabledCheckTimer"
+    :disabled="!options.hasDisabledCheckTimer"
+    :label="$t('editor.task.config-label-disabled-check-timer')"
+    :min="0"
+    :value="options.disabledCheckTimer"
+    name="disabledCheckTimer"
+    @update:value="$emit('update:options', { ...options, disabledCheckTimer: $event })"
+  ></OptionsFormNumber>
+
+
+  <!-- Disabled next button timer -->
+  <OptionsFormBoolean
+    v-if="hasDisabledNextTimer"
+    :label="$t('editor.task.config-label-has-disabled-next-timer')"
+    :value="options.hasDisabledNextTimer"
+    name="hasDisabledNextTimer"
+    @update:value="$emit('update:options', { ...options, hasDisabledNextTimer: $event })"
+  ></OptionsFormBoolean>
+  <OptionsFormNumber
+    v-if="hasDisabledNextTimer"
+    :disabled="!options.hasDisabledNextTimer"
+    :label="$t('editor.task.config-label-disabled-next-timer')"
+    :min="0"
+    :value="options.disabledNextTimer"
+    name="disabledNextTimer"
+    @update:value="$emit('update:options', { ...options, disabledNextTimer: $event })"
   ></OptionsFormNumber>
 
   <!-- Submit Button -->
@@ -103,14 +140,16 @@ export default defineComponent({
   props: {
     options: {
       type: Object,
-      required: true,
+      required: true
     },
     allowEmptyAnswerSubmission: Boolean,
     hasMaxAttempts: Boolean,
+    hasDisabledCheckTimer: Boolean,
+    hasDisabledNextTimer: Boolean,
     hasSubmitButton: Boolean,
     hasCorrectState: Boolean,
     hasIncorrectState: Boolean,
-    hasFinalIncorrectState: Boolean,
+    hasFinalIncorrectState: Boolean
   },
 
   emits: ["update:options"],

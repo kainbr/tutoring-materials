@@ -61,7 +61,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject, onMounted, provide, ref } from "vue";
+import { computed, defineComponent, inject, onMounted, provide, ref, watch } from "vue";
 import { Editor, NodeViewContent, NodeViewWrapper } from "@tiptap/vue-3";
 import { calculateHexIcon } from "@/helpers/util";
 import IconClose from "@/helpers/icons/IconClose.vue";
@@ -87,7 +87,8 @@ import { evaluate } from "@/extensions/task/evaluate";
 
 export type InjectedSubmit = {
   submit: (state: TaskState) => void;
-  submittedTaskStates: Ref<TaskState[]>
+  submittedTaskStates: Ref<TaskState[]>;
+  nextButtonDisabledTimerCount: Ref<number>;
 };
 
 export default defineComponent({
@@ -108,39 +109,39 @@ export default defineComponent({
   props: {
     editor: {
       type: Object as PropType<Editor>,
-      required: true,
+      required: true
     },
     node: {
       type: Object as PropType<NodeViewProps["node"]>,
-      required: true,
+      required: true
     },
     decorations: {
       type: Object as PropType<NodeViewProps["decorations"]>,
-      required: true,
+      required: true
     },
     selected: {
       type: Boolean as PropType<NodeViewProps["selected"]>,
-      required: true,
+      required: true
     },
     extension: {
       type: Object as PropType<NodeViewProps["extension"]>,
-      required: true,
+      required: true
     },
     getPos: {
       type: Function as PropType<NodeViewProps["getPos"]>,
-      required: true,
+      required: true
     },
     updateAttributes: {
       type: Function as PropType<NodeViewProps["updateAttributes"]>,
-      required: true,
+      required: true
     },
     deleteNode: {
       type: Function as PropType<NodeViewProps["deleteNode"]>,
-      required: true,
-    },
+      required: true
+    }
   },
 
-  setup: function (props) {
+  setup: function(props) {
     const { taskOptions } = inject("defaults") as InjectedDefaults;
     const { eventBus } = inject("eventBus") as InjectedEventBus;
     const { taskStates, renderedTasks, addTaskState, updateTaskState, removeTaskState } = inject(
@@ -150,6 +151,7 @@ export default defineComponent({
     const state: Ref<TaskState | undefined> = computed(() => {
       return taskStates.value.find((taskState: TaskState) => taskState.id === props.node.attrs.id);
     });
+
 
     const update = (newValues: {
       options: TaskOptions;
@@ -161,7 +163,7 @@ export default defineComponent({
       props.updateAttributes({
         options: newValues.options,
         content: newValues.content,
-        evaluation: newValues.evaluation,
+        evaluation: newValues.evaluation
       });
 
       if (!state.value) {
@@ -175,7 +177,7 @@ export default defineComponent({
         ...props.editor.storage.feedbacks.eventOptions.filter(
           (e: EventOption) => e.parent !== props.node.attrs.id
         ),
-        ...(!!newValues.events && Array.isArray(newValues.events) ? newValues.events : []),
+        ...(!!newValues.events && Array.isArray(newValues.events) ? newValues.events : [])
       ];
     };
 
@@ -187,7 +189,7 @@ export default defineComponent({
           facts: {},
           label: {
             message: "global.event.type-task-created",
-            hexIcon: calculateHexIcon(props.node.attrs.id),
+            hexIcon: calculateHexIcon(props.node.attrs.id)
           },
           data: {
             id: props.node.attrs.id,
@@ -195,8 +197,8 @@ export default defineComponent({
             evaluation: props.node.attrs.evaluation,
             feedbacks: props.node.attrs.feedbacks,
             options: props.node.attrs.options,
-            state: props.node.attrs.state,
-          },
+            state: props.node.attrs.state
+          }
         });
 
         renderedTasks.value = [...renderedTasks.value, props.node.attrs.id];
@@ -206,7 +208,7 @@ export default defineComponent({
     const optionsWithDefaults = computed(() => {
       return {
         ...taskOptions,
-        ...props.node.attrs.options,
+        ...props.node.attrs.options
       };
     });
 
@@ -216,6 +218,41 @@ export default defineComponent({
         removeTaskState(state.value);
       }
     };
+
+    const nextButtonDisabledTimerCount = ref(0);
+    const nextButtonDisabledTimerCountLocked = ref(false);
+
+    const calculateTimerCount = () => {
+      if (!!state.value?.state) {
+        if (optionsWithDefaults.value.hasDisabledCheckTimer && ["init", "incorrect"].includes(state.value?.state)) {
+          nextButtonDisabledTimerCount.value = optionsWithDefaults.value.disabledCheckTimer;
+        } else if (optionsWithDefaults.value.hasDisabledNextTimer && ["final-incorrect"].includes(state.value?.state)) {
+          nextButtonDisabledTimerCount.value = optionsWithDefaults.value.disabledNextTimer;
+        } else {
+          nextButtonDisabledTimerCount.value = 0;
+        }
+      }
+    };
+
+    watch(nextButtonDisabledTimerCount, (newValue, oldValue) => {
+      if (newValue > 0 && !nextButtonDisabledTimerCountLocked.value) {
+        nextButtonDisabledTimerCountLocked.value = true;
+        setTimeout(() => {
+          nextButtonDisabledTimerCountLocked.value = false;
+          nextButtonDisabledTimerCount.value = nextButtonDisabledTimerCount.value - 1;
+        }, 1000);
+      }
+    }, { immediate: true });
+
+    watch(optionsWithDefaults, () => {
+      calculateTimerCount();
+    });
+
+    watch(state, (newState, oldState) => {
+      if (!oldState?.state) {
+        calculateTimerCount();
+      }
+    });
 
     /**
      * Evaluate the response and determine the next state of the task
@@ -241,7 +278,7 @@ export default defineComponent({
         ) {
           newState = {
             ...state,
-            state: "final-incorrect",
+            state: "final-incorrect"
           };
         } else {
           newState = {
@@ -268,20 +305,31 @@ export default defineComponent({
         },
         data: {
           ...state,
-          response,
+          response
         },
         label: {
           message: "global.event.type-answer-submitted",
-          hexIcon: calculateHexIcon(state.id),
-        },
+          hexIcon: calculateHexIcon(state.id)
+        }
       });
+
+      calculateTimerCount();
     };
 
-    provide("submit", { submit, submittedTaskStates });
+    provide("submit", { submit, submittedTaskStates, nextButtonDisabledTimerCount });
 
     const isEditableReactive: Boolean = inject("isEditableReactive", props.editor.isEditable);
 
-    return { state, calculateHexIcon, update, optionsWithDefaults, removeTask, removeTaskState, isEditableReactive };
-  },
+    return {
+      state,
+      calculateHexIcon,
+      update,
+      optionsWithDefaults,
+      removeTask,
+      removeTaskState,
+      isEditableReactive,
+      taskOptions
+    };
+  }
 });
 </script>

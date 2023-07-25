@@ -41,6 +41,8 @@
         <OptionsDefaults
           :options="options"
           allow-empty-answer-submission
+          has-disabled-check-timer
+          has-disabled-next-timer
           has-correct-state
           has-final-incorrect-state
           has-incorrect-state

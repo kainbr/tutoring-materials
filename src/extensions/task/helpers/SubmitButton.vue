@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row flex-wrap container rounded-lg" :class="backgroundColor">
+  <div :class="backgroundColor" class="flex flex-row container rounded-lg items-start py-2 px-4">
     <!-- Headline -->
     <div class="flex flex-col basis-full" :class="{ 'basis-3/5': width > 500 }">
       <Transition appear>
@@ -29,19 +29,53 @@
       </Transition>
     </div>
 
-    <div class="flex w-full items-center basis-full justify-center mt-1" :class="{ 'basis-2/5 px-2': width > 500 }"
-         v-if="!options.hideSubmitButton">
+    <div class="mt-2 flex flex-row gap-1">
+
+      <!-- Check button -->
       <button
-        v-if="['init', 'incorrect'].includes(state.state)"
-        class="px-5 py-2 justify-center border shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+        v-if="!options.hideSubmitButton && ['init', 'incorrect'].includes(state.state)"
+        :disabled="(!options.allowEmptyAnswerSubmission && state.empty) || nextButtonDisabledTimerCount > 0"
         type="button"
-        :disabled="!options.allowEmptyAnswerSubmission && state.empty"
+        class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white
+        shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto disabled:bg-blue-300 disabled:cursor-not-allowed whitespace-nowrap"
         @click="submit(state)"
       >
-        {{ options.textSubmitButton }}
+        <span>
+          {{ options.textSubmitButton }}
+        </span>
+        <span v-if="nextButtonDisabledTimerCount > 0"> ... {{ nextButtonDisabledTimerCount }}</span>
       </button>
+
+      <!-- Feedback button -->
+      <div
+        v-if="['correct', 'final-incorrect'].includes(state.state) || (options.hasMaxAttempts && !options.maxAttempts)"
+        class="flex flex-row">
+        <button
+          class="inline-flex flex-row items-center w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-gray-600
+        hover:text-gray-800 sm:w-auto"
+          type="button"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5"
+               viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0
+          016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-.005-10.499l-3.11.732a9 9 0
+          01-6.085-.711l-.108-.054a9 9 0 00-6.208-.682L3 4.5M3 15V4.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+
+        <!-- Next button -->
+        <button
+          :disabled="nextButtonDisabledTimerCount > 0"
+          class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white
+        shadow-sm hover:bg-blue-500 sm:ml-1 sm:w-auto disabled:bg-blue-300 disabled:cursor-not-allowed whitespace-nowrap" type="button"
+        >
+          <span class="w-full">Weiter </span>
+          <span v-if="nextButtonDisabledTimerCount > 0"> ... {{ nextButtonDisabledTimerCount }}</span>
+        </button>
+      </div>
     </div>
   </div>
+
 </template>
 
 <script lang="ts">
@@ -93,7 +127,7 @@ export default defineComponent({
   setup(props) {
     const { activeFeedbacks } = inject("feedbacks") as InjectedFeedbacks;
     const { width } = inject("containerDimensions") as InjectedContainerDimensions;
-    const { submit } = inject("submit") as InjectedSubmit;
+    const { submit, nextButtonDisabledTimerCount } = inject("submit") as InjectedSubmit;
 
     const hints: Ref<HintFeedback[]> = computed(() => {
       return (
@@ -105,7 +139,6 @@ export default defineComponent({
 
     const backgroundColor = computed(() => {
       return {
-        "p-3": props.state.state !== "init",
         "bg-green-50": props.state.state === "correct",
         "bg-yellow-50": props.state.state === "incorrect",
         "bg-red-50": props.state.state === "final-incorrect"
@@ -148,9 +181,9 @@ export default defineComponent({
 
     const fontColor = computed(() => {
       return {
-        "text-green-700": props.state.state === "correct",
-        "text-yellow-700": props.state.state === "incorrect",
-        "text-red-700": props.state.state === "final-incorrect"
+        "text-green-800": props.state.state === "correct",
+        "text-yellow-800": props.state.state === "incorrect",
+        "text-red-800": props.state.state === "final-incorrect"
       };
     });
 
@@ -162,7 +195,8 @@ export default defineComponent({
       titleColor,
       text,
       submit,
-      width
+      width,
+      nextButtonDisabledTimerCount
     };
   }
 });
@@ -172,7 +206,7 @@ export default defineComponent({
 <style scoped>
 .v-enter-active,
 .v-leave-active {
-  transition: opacity 1s ease;
+  transition: opacity 1s;
 }
 
 .v-enter-from,

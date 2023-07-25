@@ -204,6 +204,8 @@
           :options="options"
           allow-empty-answer-submission
           has-max-attempts
+          has-disabled-check-timer
+          has-disabled-next-timer
           has-submit-button
           has-correct-state
           has-incorrect-state

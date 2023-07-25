@@ -14,6 +14,10 @@ export default function (props: { taskOptions: Partial<TaskOptions> }): Injected
     allowEmptyAnswerSubmission: false,
     hasMaxAttempts: true,
     maxAttempts: 2,
+    hasDisabledCheckTimer: true,
+    disabledCheckTimer: 10,
+    hasDisabledNextTimer: true,
+    disabledNextTimer: 5,
     textSubmitButton: t("global.options.text-submit-button"),
     titleCorrectAnswer: t("global.options.title-correct-answer"),
     textCorrectAnswer: t("global.options.text-correct-answer"),
@@ -21,7 +25,7 @@ export default function (props: { taskOptions: Partial<TaskOptions> }): Injected
     textIncorrectAnswer: t("global.options.text-incorrect-answer"),
     titleFinalIncorrectAnswer: t("global.options.title-final-incorrect-answer"),
     textFinalIncorrectAnswer: t("global.options.text-final-incorrect-answer"),
-    ...props.taskOptions,
+    ...props.taskOptions
   };
 
   provide("defaults", {
