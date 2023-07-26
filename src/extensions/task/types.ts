@@ -34,6 +34,12 @@ export interface TaskOptions {
   allowEmptyAnswerSubmission: boolean;
   hasMaxAttempts: boolean;
   maxAttempts: number;
+  hasNextButton: boolean;
+  hasFeedbackButton: boolean;
+  hasDisabledCheckTimer: boolean;
+  disabledCheckTimer: number;
+  hasDisabledNextTimer: boolean;
+  disabledNextTimer: number;
   textSubmitButton: string;
   titleCorrectAnswer: string;
   textCorrectAnswer: string;
@@ -41,7 +47,6 @@ export interface TaskOptions {
   textIncorrectAnswer: string;
   titleFinalIncorrectAnswer: string;
   textFinalIncorrectAnswer: string;
-  hideSubmitButton?: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

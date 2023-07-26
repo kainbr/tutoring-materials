@@ -98,6 +98,8 @@
           has-disabled-check-timer
           has-disabled-next-timer
           has-submit-button
+          has-feedback-button
+          has-next-button
           has-correct-state
           has-incorrect-state
           has-final-incorrect-state

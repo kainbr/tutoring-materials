@@ -14,6 +14,8 @@ export default function (props: { taskOptions: Partial<TaskOptions> }): Injected
     allowEmptyAnswerSubmission: false,
     hasMaxAttempts: true,
     maxAttempts: 2,
+    hasNextButton: true,
+    hasFeedbackButton: true,
     hasDisabledCheckTimer: true,
     disabledCheckTimer: 10,
     hasDisabledNextTimer: true,

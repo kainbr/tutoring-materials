@@ -67,6 +67,7 @@
         v-if="['correct', 'final-incorrect'].includes(state.state) || (options.hasMaxAttempts && !options.maxAttempts)"
         class="flex flex-row">
         <button
+          v-if="options.hasFeedbackButton"
           class="inline-flex flex-row items-center w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-gray-600
         hover:text-gray-800 sm:w-auto"
           type="button"
@@ -82,6 +83,7 @@
 
         <!-- Next button -->
         <button
+          v-if="options.hasNextButton"
           :disabled="nextButtonDisabledTimerCount > 0"
           class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white
         shadow-sm hover:bg-blue-500 sm:ml-1 sm:w-auto disabled:bg-blue-300 disabled:cursor-not-allowed whitespace-nowrap"

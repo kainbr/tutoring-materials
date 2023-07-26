@@ -27,6 +27,22 @@
     @update:value="$emit('update:options', { ...options, maxAttempts: $event })"
   ></OptionsFormNumber>
 
+  <!-- Show buttons -->
+  <OptionsFormBoolean
+    v-if="hasNextButton"
+    :label="$t('editor.task.config-label-has-next-button')"
+    :value="options.hasNextButton"
+    name="hasNextButton"
+    @update:value="$emit('update:options', { ...options, hasNextButton: $event })"
+  ></OptionsFormBoolean>
+  <OptionsFormBoolean
+    v-if="hasFeedbackButton"
+    :label="$t('editor.task.config-label-has-feedback-button')"
+    :value="options.hasFeedbackButton"
+    name="hasNextButton"
+    @update:value="$emit('update:options', { ...options, hasFeedbackButton: $event })"
+  ></OptionsFormBoolean>
+
   <!-- Disabled check button timer -->
   <OptionsFormBoolean
     v-if="hasDisabledCheckTimer"
@@ -147,6 +163,8 @@ export default defineComponent({
     hasDisabledCheckTimer: Boolean,
     hasDisabledNextTimer: Boolean,
     hasSubmitButton: Boolean,
+    hasNextButton: Boolean,
+    hasFeedbackButton: Boolean,
     hasCorrectState: Boolean,
     hasIncorrectState: Boolean,
     hasFinalIncorrectState: Boolean

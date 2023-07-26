@@ -41,13 +41,15 @@
         <OptionsDefaults
           :options="options"
           allow-empty-answer-submission
+          has-feedback-button
           has-disabled-check-timer
           has-disabled-next-timer
           has-correct-state
           has-final-incorrect-state
           has-incorrect-state
-          has-max-attempts
           has-submit-button
+          has-max-attempts
+          has-next-button
           @update:options="update({ options: $event })"
         />
       </div>
