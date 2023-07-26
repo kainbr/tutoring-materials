@@ -87,6 +87,8 @@ import { evaluate } from "@/extensions/task/evaluate";
 
 export type InjectedSubmit = {
   submit: (state: TaskState) => void;
+  next: () => void;
+  feedback: () => void;
   submittedTaskStates: Ref<TaskState[]>;
   nextButtonDisabledTimerCount: Ref<number>;
 };
@@ -316,7 +318,31 @@ export default defineComponent({
       calculateTimerCount();
     };
 
-    provide("submit", { submit, submittedTaskStates, nextButtonDisabledTimerCount });
+    const next = () => {
+
+      // Emit event
+      eventBus.emit("interaction", {
+        type: "next-clicked",
+        parent: null,
+        facts: {},
+        data: {},
+        label: { message: "global.event.type-next-clicked" }
+      });
+    };
+
+    const feedback = () => {
+
+      // Emit event
+      eventBus.emit("interaction", {
+        type: "feedback-clicked",
+        parent: null,
+        facts: {},
+        data: {},
+        label: { message: "global.event.type-feedback-clicked" }
+      });
+    };
+
+    provide("submit", { submit, next, feedback, submittedTaskStates, nextButtonDisabledTimerCount });
 
     const isEditableReactive: Boolean = inject("isEditableReactive", props.editor.isEditable);
 

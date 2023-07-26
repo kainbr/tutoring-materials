@@ -24,9 +24,9 @@ export type InjectedEventBus = {
   eventBus: Emitter<Events>;
 };
 
-export default function (
+export default function(
   editor: Editor,
-  context: SetupContext<("update:content" | "update:state" | "event")[]>,
+  context: SetupContext<("update:content" | "update:state" | "event" | "check" | "next" | "feedback")[]>,
   addActiveFeedback: (feedback: Feedback) => void
 ): InjectedEventBus {
   const eventBus = mitt<Events>();
@@ -62,9 +62,21 @@ export default function (
       ts: Date.now(),
       facts: e.facts,
       data: e.data,
-      label: e.label,
+      label: e.label
     } as EmittedEvent);
+
+    /* Emit special events */
+    if (e.type === "answer-submitted") {
+      context.emit("check");
+    }
+    if (e.type === "next-clicked") {
+      context.emit("next");
+    }
+    if (e.type === "feedback-clicked") {
+      context.emit("feedback");
+    }
   });
+
 
   provide("eventBus", { eventBus });
 

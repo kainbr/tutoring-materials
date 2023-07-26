@@ -6,7 +6,8 @@
            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path v-if="['correct'].includes(state.state)" d="M4.5 12.75l6 6 9-13.5" stroke-linecap="round"
               stroke-linejoin="round" />
-        <path v-if="['incorrect'].includes(state.state)" d="M15 15l6-6m0 0l-6-6m6 6H9a6 6 0 000 12h3" stroke-linecap="round"
+        <path v-if="['incorrect'].includes(state.state)" d="M15 15l6-6m0 0l-6-6m6 6H9a6 6 0 000 12h3"
+              stroke-linecap="round"
               stroke-linejoin="round" />
         <path v-if="['final-incorrect'].includes(state.state)" d="M6 18L18 6M6 6l12 12" stroke-linecap="round"
               stroke-linejoin="round" />
@@ -69,6 +70,7 @@
           class="inline-flex flex-row items-center w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-gray-600
         hover:text-gray-800 sm:w-auto"
           type="button"
+          @click="feedback()"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5"
                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -84,6 +86,7 @@
           class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white
         shadow-sm hover:bg-blue-500 sm:ml-1 sm:w-auto disabled:bg-blue-300 disabled:cursor-not-allowed whitespace-nowrap"
           type="button"
+          @click="next()"
         >
           <span class="w-full">Weiter </span>
           <span v-if="nextButtonDisabledTimerCount > 0"> ... {{ nextButtonDisabledTimerCount }}</span>
@@ -143,7 +146,7 @@ export default defineComponent({
   setup(props) {
     const { activeFeedbacks } = inject("feedbacks") as InjectedFeedbacks;
     const { width } = inject("containerDimensions") as InjectedContainerDimensions;
-    const { submit, nextButtonDisabledTimerCount } = inject("submit") as InjectedSubmit;
+    const { submit, next, feedback, nextButtonDisabledTimerCount } = inject("submit") as InjectedSubmit;
 
     const hints: Ref<HintFeedback[]> = computed(() => {
       return (
@@ -211,6 +214,8 @@ export default defineComponent({
       titleColor,
       text,
       submit,
+      next,
+      feedback,
       width,
       nextButtonDisabledTimerCount
     };

@@ -105,7 +105,7 @@ export default defineComponent({
     }
   },
 
-  emits: ["update:content", "update:is-preview", "update:state", "event"],
+  emits: ["update:content", "update:is-preview", "update:state", "event", "check", "next", "feedback"],
 
   setup(props, context) {
     const startTimestamp: number = Date.now();
