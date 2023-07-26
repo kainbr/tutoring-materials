@@ -1,5 +1,18 @@
 <template>
-  <div :class="backgroundColor" class="flex flex-row container rounded-lg items-start py-2 px-4">
+  <div :class="backgroundColor" class="flex flex-row container rounded-lg items-start p-2">
+
+    <Transition appear>
+      <svg :class="fontColor" class="w-6 h-6 mx-1" fill="none" stroke="currentColor" stroke-width="1.5"
+           viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path v-if="['correct'].includes(state.state)" d="M4.5 12.75l6 6 9-13.5" stroke-linecap="round"
+              stroke-linejoin="round" />
+        <path v-if="['incorrect'].includes(state.state)" d="M15 15l6-6m0 0l-6-6m6 6H9a6 6 0 000 12h3" stroke-linecap="round"
+              stroke-linejoin="round" />
+        <path v-if="['final-incorrect'].includes(state.state)" d="M6 18L18 6M6 6l12 12" stroke-linecap="round"
+              stroke-linejoin="round" />
+      </svg>
+    </Transition>
+
     <!-- Headline -->
     <div class="flex flex-col basis-full" :class="{ 'basis-3/5': width > 500 }">
       <Transition appear>
@@ -7,7 +20,9 @@
           v-if="['correct', 'incorrect', 'final-incorrect'].includes(state.state)"
           class="text-base font-medium"
           :class="titleColor"
-        >{{ title }}</span
+        >
+          {{ title }}
+        </span
         >
       </Transition>
       <Transition appear>
@@ -16,7 +31,7 @@
             v-for="hint in hints"
             :key="hint.id"
             :class="fontColor"
-            class="not-prose text-sm mt-0.5"
+            class="not-prose text-sm mt-0.5 w-fit"
           >
             <InlineEditor :content="hint.config.content"></InlineEditor>
           </div>
@@ -29,11 +44,11 @@
       </Transition>
     </div>
 
-    <div class="mt-2 flex flex-row gap-1">
+    <div class="mt-2 flex flex-row gap-1 pr-2">
 
       <!-- Check button -->
       <button
-        v-if="!options.hideSubmitButton && ['init', 'incorrect'].includes(state.state)"
+        v-if="!options.hideSubmitButton && ['init', 'incorrect'].includes(state.state) && !!options.maxAttempts"
         :disabled="(!options.allowEmptyAnswerSubmission && state.empty) || nextButtonDisabledTimerCount > 0"
         type="button"
         class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white
@@ -67,7 +82,8 @@
         <button
           :disabled="nextButtonDisabledTimerCount > 0"
           class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white
-        shadow-sm hover:bg-blue-500 sm:ml-1 sm:w-auto disabled:bg-blue-300 disabled:cursor-not-allowed whitespace-nowrap" type="button"
+        shadow-sm hover:bg-blue-500 sm:ml-1 sm:w-auto disabled:bg-blue-300 disabled:cursor-not-allowed whitespace-nowrap"
+          type="button"
         >
           <span class="w-full">Weiter </span>
           <span v-if="nextButtonDisabledTimerCount > 0"> ... {{ nextButtonDisabledTimerCount }}</span>
