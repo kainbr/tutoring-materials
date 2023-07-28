@@ -3,7 +3,7 @@ import en from "@/locales/en.json";
 import de from "@/locales/de.json";
 
 export default createI18n({
-  locale: navigator.language.split("-")[0],
+  locale: "de", // navigator.language.split("-")[0],
   legacy: false,
   fallbackLocale: "en",
   messages: {
