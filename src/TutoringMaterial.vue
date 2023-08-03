@@ -114,7 +114,7 @@ export default defineComponent({
     useDefaults(props);
     const { container, width, height, editorContainerClasses } = useContainerDimensions(props);
     const { editor } = useEditor(props, context);
-    const { taskStates } = useTasks(editor);
+    const { taskStates } = useTasks(editor, props);
     const { activeFeedbacks, addActiveFeedback, removeActiveFeedback } = useFeedbacks();
     const { eventBus } = useEventBus(editor, context, addActiveFeedback);
     useProps(

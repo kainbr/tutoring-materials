@@ -4,6 +4,7 @@ import { onBeforeUnmount, provide, ref } from "vue";
 import type { Editor } from "@tiptap/vue-3";
 import type { Ref } from "vue";
 import type { TaskState } from "@/extensions/task/types";
+import type { DocumentState } from "@/extensions/document/types";
 
 export type InjectedTaskStates = {
   taskStates: Ref<TaskState[]>;
@@ -13,8 +14,9 @@ export type InjectedTaskStates = {
   removeTaskState: (taskState: TaskState) => void;
 };
 
-export default function (editor: Editor): InjectedTaskStates {
-  const taskStates: Ref<TaskState[]> = ref([]);
+export default function(editor: Editor, props: { state: DocumentState }): InjectedTaskStates {
+
+  const taskStates: Ref<TaskState[]> = ref([...props.state.tasks]);
   const renderedTasks: Ref<string[]> = ref([]);
 
   function addTaskState(taskState: TaskState) {
@@ -46,7 +48,7 @@ export default function (editor: Editor): InjectedTaskStates {
     renderedTasks,
     addTaskState,
     updateTaskState,
-    removeTaskState,
+    removeTaskState
   });
 
   return {
@@ -54,6 +56,6 @@ export default function (editor: Editor): InjectedTaskStates {
     renderedTasks,
     addTaskState,
     updateTaskState,
-    removeTaskState,
+    removeTaskState
   };
 }
