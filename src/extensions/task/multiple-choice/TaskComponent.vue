@@ -151,7 +151,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject } from "vue";
+import { computed, defineComponent, inject, nextTick } from "vue";
 
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import IconAdd from "@/helpers/icons/IconAdd.vue";
@@ -272,7 +272,7 @@ export default defineComponent({
       }
     };
 
-    const toggleAnswerOptionValue = (option: MCOption) => {
+    const toggleAnswerOptionValue = async (option: MCOption) => {
       if (
         Array.isArray(props.content) &&
         !!props.state &&
@@ -291,6 +291,7 @@ export default defineComponent({
             }
           });
 
+          await nextTick();
           eventBus.emit("interaction", {
             type: "answer-changed",
             parent: props.id,

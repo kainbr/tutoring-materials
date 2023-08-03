@@ -61,7 +61,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject, onMounted, provide, ref, watch } from "vue";
+import { computed, defineComponent, inject, nextTick, onMounted, provide, ref, watch } from "vue";
 import { Editor, NodeViewContent, NodeViewWrapper } from "@tiptap/vue-3";
 import { calculateHexIcon } from "@/helpers/util";
 import IconClose from "@/helpers/icons/IconClose.vue";
@@ -262,6 +262,9 @@ export default defineComponent({
      */
     const submittedTaskStates: Ref<TaskState[]> = ref([]);
     const submit = async (state: TaskState) => {
+
+      console.log("Submit started");
+
       // Evaluate answer
       const { response, facts } = await evaluate(
         props.node.attrs.type,
@@ -296,6 +299,7 @@ export default defineComponent({
       submittedTaskStates.value = [...submittedTaskStates.value, newState];
 
       // Emit event
+      await nextTick();
       eventBus.emit("interaction", {
         type: "answer-submitted",
         parent: state.id,

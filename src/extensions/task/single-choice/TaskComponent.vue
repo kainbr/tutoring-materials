@@ -136,7 +136,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from "vue";
+import { defineComponent, inject, nextTick } from "vue";
 
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import IconAdd from "@/helpers/icons/IconAdd.vue";
@@ -252,7 +252,7 @@ export default defineComponent({
       }
     };
 
-    const changeAnswerOptionValue = (option: SCOption) => {
+    const changeAnswerOptionValue = async (option: SCOption) => {
       if (
         Array.isArray(props.content) &&
         !!props.state &&
@@ -274,6 +274,7 @@ export default defineComponent({
             }
           });
 
+          await nextTick();
           eventBus.emit("interaction", {
             type: "answer-changed",
             parent: props.id,

@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from "vue";
+import { defineComponent, inject, nextTick } from "vue";
 
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import IconAdd from "@/helpers/icons/IconAdd.vue";
@@ -158,7 +158,7 @@ export default defineComponent({
       [formatOptions, formatContent, formatEvaluation, formatState, formatEvents]
     );
 
-    const changeAnswerValue = ($event: InputEvent) => {
+    const changeAnswerValue = async ($event: InputEvent) => {
 
       const oldAnswer = props.state?.answer;
       const newAnswer = ($event.target as HTMLInputElement)?.value;
@@ -170,6 +170,7 @@ export default defineComponent({
         }
       });
 
+      await nextTick();
       eventBus.emit("interaction", {
         type: "answer-changed",
         parent: props.id,

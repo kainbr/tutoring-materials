@@ -82,7 +82,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, provide } from "vue";
+import { defineComponent, nextTick, provide } from "vue";
 import { inject } from "vue";
 import { formatContent } from "@/extensions/task/fill-the-blank/format/content";
 import {
@@ -198,7 +198,8 @@ export default defineComponent({
       }
     });
 
-    const emitAnswerChangedEvent = (newAnswer: FTBStateAnswer, oldAnswer: FTBStateAnswer) => {
+    const emitAnswerChangedEvent = async (newAnswer: FTBStateAnswer, oldAnswer: FTBStateAnswer) => {
+      await nextTick();
       eventBus.emit("interaction", {
         type: "answer-changed",
         parent: props.id,

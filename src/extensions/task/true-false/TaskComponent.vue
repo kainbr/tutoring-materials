@@ -220,7 +220,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from "vue";
+import { defineComponent, inject, nextTick } from "vue";
 import { formatOptions } from "@/extensions/task/true-false/format/options";
 import { formatContent } from "@/extensions/task/true-false/format/content";
 import { formatEvaluation } from "@/extensions/task/true-false/format/evaluation";
@@ -346,7 +346,7 @@ export default defineComponent({
       }
     };
 
-    const updateAnswerOptionValue = (option: MCOption, value: boolean) => {
+    const updateAnswerOptionValue = async (option: MCOption, value: boolean) => {
       if (
         Array.isArray(props.content) &&
         !!props.state &&
@@ -365,6 +365,7 @@ export default defineComponent({
             },
           });
 
+          await nextTick();
           eventBus.emit("interaction", {
             type: "answer-changed",
             parent: props.id,
