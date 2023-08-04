@@ -45,21 +45,51 @@
       </Transition>
     </div>
 
-    <div class="mt-2 flex flex-row gap-1 pr-2">
+    <div class="mt-2 flex flex-row gap-1 pr-2 items-center">
+
+      <div
+        v-if="disabledTimer > 0"
+        class="inline-flex items-center justify-center overflow-hidden rounded-full bottom-5 left-5"
+      >
+        <!-- Building a Progress Ring: https://css-tricks.com/building-progress-ring-quickly/ -->
+        <svg class="w-8 h-8">
+          <circle
+            class="text-gray-300"
+            cx="16"
+            cy="16"
+            fill="transparent"
+            r="12"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <circle
+            :stroke-dasharray="75.3982236862"
+            :stroke-dashoffset="75.3982236862 - disabledTimer * 75.3982236862"
+            class="text-blue-500"
+            cx="16"
+            cy="16"
+            fill="transparent"
+            r="12"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-width="2.5"
+          />
+        </svg>
+      </div>
+
 
       <!-- Check button -->
       <button
         v-if="!options.hideSubmitButton && ['init', 'incorrect'].includes(state.state) && !!options.maxAttempts"
-        :disabled="(!options.allowEmptyAnswerSubmission && state.empty) || nextButtonDisabledTimerCount > 0"
+        :disabled="(!options.allowEmptyAnswerSubmission && state.empty) || disabledTimer > 0"
         type="button"
         class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white
-        shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto disabled:bg-blue-300 disabled:cursor-not-allowed whitespace-nowrap"
+        shadow-sm hover:bg-blue-500 sm:ml-1 sm:w-auto disabled:bg-blue-300 disabled:cursor-not-allowed whitespace-nowrap"
         @click="submit(state)"
       >
         <span>
           {{ options.textSubmitButton }}
         </span>
-        <span v-if="nextButtonDisabledTimerCount > 0"> ... {{ nextButtonDisabledTimerCount }}</span>
       </button>
 
       <!-- Feedback button -->
@@ -84,14 +114,13 @@
         <!-- Next button -->
         <button
           v-if="options.hasNextButton"
-          :disabled="nextButtonDisabledTimerCount > 0"
+          :disabled="disabledTimer > 0"
           class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white
         shadow-sm hover:bg-blue-500 sm:ml-1 sm:w-auto disabled:bg-blue-300 disabled:cursor-not-allowed whitespace-nowrap"
           type="button"
           @click="next()"
         >
           <span class="w-full">Weiter </span>
-          <span v-if="nextButtonDisabledTimerCount > 0"> ... {{ nextButtonDisabledTimerCount }}</span>
         </button>
       </div>
     </div>
@@ -148,7 +177,7 @@ export default defineComponent({
   setup(props) {
     const { activeFeedbacks } = inject("feedbacks") as InjectedFeedbacks;
     const { width } = inject("containerDimensions") as InjectedContainerDimensions;
-    const { submit, next, feedback, nextButtonDisabledTimerCount } = inject("submit") as InjectedSubmit;
+    const { submit, next, feedback } = inject("submit") as InjectedSubmit;
 
     const hints: Ref<HintFeedback[]> = computed(() => {
       return (
@@ -208,6 +237,10 @@ export default defineComponent({
       };
     });
 
+    const disabledTimer = computed(() => {
+      return props.state.disabledTimer;
+    });
+
     return {
       backgroundColor,
       fontColor,
@@ -219,7 +252,7 @@ export default defineComponent({
       next,
       feedback,
       width,
-      nextButtonDisabledTimerCount
+      disabledTimer
     };
   }
 });

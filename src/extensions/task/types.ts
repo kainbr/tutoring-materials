@@ -73,4 +73,5 @@ export interface TaskState {
   type: string;
   answer: unknown;
   empty: boolean;
+  disabledTimer?: number;
 }

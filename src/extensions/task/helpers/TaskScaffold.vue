@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col w-full w-full">
+  <div class="flex flex-col w-full">
     <div v-if="!isEditableReactive" class="my-1 w-full">
       <slot name="render" />
     </div>

@@ -90,7 +90,7 @@ export type InjectedSubmit = {
   next: () => void;
   feedback: () => void;
   submittedTaskStates: Ref<TaskState[]>;
-  nextButtonDisabledTimerCount: Ref<number>;
+  disabledTimer: Ref<number>;
 };
 
 export default defineComponent({
@@ -221,39 +221,49 @@ export default defineComponent({
       }
     };
 
-    const nextButtonDisabledTimerCount = ref(0);
-    const nextButtonDisabledTimerCountLocked = ref(false);
+    const disabledTimerLocked = ref(false);
 
     const calculateTimerCount = () => {
-      if (!!state.value?.state) {
-        if (optionsWithDefaults.value.hasDisabledCheckTimer && ["init", "incorrect"].includes(state.value?.state)) {
-          nextButtonDisabledTimerCount.value = optionsWithDefaults.value.disabledCheckTimer;
-        } else if (optionsWithDefaults.value.hasDisabledNextTimer && ["final-incorrect"].includes(state.value?.state)) {
-          nextButtonDisabledTimerCount.value = optionsWithDefaults.value.disabledNextTimer;
+      if (!!state.value?.state && !state.value.disabledTimer) {
+        if (optionsWithDefaults.value.hasDisabledCheckTimer && ["init", "incorrect"].includes(state.value.state)) {
+          state.value.disabledTimer = 1;
+          optionsWithDefaults.value.disabledCheckTimer;
+        } else if (optionsWithDefaults.value.hasDisabledNextTimer && ["final-incorrect"].includes(state.value.state)) {
+          state.value.disabledTimer = 1;
+          optionsWithDefaults.value.disabledNextTimer;
         } else {
-          nextButtonDisabledTimerCount.value = 0;
+          state.value.disabledTimer = 0;
         }
       }
     };
 
-    watch(nextButtonDisabledTimerCount, (newValue, oldValue) => {
-      if (newValue > 0 && !nextButtonDisabledTimerCountLocked.value) {
-        nextButtonDisabledTimerCountLocked.value = true;
+    watch(state, (newValue, oldValue) => {
+      if (!!newValue && !!newValue?.disabledTimer && !disabledTimerLocked.value) {
+        disabledTimerLocked.value = true;
         setTimeout(() => {
-          nextButtonDisabledTimerCountLocked.value = false;
-          nextButtonDisabledTimerCount.value = nextButtonDisabledTimerCount.value - 1;
+          if (!!state.value && !!state.value?.disabledTimer) {
+            if (["init", "incorrect"].includes(state.value.state)) {
+              state.value.disabledTimer = ((state.value.disabledTimer * optionsWithDefaults.value.disabledCheckTimer) - 1) /
+                optionsWithDefaults.value.disabledCheckTimer;
+            } else {
+              state.value.disabledTimer = ((state.value.disabledTimer * optionsWithDefaults.value.disabledNextTimer) - 1) /
+                optionsWithDefaults.value.disabledNextTimer;
+            }
+            if (state.value.disabledTimer < 0) {
+              state.value.disabledTimer = 0;
+            }
+          }
+          disabledTimerLocked.value = false;
         }, 1000);
       }
-    }, { immediate: true });
+    }, { immediate: true, deep: true });
 
     watch(optionsWithDefaults, () => {
       calculateTimerCount();
     });
 
-    watch(state, (newState, oldState) => {
-      if (!oldState?.state) {
-        calculateTimerCount();
-      }
+    onMounted(() => {
+      calculateTimerCount();
     });
 
     /**
@@ -344,7 +354,7 @@ export default defineComponent({
       });
     };
 
-    provide("submit", { submit, next, feedback, submittedTaskStates, nextButtonDisabledTimerCount });
+    provide("submit", { submit, next, feedback, submittedTaskStates, disabledTimer: state.value?.disabledTimer });
 
     const isEditableReactive: Boolean = inject("isEditableReactive", props.editor.isEditable);
 
