@@ -224,7 +224,7 @@ export default defineComponent({
     const disabledTimerLocked = ref(false);
 
     const calculateTimerCount = () => {
-      if (!!state.value?.state && !state.value.disabledTimer) {
+      if (!!state.value?.state && !state.value.disabledTimer && state.value.disabledTimer != 0) {
         if (optionsWithDefaults.value.hasDisabledCheckTimer && ["init", "incorrect"].includes(state.value.state)) {
           state.value.disabledTimer = 1;
           optionsWithDefaults.value.disabledCheckTimer;
@@ -302,6 +302,7 @@ export default defineComponent({
         }
       }
 
+      newState.disabledTimer = undefined;
       updateTaskState(state, newState);
 
       submittedTaskStates.value = [...submittedTaskStates.value, newState];
