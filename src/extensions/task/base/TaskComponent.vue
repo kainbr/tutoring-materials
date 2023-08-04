@@ -263,8 +263,6 @@ export default defineComponent({
     const submittedTaskStates: Ref<TaskState[]> = ref([]);
     const submit = async (state: TaskState) => {
 
-      console.log("Submit started");
-
       // Evaluate answer
       const { response, facts } = await evaluate(
         props.node.attrs.type,
