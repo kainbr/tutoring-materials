@@ -26,7 +26,7 @@ export default function (props: { isEditor: boolean }): InjectedContainerDimensi
 
       editorContainerClasses.value = [
         props.isEditor ? "overflow-y-auto h-full" : "",
-        width.value < 500 ? "prose-sm" : "",
+        width.value < 500 ? "prose" : "",
         width.value >= 500 && width.value < 900 ? "prose-base" : "",
         width.value >= 900 ? "prose-lg" : "",
       ];
