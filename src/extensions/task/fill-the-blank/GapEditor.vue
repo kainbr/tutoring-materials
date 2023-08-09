@@ -18,7 +18,7 @@
       <EditorContent
         :editor="editor"
         :content="content"
-        class="w-full h-full mx-auto z-0 prose [&_p]:m-0 [&_h2]:mt-0 [&_h3]:mt-0 [&_blockquote]:mt-0 [&_pre]:mt-0 [&_ul]:mt-0 [&_ol]:mt-0 [&_li]:mt-0"
+        class="w-full h-full mx-auto z-0 prose lg:prose-lg prose-slate [&_p]:m-0 [&_h2]:mt-0 [&_h3]:mt-0 [&_blockquote]:mt-0 [&_pre]:mt-0 [&_ul]:mt-0 [&_ol]:mt-0 [&_li]:mt-0"
         :class="{
           'p-2': isEditor,
           'prose-sm': width < 500,
