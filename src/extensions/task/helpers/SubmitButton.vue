@@ -2,29 +2,32 @@
   <div :class="backgroundColor" class="flex flex-row container rounded-lg items-start p-2">
 
     <Transition appear>
-      <svg :class="fontColor" class="w-6 h-6 mx-1" fill="none" stroke="currentColor" stroke-width="1.5"
-           viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path v-if="['correct'].includes(state.state)" d="M4.5 12.75l6 6 9-13.5" stroke-linecap="round"
-              stroke-linejoin="round" />
-        <path v-if="['incorrect'].includes(state.state)" d="M15 15l6-6m0 0l-6-6m6 6H9a6 6 0 000 12h3"
-              stroke-linecap="round"
-              stroke-linejoin="round" />
-        <path v-if="['final-incorrect'].includes(state.state)" d="M6 18L18 6M6 6l12 12" stroke-linecap="round"
-              stroke-linejoin="round" />
-      </svg>
+      <div
+        class="mx-auto flex w-10 flex-shrink-0 items-center justify-center rounded-full"
+      >
+        <svg :class="fontColor" class="w-8 h-8 my-0 mx-2" fill="none" stroke="currentColor" stroke-width="1.5"
+             viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path v-if="['correct'].includes(state.state)" d="M4.5 12.75l6 6 9-13.5" stroke-linecap="round"
+                stroke-linejoin="round" />
+          <path v-if="['incorrect'].includes(state.state)" d="M15 15l6-6m0 0l-6-6m6 6H9a6 6 0 000 12h3"
+                stroke-linecap="round"
+                stroke-linejoin="round" />
+          <path v-if="['final-incorrect'].includes(state.state)" d="M6 18L18 6M6 6l12 12" stroke-linecap="round"
+                stroke-linejoin="round" />
+        </svg>
+      </div>
     </Transition>
 
     <!-- Headline -->
-    <div class="flex flex-col basis-full" :class="{ 'basis-3/5': width > 500 }">
+    <div :class="{ 'basis-3/5': width > 500 }" class="flex flex-col basis-full mx-1">
       <Transition appear>
         <span
           v-if="['correct', 'incorrect', 'final-incorrect'].includes(state.state)"
-          class="text-base font-medium"
+          class="font-medium"
           :class="titleColor"
         >
           {{ title }}
-        </span
-        >
+        </span>
       </Transition>
       <Transition appear>
         <div v-if="['incorrect'].includes(state.state)">
@@ -32,7 +35,7 @@
             v-for="hint in hints"
             :key="hint.id"
             :class="fontColor"
-            class="not-prose text-sm mt-0.5 w-fit"
+            class="w-fit"
           >
             <InlineEditor :content="hint.config.content"></InlineEditor>
           </div>
@@ -40,7 +43,7 @@
       </Transition>
       <Transition appear>
         <div v-if="['correct', 'incorrect', 'final-incorrect'].includes(state.state)" class="">
-          <span class="text-sm" :class="fontColor">{{ text }}</span>
+          <span :class="fontColor">{{ text }}</span>
         </div>
       </Transition>
     </div>
@@ -83,7 +86,7 @@
         v-if="!options.hideSubmitButton && ['init', 'incorrect'].includes(state.state) && !!options.maxAttempts"
         :disabled="(!options.allowEmptyAnswerSubmission && state.empty) || disabledTimer > 0"
         type="button"
-        class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white
+        class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-base font-semibold text-white
         shadow-sm hover:bg-blue-500 sm:ml-1 sm:w-auto disabled:bg-blue-300 disabled:cursor-not-allowed whitespace-nowrap"
         @click="submit(state)"
       >
@@ -98,12 +101,12 @@
         class="flex flex-row">
         <button
           v-if="options.hasFeedbackButton"
-          class="inline-flex flex-row items-center w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-gray-600
+          class="inline-flex flex-row items-center w-full justify-center rounded-md px-3 py-2 font-semibold text-gray-600
         hover:text-gray-800 sm:w-auto"
           type="button"
           @click="feedback()"
         >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5"
+          <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" stroke-width="1.5"
                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0
           016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-.005-10.499l-3.11.732a9 9 0
@@ -115,7 +118,7 @@
         <button
           v-if="options.hasNextButton"
           :disabled="disabledTimer > 0"
-          class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white
+          class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-base font-semibold text-white
         shadow-sm hover:bg-blue-500 sm:ml-1 sm:w-auto disabled:bg-blue-300 disabled:cursor-not-allowed whitespace-nowrap"
           type="button"
           @click="next()"
