@@ -1,12 +1,12 @@
 <template>
   <node-view-wrapper
-    class="flex w-full px-4 mb-4 rounded-lg border"
     :class="{
-      'bg-blue-100 border-blue-800': node.attrs.color === 'blue',
-      'bg-red-100 border-red-800': node.attrs.color === 'red',
-      'bg-amber-100 border-amber-800': node.attrs.color === 'amber',
-      'bg-green-100 border-green-800': node.attrs.color === 'green',
+      'bg-blue-100 ': node.attrs.color === 'blue',
+      'bg-red-100': node.attrs.color === 'red',
+      'bg-amber-100': node.attrs.color === 'amber',
+      'bg-green-100': node.attrs.color === 'green',
     }"
+    class="flex w-full px-4 mb-4 rounded-lg"
   >
     <div class="flex flex-col w-full rounded-md py-2">
       <!-- Configuration menu -->
@@ -168,11 +168,12 @@
       </div>
 
       <!-- Main Content -->
-      <div class="flex flex-row w-full items-start [&_p]:mt-4">
+      <div class="flex flex-row w-full items-start">
         <!-- Icon -->
+
+        <div class="mx-auto flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 mt-1">
         <component
           :is="node.attrs.icon"
-          class="basis-1/6 min-h-[40px] min-w-[40px] max-h-[90px] max-w-[90px] my-2"
           :class="{
             'fill-blue-800 ': node.attrs.color === 'blue',
             'fill-red-800 ': node.attrs.color === 'red',
@@ -180,10 +181,11 @@
             'fill-green-800 ': node.attrs.color === 'green',
           }"
         />
+        </div>
 
         <!-- Text -->
-        <div class="ml-3 w-[90%]">
-          <div class="flex w-full h-full items-center">
+        <div class="ml-3">
+          <div class="flex w-full h-full">
             <node-view-content
               class="w-full not-prose"
               :class="{
