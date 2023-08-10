@@ -35,7 +35,7 @@ export default defineComponent({
   name: "SourceOption",
 
   components: {
-    InlineEditor,
+    InlineEditor
   },
 
   emits: ["startDragging", "updateDraggingPosition", "stopDragging", "cancelDragging"],
@@ -43,18 +43,18 @@ export default defineComponent({
   props: {
     id: {
       type: String,
-      required: true,
+      required: true
     },
     content: {
       type: Object as PropType<JSONContent>,
       default() {
         return {};
-      },
+      }
     },
     disabled: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
 
   setup(props, context) {
@@ -67,10 +67,17 @@ export default defineComponent({
     const yDragStart = ref(0);
     const isDragging = ref(false);
 
+    const isTouchEvent = (event: any): boolean => {
+      if ((window as any).TouchEvent !== undefined) {
+        return event instanceof TouchEvent;
+      }
+      return event.touches !== undefined;
+    };
+
     const onInputStart = (e: MouseEvent | TouchEvent) => {
       if (!props.disabled) {
         e.stopPropagation();
-        let { clientX, clientY } = e instanceof TouchEvent ? e.targetTouches[0] : e;
+        let { clientX, clientY } = isTouchEvent(e) ? (e as TouchEvent).targetTouches[0] : (e as MouseEvent);
         isDragging.value = true;
         xDragStart.value = clientX;
         yDragStart.value = clientY;
@@ -78,14 +85,14 @@ export default defineComponent({
           leaderLine.position();
           leaderLine.show("none");
         }
-        document.addEventListener(e instanceof TouchEvent ? "touchmove" : "mousemove", onInputMove);
+        document.addEventListener(isTouchEvent(e) ? "touchmove" : "mousemove", onInputMove);
         context.emit("startDragging");
       }
     };
 
     const onInputMove = (e: MouseEvent | TouchEvent) => {
       e.stopPropagation();
-      let { clientX, clientY } = e instanceof TouchEvent ? e.targetTouches[0] : e;
+      let { clientX, clientY } = isTouchEvent(e) ? (e as TouchEvent).targetTouches[0] : (e as MouseEvent);
       if (isDragging.value) {
         xTransform.value = clientX - xDragStart.value;
         yTransform.value = clientY - yDragStart.value;
@@ -94,7 +101,7 @@ export default defineComponent({
         }
         context.emit("updateDraggingPosition", {
           clientX,
-          clientY,
+          clientY
         });
       }
     };
@@ -111,7 +118,7 @@ export default defineComponent({
         leaderLine.position();
       }
       document.removeEventListener(
-        e instanceof TouchEvent ? "touchmove" : "mousemove",
+        isTouchEvent(e) ? "touchmove" : "mousemove",
         onInputMove
       );
       context.emit("stopDragging");
@@ -129,7 +136,7 @@ export default defineComponent({
           endSocket: "left",
           color: "#2563eb",
           hide: true,
-          dash: { animation: true },
+          dash: { animation: true }
         });
       }
     });
@@ -146,8 +153,8 @@ export default defineComponent({
       isDragging,
       onInputStart,
       onInputEnd,
-      cancelDragging,
+      cancelDragging
     };
-  },
+  }
 });
 </script>

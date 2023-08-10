@@ -86,7 +86,7 @@
         v-if="!options.hideSubmitButton && ['init', 'incorrect'].includes(state.state) && !!options.maxAttempts"
         :disabled="(!options.allowEmptyAnswerSubmission && state.empty) || disabledTimer > 0"
         type="button"
-        class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-base font-semibold text-white
+        class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white
         shadow-sm hover:bg-blue-500 sm:ml-1 sm:w-auto disabled:bg-blue-300 disabled:cursor-not-allowed whitespace-nowrap"
         @click="submit(state)"
       >
@@ -118,7 +118,7 @@
         <button
           v-if="options.hasNextButton"
           :disabled="disabledTimer > 0"
-          class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-base font-semibold text-white
+          class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white
         shadow-sm hover:bg-blue-500 sm:ml-1 sm:w-auto disabled:bg-blue-300 disabled:cursor-not-allowed whitespace-nowrap"
           type="button"
           @click="next()"

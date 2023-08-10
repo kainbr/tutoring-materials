@@ -5,7 +5,7 @@
       <div v-if="width < 400" class="text-center">
         {{ $t("editor.task.text-screen-size") }}
       </div>
-      <div v-else class="grid grid-cols-3" @mouseleave="cancelDragging">
+      <div v-else class="grid grid-cols-3 px-4" @mouseleave="cancelDragging">
         <!-- Start options -->
         <div class="flex flex-col h-full justify-center">
           <SourceOption
