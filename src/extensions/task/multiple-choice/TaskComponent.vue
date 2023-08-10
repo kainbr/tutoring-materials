@@ -17,7 +17,7 @@
             :checked="isOptionChecked(content[index])"
             :disabled="['correct', 'final-incorrect'].includes(state.state)"
           />
-          <div style="flex-grow: 1" class="py-1"
+          <div style="flex-grow: 1"
                :class="{'cursor-pointer':!['correct', 'final-incorrect'].includes(state.state)}">
             <InlineEditor :content="!!content ? content[index].content : undefined" />
           </div>
