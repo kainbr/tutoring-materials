@@ -242,16 +242,15 @@ export default defineComponent({
         disabledTimerLocked.value = true;
         setTimeout(() => {
           if (!!state.value && !!state.value?.disabledTimer) {
+            let disabledTimer = 0;
             if (["init", "incorrect"].includes(state.value.state)) {
-              state.value.disabledTimer = ((state.value.disabledTimer * optionsWithDefaults.value.disabledCheckTimer) - 1) /
+              disabledTimer = ((state.value.disabledTimer * optionsWithDefaults.value.disabledCheckTimer) - 1) /
                 optionsWithDefaults.value.disabledCheckTimer;
             } else {
-              state.value.disabledTimer = ((state.value.disabledTimer * optionsWithDefaults.value.disabledNextTimer) - 1) /
+              disabledTimer = ((state.value.disabledTimer * optionsWithDefaults.value.disabledNextTimer) - 1) /
                 optionsWithDefaults.value.disabledNextTimer;
             }
-            if (state.value.disabledTimer < 0) {
-              state.value.disabledTimer = 0;
-            }
+            updateTaskState(state.value, { disabledTimer: disabledTimer });
           }
           disabledTimerLocked.value = false;
         }, 1000);
