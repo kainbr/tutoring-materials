@@ -12,7 +12,7 @@
         <EditorContent
           :editor="editor"
           :class="{'overflow-hidden bg-white': isEditor && isPreview, 'h-full': isEditor && !isPreview}"
-          class="w-full mx-auto z-0 prose lg:prose-lg prose-slate [&_p]:mt-0 [&_h2]:mt-0 [&_h3]:mt-0 [&_blockquote]:mt-0 [&_pre]:mt-0 [&_ul]:mt-0 [&_ol]:mt-0 [&_li]:mt-0"
+          class="w-full mx-auto z-0 prose lg:prose-lg prose-slate select-none [&_p]:mt-0 [&_h2]:mt-0 [&_h3]:mt-0 [&_blockquote]:mt-0 [&_pre]:mt-0 [&_ul]:mt-0 [&_ol]:mt-0 [&_li]:mt-0"
         >
         </EditorContent>
       </div>
