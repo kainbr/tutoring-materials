@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 border-2 rounded-xl text-center my-2 relative [&_img]:my-0">
+  <div class="p-3 shadow border rounded-xl text-center my-2 relative [&_img]:my-0 text-base">
     <InlineEditor :content="content" @input-up-event="cancelDragging" allow-images />
 
     <div
@@ -17,7 +17,7 @@
         @mouseup.prevent="onInputEnd"
         @touchend.passive="onInputEnd"
       >
-        <div class="p-1 border-2 w-8 h-8 rounded-full bg-green-300" ref="handleRef"></div>
+        <div ref="handleRef" class="p-1 w-8 h-8 rounded-full bg-green-400"></div>
       </div>
     </div>
   </div>
@@ -127,7 +127,7 @@ export default defineComponent({
           startSocket: "right",
           endPlug: "behind",
           endSocket: "left",
-          color: "#38bdf8",
+          color: "#2563eb",
           hide: true,
           dash: { animation: true },
         });

@@ -609,7 +609,7 @@ export default defineComponent({
                 startSocket: "right",
                 endPlug: "behind",
                 endSocket: "left",
-                color: "#38bdf8"
+                color: "#2563eb"
               }
             );
             lines.value = [
