@@ -44,7 +44,7 @@
 
         <input
           :checked="evaluation.solution.find((s) => s.id === option.id)?.value || false"
-          class="mx-1 my-2 h-fit"
+          class="mx-1 my-2"
           type="checkbox"
           @input="toggleEvaluationOptionValue(option)"
         />
