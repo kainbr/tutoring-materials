@@ -624,7 +624,7 @@ export default defineComponent({
 
             // Add event listener to redraw on scroll
             window.addEventListener("scroll", (event) => {
-              if (!ticking.value) {
+              if (!ticking.value && newLine) {
                 window.requestAnimationFrame(() => {
                   newLine.position();
                   ticking.value = false;
