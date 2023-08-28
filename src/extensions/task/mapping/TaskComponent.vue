@@ -351,6 +351,7 @@ export default defineComponent({
     /* Variable */
     let sourceElement: Ref<string | null> = ref(null);
     let targetElement: Ref<string | null> = ref(null);
+    let ticking: Ref<boolean> = ref(false); // For throttling scroll events
     const lines: Ref<{ source: string; target: string; line: LeaderLine }[]> = ref([]);
     const sourceRefs: Ref<typeof SourceOption[]> = ref([]);
     const targetRefs: Ref<typeof TargetOption[]> = ref([]);
@@ -620,6 +621,17 @@ export default defineComponent({
                 line: newLine
               }
             ];
+
+            // Add event listener to redraw on scroll
+            window.addEventListener("scroll", (event) => {
+              if (!ticking.value) {
+                window.requestAnimationFrame(() => {
+                  newLine.position();
+                  ticking.value = false;
+                });
+                ticking.value = true;
+              }
+            });
           }
         }
       }
