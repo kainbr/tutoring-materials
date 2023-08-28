@@ -136,13 +136,15 @@ export default defineComponent({
         label: { message: "global.event.type-document-created" }
       });
 
+      const endTimestamp = Date.now();
       eventBus.emit("interaction", {
         type: "document-created",
         parent: null,
         facts: {},
         data: {
-          startTimestamp: startTimestamp,
-          endTimestamp: Date.now()
+          start: startTimestamp,
+          end: endTimestamp,
+          duration: endTimestamp - startTimestamp
         },
         label: {
           message: "global.event.type-document-created"
