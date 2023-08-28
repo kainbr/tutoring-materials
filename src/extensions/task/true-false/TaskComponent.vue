@@ -39,14 +39,14 @@
         </div>
       </div>
       <div v-else>
-        <div class="flex flex-row grid grid-cols-8 w-full gap-2">
+        <div class="grid grid-cols-8 w-full gap-2">
           <div class="col-span-1 flex justify-center">{{ options.falseLabel }}</div>
           <div class="col-span-1 flex justify-center">{{ options.trueLabel }}</div>
         </div>
         <div
           v-for="index in state?.order"
           :key="index"
-          class="flex flex-row grid grid-cols-8 w-full gap-2"
+          class="grid grid-cols-8 w-full gap-2"
           :class="[showCorrectnessAnswerOption(content[index])]"
         >
           <div
@@ -59,6 +59,7 @@
                 state.answer.find((s) => s.id === content[index].id)?.value === false || false
               "
               :disabled="['correct', 'final-incorrect'].includes(state.state)"
+              class="mx-2 my-2.5 enabled:cursor-pointer"
             />
           </div>
           <div
@@ -71,6 +72,7 @@
                 state.answer.find((s) => s.id === content[index].id)?.value === true || false
               "
               :disabled="['correct', 'final-incorrect'].includes(state.state)"
+              class="mx-2 my-2.5 enabled:cursor-pointer"
             />
           </div>
           <div class="col-span-6">
