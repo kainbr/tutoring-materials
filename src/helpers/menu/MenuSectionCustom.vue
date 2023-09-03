@@ -11,7 +11,7 @@
       <IconFolderInfo />
     </EditorMenuButton>
 
-    <span class="ml-0.5 relative z-50 inline-flex">
+    <span class="ml-0.5 relative inline-flex">
       <Menu as="span" class="-ml-px relative block">
         <MenuButton
           class="relative hover:bg-black hover:fill-white focus:outline-none font-medium rounded-lg text-sm p-1 text-center inline-flex items-center"
@@ -28,7 +28,7 @@
           leave-to-class="transform opacity-0 scale-95"
         >
           <MenuItems
-            class="origin-top-right w-auto absolute right-0 -mr-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+            class="origin-top-right w-auto absolute z-50 right-0 -mr-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
           >
             <MenuItem>
               <button
