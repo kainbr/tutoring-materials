@@ -230,7 +230,7 @@ export default defineComponent({
       ctx.drawImage(background, 0, 0);
 
       // Draw regions
-      if (props.editor.isEditable || ["correct", "final-incorrect"].includes(props.state?.state)) {
+      if (props.editor.isEditable || ["correct", "final-incorrect", "solution"].includes(props.state?.state)) {
         props.content?.regions.forEach((region) => {
           switch (region.type) {
             case "rect":
@@ -291,7 +291,7 @@ export default defineComponent({
     };
 
     const submitAnswer = ($event: MouseEvent) => {
-      if (["correct", "final-incorrect"].includes(props.state?.state)) return;
+      if (["correct", "final-incorrect", "solution"].includes(props.state?.state)) return;
 
       const rect = canvas.value.getBoundingClientRect();
       const scaleX = canvas.value.width / rect.width;

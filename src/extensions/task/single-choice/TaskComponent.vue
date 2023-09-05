@@ -16,11 +16,11 @@
             type="radio"
             class="m-2 enabled:cursor-pointer"
             :checked="isOptionChecked(content[index])"
-            :disabled="['correct', 'final-incorrect'].includes(state.state)"
+            :disabled="['correct', 'final-incorrect', 'solution'].includes(state.state)"
           />
           </div>
           <div style="flex-grow: 1"
-               :class="{'cursor-pointer':!['correct', 'final-incorrect'].includes(state.state)}">
+               :class="{'cursor-pointer':!['correct', 'final-incorrect', 'solution'].includes(state.state)}">
             <InlineEditor :content="!!content ? content[index].content : undefined" />
           </div>
         </div>
@@ -296,7 +296,7 @@ export default defineComponent({
     const showCorrectAnswerOption = (option: SCOption) => {
       const state = props.state?.state;
 
-      if (!!option.id && !!state && ["correct", "final-incorrect"].includes(state)) {
+      if (!!option.id && !!state && ["correct", "final-incorrect", "solution"].includes(state)) {
         return !!props.evaluation?.solution.find((s) => s.id === option.id)?.value;
       } else {
         return false;
@@ -306,7 +306,7 @@ export default defineComponent({
     const showIncorrectAnswerOption = (option: SCOption) => {
       const state = props.state?.state;
 
-      if (!!option.id && !!state && ["correct", "final-incorrect"].includes(state)) {
+      if (!!option.id && !!state && ["correct", "final-incorrect", "solution"].includes(state)) {
         return !props.evaluation?.solution.find((s) => s.id === option.id)?.value;
       } else {
         return false;

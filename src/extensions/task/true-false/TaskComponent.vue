@@ -19,7 +19,7 @@
                 :checked="
                   state.answer.find((s) => s.id === content[index].id)?.value === false || false
                 "
-                :disabled="['correct', 'final-incorrect'].includes(state.state)"
+                :disabled="['correct', 'final-incorrect', 'solution'].includes(state.state)"
               />
             </div>
             <div
@@ -31,7 +31,7 @@
                 :checked="
                   state.answer.find((s) => s.id === content[index].id)?.value === true || false
                 "
-                :disabled="['correct', 'final-incorrect'].includes(state.state)"
+                :disabled="['correct', 'final-incorrect', 'solution'].includes(state.state)"
               />
               {{ options.trueLabel }}
             </div>
@@ -58,7 +58,7 @@
               :checked="
                 state.answer.find((s) => s.id === content[index].id)?.value === false || false
               "
-              :disabled="['correct', 'final-incorrect'].includes(state.state)"
+              :disabled="['correct', 'final-incorrect', 'solution'].includes(state.state)"
               class="mx-2 my-2.5 enabled:cursor-pointer"
             />
           </div>
@@ -71,7 +71,7 @@
               :checked="
                 state.answer.find((s) => s.id === content[index].id)?.value === true || false
               "
-              :disabled="['correct', 'final-incorrect'].includes(state.state)"
+              :disabled="['correct', 'final-incorrect', 'solution'].includes(state.state)"
               class="mx-2 my-2.5 enabled:cursor-pointer"
             />
           </div>
@@ -352,7 +352,7 @@ export default defineComponent({
       if (
         Array.isArray(props.content) &&
         !!props.state &&
-        !["correct", "final-incorrect"].includes(props.state.state)
+        !["correct", "final-incorrect", "solution"].includes(props.state.state)
       ) {
         const oldAnswer = props.state?.answer;
         const newAnswer = oldAnswer.map((s) => {
@@ -392,7 +392,9 @@ export default defineComponent({
       const solution = props.evaluation?.solution.find((s) => s.id === option.id)?.value;
 
       if (!!state && ["correct", "final-incorrect"].includes(state)) {
-        return answer === solution ? "bg-green-50" : "bg-red-50";
+          return answer === solution ? "bg-green-50" : "bg-red-50";
+      } else if(!!state && ["solution"].includes(state)) {
+          return solution ? "bg-green-50" : "bg-red-50";
       } else {
         return "";
       }

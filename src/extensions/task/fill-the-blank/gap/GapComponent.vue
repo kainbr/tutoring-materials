@@ -65,11 +65,11 @@
             :class="{
             'hover:bg-gray-50': ['init', 'incorrect'].includes(state?.state),
             'border-2 border-green-700 bg-green-100':
-              (['correct', 'final-incorrect'].includes(state.state) ||
+              (['correct', 'final-incorrect', 'solution'].includes(state.state) ||
                 !!state.correctGaps?.includes(node.attrs.id)) &&
               isCorrectAnswerOption(state.answer.find((a) => a.id === node.attrs.id)?.value),
             'border-2 border-red-700 bg-red-100':
-              (['correct', 'final-incorrect'].includes(state.state) ||
+              (['correct', 'final-incorrect', 'solution'].includes(state.state) ||
                 !!state.correctGaps?.includes(node.attrs.id)) &&
               isIncorrectAnswerOption(state.answer.find((a) => a.id === node.attrs.id)?.value),
           }">
@@ -89,12 +89,12 @@
                   ? 'bg-amber-100 text-amber-900'
                   : 'text-gray-900',
                 'relative select-none p-0.5',
-                (['correct', 'final-incorrect'].includes(state.state) ||
+                (['correct', 'final-incorrect', 'solution'].includes(state.state) ||
                   !!state.correctGaps?.includes(node.attrs.id)) &&
                 isCorrectAnswerOption(option.id)
                   ? 'bg-green-100'
                   : '',
-                (['correct', 'final-incorrect'].includes(state.state) ||
+                (['correct', 'final-incorrect', 'solution'].includes(state.state) ||
                   !!state.correctGaps?.includes(node.attrs.id)) &&
                 isIncorrectAnswerOption(option.id)
                   ? 'bg-red-100'

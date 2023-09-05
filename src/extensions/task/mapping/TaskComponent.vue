@@ -9,17 +9,17 @@
         <!-- Start options -->
         <div class="flex flex-col h-full justify-center">
           <SourceOption
-            v-for="s in content?.source"
-            ref="sourceRefs"
-            :key="s.id"
-            :id="s.id"
-            :class="{ 'bg-amber-300': sourceElement === s.id }"
-            :content="s.content"
-            :disabled="!!state && ['correct', 'final-incorrect'].includes(state.state)"
-            @start-dragging="sourceDragging(s.id)"
-            @update-dragging-position="updateDraggingPosition"
-            @stop-dragging="stopDragging"
-            @cancel-dragging="cancelDragging"
+              v-for="s in content?.source"
+              ref="sourceRefs"
+              :key="s.id"
+              :id="s.id"
+              :class="{ 'bg-amber-300': sourceElement === s.id }"
+              :content="s.content"
+              :disabled="!!state && ['correct', 'final-incorrect', 'solution'].includes(state.state)"
+              @start-dragging="sourceDragging(s.id)"
+              @update-dragging-position="updateDraggingPosition"
+              @stop-dragging="stopDragging"
+              @cancel-dragging="cancelDragging"
           />
         </div>
 
@@ -28,17 +28,26 @@
         <!-- End options -->
         <div class="flex flex-col h-full justify-center">
           <TargetOption
-            v-for="t in content?.target"
-            ref="targetRefs"
-            :key="t.id"
-            :id="t.id"
-            :class="{ 'bg-amber-300': targetElement === t.id, 'cursor-grab': !!sourceElement }"
-            :content="t.content"
-            :is-connected="!!state.answer.find((a) => a.target === t.id)"
-            :disabled="!!state && ['correct', 'final-incorrect'].includes(state.state)"
-            @cancel-dragging="cancelDragging"
-            @remove-connection="removeConnection(t.id)"
+              v-for="t in content?.target"
+              ref="targetRefs"
+              :key="t.id"
+              :id="t.id"
+              :class="{ 'bg-amber-300': targetElement === t.id, 'cursor-grab': !!sourceElement }"
+              :content="t.content"
+              :is-connected="!!state.answer.find((a) => a.target === t.id)"
+              :disabled="!!state && ['correct', 'final-incorrect', 'solution'].includes(state.state)"
+              @cancel-dragging="cancelDragging"
+              @remove-connection="removeConnection(t.id)"
           />
+        </div>
+
+        <div v-if="['solution'].includes(state.state)" class="col-span-3">
+          Die richtigen Zuordnungen sind:
+          <div v-if="!!evaluation && !!evaluation.solution"
+               v-for="mapping in evaluation.solution">
+            Linke Option {{ content?.source.findIndex((x) => x.id === mapping.source) + 1 }} zur
+            rechten Option {{ content?.target.findIndex((x) => x.id === mapping.target) + 1 }}
+          </div>
         </div>
       </div>
     </template>
@@ -55,33 +64,33 @@
         </div>
         <div class="grow [&_p]:my-1 [&_img]:my-0 max-h-40 overflow-auto my-1">
           <InlineEditor
-            is-editor
-            allow-images
-            :content="option.content"
-            @update:content="updateOptionContent(option, $event)"
+              is-editor
+              allow-images
+              :content="option.content"
+              @update:content="updateOptionContent(option, $event)"
           />
         </div>
         <div class="min-w-fit">
           <EditorMenuButton
-            :disabled="index === 0"
-            tabindex="-1"
-            @click="moveUpOption(index, option)"
+              :disabled="index === 0"
+              tabindex="-1"
+              @click="moveUpOption(index, option)"
           >
-            <IconArrowUp />
+            <IconArrowUp/>
           </EditorMenuButton>
           <EditorMenuButton
-            :disabled="!content.source || index === content.source.length - 1"
-            tabindex="-1"
-            @click="moveDownOption(index, option)"
+              :disabled="!content.source || index === content.source.length - 1"
+              tabindex="-1"
+              @click="moveDownOption(index, option)"
           >
-            <IconArrowDown />
+            <IconArrowDown/>
           </EditorMenuButton>
           <EditorMenuButton
-            :disabled="!content.source || content.source.length <= 1"
-            tabindex="-1"
-            @click="removeOption(index)"
+              :disabled="!content.source || content.source.length <= 1"
+              tabindex="-1"
+              @click="removeOption(index)"
           >
-            <IconTrash />
+            <IconTrash/>
           </EditorMenuButton>
         </div>
       </div>
@@ -89,7 +98,7 @@
         <div class="flex flex-row justify-end">
           <div class="flex gap-1">
             <EditorMenuButton @click="addOption(true)">
-              <IconAdd />
+              <IconAdd/>
             </EditorMenuButton>
           </div>
         </div>
@@ -105,37 +114,37 @@
         </div>
         <div class="grow [&_p]:my-1 [&_img]:my-0 max-h-40 overflow-auto my-1">
           <InlineEditor
-            is-editor
-            allow-images
-            :content="option.content"
-            @update:content="updateOptionContent(option, $event, false)"
+              is-editor
+              allow-images
+              :content="option.content"
+              @update:content="updateOptionContent(option, $event, false)"
           />
         </div>
         <div class="min-w-fit">
           <EditorMenuButton
-            :disabled="index === 0"
-            tabindex="-1"
-            @click="moveUpOption(index, option, false)"
+              :disabled="index === 0"
+              tabindex="-1"
+              @click="moveUpOption(index, option, false)"
           >
-            <IconArrowUp />
+            <IconArrowUp/>
           </EditorMenuButton>
           <EditorMenuButton
-            :disabled="!content.source || index === content.target.length - 1"
-            tabindex="-1"
-            @click="moveDownOption(index, option, false)"
+              :disabled="!content.source || index === content.target.length - 1"
+              tabindex="-1"
+              @click="moveDownOption(index, option, false)"
           >
-            <IconArrowDown />
+            <IconArrowDown/>
           </EditorMenuButton>
           <EditorMenuButton
-            :disabled="
+              :disabled="
               !content.source ||
               content.target.length <= 1 ||
               content.source.length === content.target.length
             "
-            tabindex="-1"
-            @click="removeOption(index, false)"
+              tabindex="-1"
+              @click="removeOption(index, false)"
           >
-            <IconTrash />
+            <IconTrash/>
           </EditorMenuButton>
         </div>
       </div>
@@ -143,7 +152,7 @@
         <div class="flex flex-row justify-end">
           <div class="flex gap-1">
             <EditorMenuButton @click="addOption(false)">
-              <IconAdd />
+              <IconAdd/>
             </EditorMenuButton>
           </div>
         </div>
@@ -154,36 +163,36 @@
         {{ $t("editor.task.mapping.title-correct-mappings") }}
       </div>
       <div
-        v-if="!!evaluation && !!evaluation.solution"
-        v-for="mapping in evaluation.solution"
-        :key="mapping.source"
-        class="flex flex-row gap-2"
+          v-if="!!evaluation && !!evaluation.solution"
+          v-for="mapping in evaluation.solution"
+          :key="mapping.source"
+          class="flex flex-row gap-2"
       >
         <div v-if="content" class="grow flex flex-col gap-1 my-1">
           <div class="flex flex-row items-center justify-center">
             <span class="mx-2"> {{ $t("editor.task.mapping.label-source-node") }} </span>
             <select
-              v-model="mapping.source"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500
+                v-model="mapping.source"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500
               focus:border-blue-500 block py-1 px-2"
-              disabled
+                disabled
             >
               <option
-                v-for="option in content?.source.filter(
+                  v-for="option in content?.source.filter(
                   (o) =>
                     !evaluation?.solution.find((s) => s.source === o.id && o.id !== mapping.source)
                 )"
-                :key="option.id"
-                :value="option.id"
+                  :key="option.id"
+                  :value="option.id"
               >
                 {{ content?.source.findIndex((o) => o.id === option.id) + 1 }}.
               </option>
             </select>
             <IconArrowRight></IconArrowRight>
             <select
-              :value="mapping.target"
-              @input="(e) => updateEvaluationMapping(e, mapping.source)"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500
+                :value="mapping.target"
+                @input="(e) => updateEvaluationMapping(e, mapping.source)"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500
               focus:border-blue-500 block py-1 px-2"
             >
               <option v-for="option in content?.target" :key="option.id" :value="option.id">
@@ -199,16 +208,16 @@
     <!-- Evaluation -->
     <template #evaluation>
       <OptionsFormEnum
-        v-if="!!evaluation"
-        name="evaluationName"
-        :value="evaluation.name"
-        :options="
+          v-if="!!evaluation"
+          name="evaluationName"
+          :value="evaluation.name"
+          :options="
           evaluationOptions.map((o) => {
             return { value: o.name, label: o.label };
           })
         "
-        :label="$t('editor.task.evaluation-label-type')"
-        @update:value="updateEvaluationName"
+          :label="$t('editor.task.evaluation-label-type')"
+          @update:value="updateEvaluationName"
       />
     </template>
 
@@ -216,18 +225,18 @@
     <template #options>
       <div v-if="options" class="mt-1 flex flex-col gap-1.5">
         <OptionsDefaults
-          :options="options"
-          allow-empty-answer-submission
-          has-max-attempts
-          has-disabled-check-timer
-          has-disabled-next-timer
-          has-submit-button
-          has-feedback-button
-          has-next-button
-          has-correct-state
-          has-incorrect-state
-          has-final-incorrect-state
-          @update:options="update({ options: $event })"
+            :options="options"
+            allow-empty-answer-submission
+            has-max-attempts
+            has-disabled-check-timer
+            has-disabled-next-timer
+            has-submit-button
+            has-feedback-button
+            has-next-button
+            has-correct-state
+            has-incorrect-state
+            has-final-incorrect-state
+            @update:options="update({ options: $event })"
         />
       </div>
     </template>
@@ -235,14 +244,14 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject, onUnmounted, ref, watch } from "vue";
-import { formatContent } from "@/extensions/task/mapping/format/content";
-import { formatEvaluation, evaluationOptions } from "@/extensions/task/mapping/format/evaluation";
-import { formatEvents } from "@/extensions/task/mapping/format/events";
-import { formatOptions } from "@/extensions/task/mapping/format/options";
-import { formatState } from "@/extensions/task/mapping/format/state";
-import { useTask } from "@/extensions/task/helpers";
-import { v4 as uuid } from "uuid";
+import {computed, defineComponent, inject, onUnmounted, ref, watch} from "vue";
+import {formatContent} from "@/extensions/task/mapping/format/content";
+import {formatEvaluation, evaluationOptions} from "@/extensions/task/mapping/format/evaluation";
+import {formatEvents} from "@/extensions/task/mapping/format/events";
+import {formatOptions} from "@/extensions/task/mapping/format/options";
+import {formatState} from "@/extensions/task/mapping/format/state";
+import {useTask} from "@/extensions/task/helpers";
+import {v4 as uuid} from "uuid";
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import IconAdd from "@/helpers/icons/IconAdd.vue";
 import IconArrowDownOnSquare from "@/helpers/icons/IconArrowDownOnSquare.vue";
@@ -262,9 +271,9 @@ import SourceOption from "@/extensions/task/mapping/SourceOption.vue";
 import TargetOption from "@/extensions/task/mapping/TargetOption.vue";
 import TaskScaffold from "@/extensions/task/helpers/TaskScaffold.vue";
 
-import type { Editor } from "@tiptap/vue-3";
-import type { InjectedContainerDimensions } from "@/helpers/useContainerDimensions";
-import type { JSONContent } from "@tiptap/vue-3";
+import type {Editor} from "@tiptap/vue-3";
+import type {InjectedContainerDimensions} from "@/helpers/useContainerDimensions";
+import type {JSONContent} from "@tiptap/vue-3";
 import type {
   MAPEvaluation,
   MAPOptions,
@@ -274,7 +283,7 @@ import type {
   MAPContent,
   MAPOption
 } from "@/extensions/task/mapping/types";
-import type { PropType, Ref } from "vue";
+import type {PropType, Ref} from "vue";
 
 export default defineComponent({
   name: "TaskMapping",
@@ -336,16 +345,16 @@ export default defineComponent({
 
   emits: ["update", "submit"],
 
-  setup(props, { emit }) {
+  setup(props, {emit}) {
     /* Imports */
     // const { eventBus } = inject("eventBus") as InjectedEventBus;
-    const { width, height, scrollTop, scrollLeft } = inject(
-      "containerDimensions"
+    const {width, height, scrollTop, scrollLeft} = inject(
+        "containerDimensions"
     ) as InjectedContainerDimensions;
-    const { update } = useTask<MAPProps, MAPEmits, MAPOptions, MAPContent, MAPEvaluation, MAPState>(
-      props,
-      emit,
-      [formatOptions, formatContent, formatEvaluation, formatState, formatEvents]
+    const {update} = useTask<MAPProps, MAPEmits, MAPOptions, MAPContent, MAPEvaluation, MAPState>(
+        props,
+        emit,
+        [formatOptions, formatContent, formatEvaluation, formatState, formatEvents]
     );
 
     /* Variable */
@@ -362,7 +371,7 @@ export default defineComponent({
       const content = isSourceOption ? props.content?.source || [] : props.content?.target || [];
       content.push({
         id: uuid(),
-        content: { type: "doc", content: [{ type: "paragraph" }] }
+        content: {type: "doc", content: [{type: "paragraph"}]}
       });
       update({
         content: {
@@ -374,23 +383,23 @@ export default defineComponent({
     };
 
     const updateOptionContent = (
-      option: MAPOption,
-      answerOptionContent: JSONContent,
-      isSourceOption: boolean = true
+        option: MAPOption,
+        answerOptionContent: JSONContent,
+        isSourceOption: boolean = true
     ) => {
       update({
         content: {
           ...props.content,
           source: isSourceOption
-            ? props.content?.source.map((o) =>
-              option?.id === o.id ? { ...o, content: answerOptionContent } : o
-            )
-            : props.content?.source,
+              ? props.content?.source.map((o) =>
+                  option?.id === o.id ? {...o, content: answerOptionContent} : o
+              )
+              : props.content?.source,
           target: !isSourceOption
-            ? props.content?.target.map((o) =>
-              option?.id === o.id ? { ...o, content: answerOptionContent } : o
-            )
-            : props.content?.target
+              ? props.content?.target.map((o) =>
+                  option?.id === o.id ? {...o, content: answerOptionContent} : o
+              )
+              : props.content?.target
         }
       });
     };
@@ -447,7 +456,7 @@ export default defineComponent({
             evaluation: {
               name: newName,
               solution:
-                !!props.evaluation && !!props.evaluation.solution ? props.evaluation.solution : []
+                  !!props.evaluation && !!props.evaluation.solution ? props.evaluation.solution : []
             }
           });
       }
@@ -460,9 +469,9 @@ export default defineComponent({
           ...props.evaluation,
           solution: props.evaluation?.solution.map((s) => {
             if (s.source === sourceId) {
-              return { source: sourceId, target: targetId };
+              return {source: sourceId, target: targetId};
             } else if (s.target === targetId) {
-              return { source: s.source, target: null };
+              return {source: s.source, target: null};
             } else {
               return s;
             }
@@ -473,22 +482,22 @@ export default defineComponent({
 
     const canAddMapping = computed(() => {
       return (
-        props.content?.source.some(
-          (o) => !props.evaluation?.solution.find((s) => s.source === o.id)
-        ) &&
-        props.content?.target.some(
-          (o) => !props.evaluation?.solution.find((s) => s.target === o.id)
-        )
+          props.content?.source.some(
+              (o) => !props.evaluation?.solution.find((s) => s.source === o.id)
+          ) &&
+          props.content?.target.some(
+              (o) => !props.evaluation?.solution.find((s) => s.target === o.id)
+          )
       );
     });
 
     const addMapping = () => {
       if (canAddMapping) {
         const sourceNode = props.content?.source.find(
-          (o) => !props.evaluation?.solution.find((s) => s.source === o.id)
+            (o) => !props.evaluation?.solution.find((s) => s.source === o.id)
         );
         const targetNode = props.content?.target.find(
-          (o) => !props.evaluation?.solution.find((s) => s.target === o.id)
+            (o) => !props.evaluation?.solution.find((s) => s.target === o.id)
         );
 
         if (!!sourceNode && !!targetNode) {
@@ -519,10 +528,10 @@ export default defineComponent({
         const domRect = targetRef.getBoundingClientRect();
 
         if (
-          event.clientX >= domRect.left &&
-          event.clientX <= domRect.right &&
-          event.clientY <= domRect.bottom &&
-          event.clientY >= domRect.top
+            event.clientX >= domRect.left &&
+            event.clientX <= domRect.right &&
+            event.clientY <= domRect.bottom &&
+            event.clientY >= domRect.top
         ) {
           targetElement.value = targetRef.id;
           return;
@@ -538,7 +547,7 @@ export default defineComponent({
             ...props.state,
             answer: [
               ...props.state.answer.filter(
-                (a) => a.source !== sourceElement.value && a.target !== targetElement.value
+                  (a) => a.source !== sourceElement.value && a.target !== targetElement.value
               ),
               {
                 source: sourceElement.value,
@@ -562,9 +571,9 @@ export default defineComponent({
       // Remove non-existing lines
       lines.value = lines.value.filter((line) => {
         if (
-          width.value < 400 ||
-          !props.state.answer.find((s) => s.source === line.source && s.target === line.target) ||
-          props.editor.isEditable
+            width.value < 400 ||
+            !props.state.answer.find((s) => s.source === line.source && s.target === line.target) ||
+            props.editor.isEditable
         ) {
           line.line.remove();
           return false;
@@ -589,29 +598,26 @@ export default defineComponent({
 
       // Add new lines
       for (const answer of props.state.answer) {
-        if (
-          !!answer.target &&
-          !lines.value.find((l) => l.source === answer.source && l.target === answer.target)
-        ) {
+        if (!!answer.target && !lines.value.find((l) => l.source === answer.source && l.target === answer.target)) {
           const sourceRef = sourceRefs.value.find((r) => r.id === answer.source);
           const targetRef = targetRefs.value.find((r) => r.id === answer.target);
           if (!!sourceRef && !!targetRef) {
             const newLine = new LeaderLine(
-              LeaderLine.pointAnchor(sourceRef.$el, {
-                x: sourceRef.$el.getBoundingClientRect().width + 13,
-                y: sourceRef.$el.getBoundingClientRect().height / 2
-              }),
-              LeaderLine.pointAnchor(targetRef.$el, {
-                x: -13,
-                y: targetRef.$el.getBoundingClientRect().height / 2
-              }),
-              {
-                startPlug: "behind",
-                startSocket: "right",
-                endPlug: "behind",
-                endSocket: "left",
-                color: "#2563eb"
-              }
+                LeaderLine.pointAnchor(sourceRef.$el, {
+                  x: sourceRef.$el.getBoundingClientRect().width + 13,
+                  y: sourceRef.$el.getBoundingClientRect().height / 2
+                }),
+                LeaderLine.pointAnchor(targetRef.$el, {
+                  x: -13,
+                  y: targetRef.$el.getBoundingClientRect().height / 2
+                }),
+                {
+                  startPlug: "behind",
+                  startSocket: "right",
+                  endPlug: "behind",
+                  endSocket: "left",
+                  color: "#2563eb"
+                }
             );
             lines.value = [
               ...lines.value,
@@ -636,15 +642,76 @@ export default defineComponent({
         }
       }
 
+      // Add lines when state is 'solution'
+      /*
+    if (["solution"].includes(props.state?.state)) {
+        console.log("SOLUTION!")
+      for (const answer of props.evaluation?.solution) {
+          console.log(answer.source)
+          console.log(answer.target)
+          console.log(!lines.value.find((l) => l.source === answer.source && l.target === answer.target))
+        if (!!answer.target && !lines.value.find((l) => l.source === answer.source && l.target === answer.target)) {
+
+            console.log("INNER")
+            console.log(sourceRefs.value, sourceRefs.value.length)
+          const sourceRef = sourceRefs.value.find((r) => r.id === answer.source);
+          const targetRef = targetRefs.value.find((r) => r.id === answer.target);
+
+            console.log("sourceRef", sourceRef)
+            console.log("targetRef", targetRef)
+          if (!!sourceRef && !!targetRef) {
+            const newLine = new LeaderLine(
+                LeaderLine.pointAnchor(sourceRef.$el, {
+                  x: sourceRef.$el.getBoundingClientRect().width + 13,
+                  y: sourceRef.$el.getBoundingClientRect().height / 2
+                }),
+                LeaderLine.pointAnchor(targetRef.$el, {
+                  x: -13,
+                  y: targetRef.$el.getBoundingClientRect().height / 2
+                }),
+                {
+                  startPlug: "behind",
+                  startSocket: "right",
+                  endPlug: "behind",
+                  endSocket: "left",
+                  color: "#2563eb"
+                }
+            );
+            lines.value = [
+              ...lines.value,
+              {
+                source: answer.source,
+                target: answer.target,
+                line: newLine
+              }
+            ];
+
+
+            // Add event listener to redraw on scroll
+            window.addEventListener("scroll", (event) => {
+              if (!ticking.value && newLine) {
+                window.requestAnimationFrame(() => {
+                  newLine.position();
+                  ticking.value = false;
+                });
+                ticking.value = true;
+              }
+            });
+          }
+        }
+      }
+    }
+       */
+
       // Update positions and color
       for (const line of lines.value) {
         line.line.position();
 
         if (["correct", "final-incorrect"].includes(props.state?.state)) {
           if (
-            !props.evaluation?.solution.find(
-              (s) => s.source === line.source && s.target === line.target
-            )
+              !props.evaluation?.solution.find(
+                  (s) => s.source === line.source && s.target === line.target
+              )
           ) {
             line.line.setOptions({
               color: "#dc2626"
