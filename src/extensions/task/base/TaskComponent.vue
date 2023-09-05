@@ -45,7 +45,7 @@
         @update="update"
       />
 
-      <div v-if="!isEditableReactive && !!state" class="my-1 w-full">
+      <div v-if="!isEditableReactive && !!state && !['solution'].includes(state.state)" class="my-1 w-full">
         <SubmitButton
           :id="node.attrs.id"
           :type="node.attrs.type"
