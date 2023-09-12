@@ -1,5 +1,5 @@
 <template>
-  <div ref="containerRef" class="relative p-3 shadow border rounded-xl text-center my-2 [&_img]:my-0 text-base">
+  <div ref="containerRef" class="relative p-2.5 shadow border rounded-xl text-center my-1.5 [&_img]:my-0 text-xs">
     <InlineEditor :content="content" @input-up-event="cancelDragging" allow-images />
 
     <div
@@ -9,8 +9,8 @@
       @click="removeConnection"
     >
       <div class="p-0 z-0" :style="{ transform: 'translate(-' + 15 + 'px, ' + 0 + 'px)' }">
-        <div class="flex flex-col items-center justify-center w-8 h-8 rounded-full bg-green-400">
-          <IconClose v-if="!disabled" class="w-4 h-4"></IconClose>
+        <div class="flex flex-col items-center justify-center w-7 h-7 rounded-full bg-green-400">
+          <IconClose v-if="!disabled" class="w-3.5 h-3.5"></IconClose>
         </div>
       </div>
     </div>

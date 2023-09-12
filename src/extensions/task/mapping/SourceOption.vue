@@ -1,5 +1,5 @@
 <template>
-  <div class="p-3 shadow border rounded-xl text-center my-2 relative [&_img]:my-0 text-base">
+  <div class="p-2.5 shadow border rounded-xl text-center my-1.5 relative [&_img]:my-0 text-xs">
     <InlineEditor :content="content" @input-up-event="cancelDragging" allow-images />
 
     <div
@@ -10,14 +10,14 @@
         class="p-0 z-0"
         :class="[disabled ? 'cursor-default' : (isDragging ? 'cursor-grab' : 'cursor-pointer'), isDragging ? 'drop-shadow-md' : '']"
         :style="{
-          transform: 'translate(' + (xTransform + 17) + 'px, ' + yTransform + 'px)',
+          transform: 'translate(' + (xTransform + 15) + 'px, ' + yTransform + 'px)',
         }"
         @mousedown="onInputStart"
         @touchstart.passive="onInputStart"
         @mouseup.prevent="onInputEnd"
         @touchend.passive="onInputEnd"
       >
-        <div ref="handleRef" class="p-1 w-8 h-8 rounded-full bg-green-400"></div>
+        <div ref="handleRef" class="p-1 w-7 h-7 rounded-full bg-green-400"></div>
       </div>
     </div>
   </div>
