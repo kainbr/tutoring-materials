@@ -117,13 +117,13 @@
         <!-- Next button -->
         <button
           v-if="options.hasNextButton"
-          :disabled="disabledTimer > 0"
+          :disabled="(!options.allowEmptyAnswerSubmission && state.empty) || disabledTimer > 0"
           class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white
         shadow-sm hover:bg-blue-500 sm:ml-1 sm:w-auto disabled:bg-blue-300 disabled:cursor-not-allowed whitespace-nowrap"
           type="button"
           @click="next()"
         >
-          <span class="w-full">Weiter </span>
+          <span class="w-full">Weiter</span>
         </button>
       </div>
     </div>
