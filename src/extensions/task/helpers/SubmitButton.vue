@@ -1,6 +1,5 @@
 <template>
   <div :class="backgroundColor" class="flex flex-row container rounded-lg items-start p-2">
-
     <Transition appear>
       <div
           v-if="options.maxAttempts !== 0"
@@ -57,7 +56,7 @@
     <div class="mt-2 flex flex-row gap-1 pr-2 items-center">
 
       <div
-          v-if="disabledTimer > 0 && options.maxAttempts !== 0"
+          v-if="disabledTimer > 0 && (options.maxAttempts !== 0 || (options.maxAttempts === 0 && ['init'].includes(state.state)))"
           class="inline-flex items-center justify-center overflow-hidden rounded-full bottom-5 left-5"
       >
         <!-- Building a Progress Ring: https://css-tricks.com/building-progress-ring-quickly/ -->
