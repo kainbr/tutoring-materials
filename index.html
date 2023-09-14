@@ -62,6 +62,7 @@
         @update:content="content = $event"
         @update:is-preview="isPreview = $event"
         @update:state="state = { ...$event }"
+        @next="next"
       ></tutoring-material>
     </main>
   </div>
@@ -84,7 +85,12 @@
         isReloading: false,
         isSidebarOpen: false
       };
-    }
+    },
+      methods: {
+        next() {
+            console.log(JSON.stringify(this.state))
+        }
+      }
   });
 
   app.use(TutoringMaterials);

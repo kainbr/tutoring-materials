@@ -391,9 +391,9 @@ export default defineComponent({
       const answer = props.state?.answer.find((a) => a.id === option.id)?.value;
       const solution = props.evaluation?.solution.find((s) => s.id === option.id)?.value;
 
-      if (!!state && ["correct", "final-incorrect"].includes(state)) {
+      if (!!state && ["correct", "final-incorrect"].includes(state) && props.options.maxAttempts !== 0) {
           return answer === solution ? "bg-green-50" : "bg-red-50";
-      } else if(!!state && ["solution"].includes(state)) {
+      } else if(!!state && ["solution"].includes(state) && props.options.maxAttempts !== 0) {
           return solution ? "bg-green-50" : "bg-red-50";
       } else {
         return "";

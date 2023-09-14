@@ -296,7 +296,7 @@ export default defineComponent({
     const showCorrectAnswerOption = (option: SCOption) => {
       const state = props.state?.state;
 
-      if (!!option.id && !!state && ["correct", "final-incorrect", "solution"].includes(state)) {
+      if (!!option.id && !!state && ["correct", "final-incorrect", "solution"].includes(state) && props.options.maxAttempts !== 0) {
         return !!props.evaluation?.solution.find((s) => s.id === option.id)?.value;
       } else {
         return false;
@@ -306,7 +306,7 @@ export default defineComponent({
     const showIncorrectAnswerOption = (option: SCOption) => {
       const state = props.state?.state;
 
-      if (!!option.id && !!state && ["correct", "final-incorrect", "solution"].includes(state)) {
+      if (!!option.id && !!state && ["correct", "final-incorrect", "solution"].includes(state) && props.options.maxAttempts !== 0) {
         return !props.evaluation?.solution.find((s) => s.id === option.id)?.value;
       } else {
         return false;

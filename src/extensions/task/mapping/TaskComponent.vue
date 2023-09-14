@@ -571,7 +571,7 @@ export default defineComponent({
       // Remove non-existing lines
       lines.value = lines.value.filter((line) => {
         if (
-            width.value < 400 ||
+            width.value < 400 || !props.state.answer ||
             !props.state.answer.find((s) => s.source === line.source && s.target === line.target) ||
             props.editor.isEditable
         ) {
@@ -597,51 +597,52 @@ export default defineComponent({
       });
 
       // Add new lines
-      for (const answer of props.state.answer) {
-        if (!!answer.target && !lines.value.find((l) => l.source === answer.source && l.target === answer.target)) {
-          const sourceRef = sourceRefs.value.find((r) => r.id === answer.source);
-          const targetRef = targetRefs.value.find((r) => r.id === answer.target);
-          if (!!sourceRef && !!targetRef) {
-            const newLine = new LeaderLine(
-                LeaderLine.pointAnchor(sourceRef.$el, {
-                  x: sourceRef.$el.getBoundingClientRect().width + 13,
-                  y: sourceRef.$el.getBoundingClientRect().height / 2
-                }),
-                LeaderLine.pointAnchor(targetRef.$el, {
-                  x: -13,
-                  y: targetRef.$el.getBoundingClientRect().height / 2
-                }),
+      if (!!props.state.answer) {
+        for (const answer of props.state.answer) {
+          if (!!answer.target && !lines.value.find((l) => l.source === answer.source && l.target === answer.target)) {
+            const sourceRef = sourceRefs.value.find((r) => r.id === answer.source);
+            const targetRef = targetRefs.value.find((r) => r.id === answer.target);
+            if (!!sourceRef && !!targetRef) {
+              const newLine = new LeaderLine(
+                  LeaderLine.pointAnchor(sourceRef.$el, {
+                    x: sourceRef.$el.getBoundingClientRect().width + 13,
+                    y: sourceRef.$el.getBoundingClientRect().height / 2
+                  }),
+                  LeaderLine.pointAnchor(targetRef.$el, {
+                    x: -13,
+                    y: targetRef.$el.getBoundingClientRect().height / 2
+                  }),
+                  {
+                    startPlug: "behind",
+                    startSocket: "right",
+                    endPlug: "behind",
+                    endSocket: "left",
+                    color: "#2563eb"
+                  }
+              );
+              lines.value = [
+                ...lines.value,
                 {
-                  startPlug: "behind",
-                  startSocket: "right",
-                  endPlug: "behind",
-                  endSocket: "left",
-                  color: "#2563eb"
+                  source: answer.source,
+                  target: answer.target,
+                  line: newLine
                 }
-            );
-            lines.value = [
-              ...lines.value,
-              {
-                source: answer.source,
-                target: answer.target,
-                line: newLine
-              }
-            ];
+              ];
 
-            // Add event listener to redraw on scroll
-            window.addEventListener("scroll", (event) => {
-              if (!ticking.value && newLine) {
-                window.requestAnimationFrame(() => {
-                  newLine.position();
-                  ticking.value = false;
-                });
-                ticking.value = true;
-              }
-            });
+              // Add event listener to redraw on scroll
+              window.addEventListener("scroll", (event) => {
+                if (!ticking.value && !!newLine) {
+                  window.requestAnimationFrame(() => {
+                    newLine.position();
+                    ticking.value = false;
+                  });
+                  ticking.value = true;
+                }
+              });
+            }
           }
         }
       }
-
       // Add lines when state is 'solution'
       /*
     if (["solution"].includes(props.state?.state)) {
@@ -707,7 +708,7 @@ export default defineComponent({
       for (const line of lines.value) {
         line.line.position();
 
-        if (["correct", "final-incorrect"].includes(props.state?.state)) {
+        if (["correct", "final-incorrect"].includes(props.state?.state) && props.options.maxAttempts !== 0) {
           if (
               !props.evaluation?.solution.find(
                   (s) => s.source === line.source && s.target === line.target
