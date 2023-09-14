@@ -3,8 +3,10 @@
     <!-- Render -->
     <template #render>
       <div v-if="!editor.isEditable && !!content?.img" class="flex justify-center">
-        <canvas ref="canvas" class="max-w-full cursor-pointer" @click="submitAnswer">
-          <img ref="image" :src="content.img" alt="image" @load="initCanvas()" />
+        <canvas ref="canvas" class="max-w-full"
+                :class="{'cursor-pointer': disabledTimer == 0 && !!state?.state && ['init', 'incorrect'].includes(state.state)}"
+                @click="submitAnswer">
+          <img ref="image" :src="content.img" alt="image" @load="initCanvas()"/>
         </canvas>
       </div>
     </template>
@@ -14,11 +16,11 @@
       <div v-if="editor.isEditable">
         <canvas ref="canvas" class="w-full px-28 m-0">
           <img
-            v-if="!!content?.img"
-            ref="image"
-            :src="content.img"
-            alt="image"
-            @load="initCanvas()"
+              v-if="!!content?.img"
+              ref="image"
+              :src="content.img"
+              alt="image"
+              @load="initCanvas()"
           />
         </canvas>
         <div class="flex w-full justify-center">
@@ -27,7 +29,7 @@
         <div class="flex flex-row justify-between">
           <span></span>
           <EditorMenuButton :on-inactive-click="showFileModal">
-            <IconUpload />
+            <IconUpload/>
           </EditorMenuButton>
         </div>
         <div v-if="content?.regions">
@@ -39,9 +41,9 @@
               <div class="w-full">
                 <div class="flex flex-row">
                   <select
-                    v-model="region.type"
-                    disabled
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-1"
+                      v-model="region.type"
+                      disabled
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-1"
                   >
                     <option value="rect" disabled>Rectangle</option>
                   </select>
@@ -51,41 +53,41 @@
                     @input="toggleEvaluationOptionValue(option)"
                     -->
                     <input
-                      :checked="evaluation.solution.find((s) => s.id === region.id)?.value || false"
-                      type="checkbox"
-                      class="mx-1 my-2"
-                      :disabled="content.regions.length <= 1"
+                        :checked="evaluation.solution.find((s) => s.id === region.id)?.value || false"
+                        type="checkbox"
+                        class="mx-1 my-2"
+                        :disabled="content.regions.length <= 1"
                     />
                     Correct
                   </div>
                 </div>
                 <component
-                  :is="region.type"
-                  :region="region"
-                  @update:region="updateRegionAttributes(region.id, $event)"
+                    :is="region.type"
+                    :region="region"
+                    @update:region="updateRegionAttributes(region.id, $event)"
                 ></component>
               </div>
             </div>
           </div>
         </div>
         <!-- Upload Modal -->
-        <UploadModal v-model="fileModalOpen" @update:image="updateImage" />
+        <UploadModal v-model="fileModalOpen" @update:image="updateImage"/>
       </div>
     </template>
 
     <!-- Evaluation -->
     <template #evaluation>
       <OptionsFormEnum
-        v-if="!!evaluation"
-        name="evaluationName"
-        :value="evaluation.name"
-        :options="
+          v-if="!!evaluation"
+          name="evaluationName"
+          :value="evaluation.name"
+          :options="
           evaluationOptions.map((o) => {
             return { value: o.name, label: o.label };
           })
         "
-        :label="$t('editor.task.evaluation-label-type')"
-        @update:value="updateEvaluationName"
+          :label="$t('editor.task.evaluation-label-type')"
+          @update:value="updateEvaluationName"
       />
     </template>
 
@@ -93,17 +95,17 @@
     <template #options>
       <div v-if="options" class="mt-1 flex flex-col gap-1.5">
         <OptionsDefaults
-          :options="options"
-          has-max-attempts
-          has-disabled-check-timer
-          has-disabled-next-timer
-          has-submit-button
-          has-feedback-button
-          has-next-button
-          has-correct-state
-          has-incorrect-state
-          has-final-incorrect-state
-          @update:options="update({ options: $event })"
+            :options="options"
+            has-max-attempts
+            has-disabled-check-timer
+            has-disabled-next-timer
+            has-submit-button
+            has-feedback-button
+            has-next-button
+            has-correct-state
+            has-incorrect-state
+            has-final-incorrect-state
+            @update:options="update({ options: $event })"
         />
       </div>
     </template>
@@ -112,14 +114,14 @@
 
 <script lang="ts">
 // import {  inject } from "vue";
-import { defineComponent, inject, ref, watch } from "vue";
-import { useTask } from "@/extensions/task/helpers";
-import { formatOptions } from "@/extensions/task/find-hotspots/format/options";
-import { formatContent } from "@/extensions/task/find-hotspots/format/content";
+import {computed, defineComponent, inject, ref, watch} from "vue";
+import {useTask} from "@/extensions/task/helpers";
+import {formatOptions} from "@/extensions/task/find-hotspots/format/options";
+import {formatContent} from "@/extensions/task/find-hotspots/format/content";
 import TaskScaffold from "@/extensions/task/helpers/TaskScaffold.vue";
 import UploadModal from "@/extensions/task/find-hotspots/UploadModal.vue";
 
-import type { PropType } from "vue";
+import type {PropType} from "vue";
 import type {
   FHContent,
   FHEvaluation,
@@ -129,20 +131,20 @@ import type {
   FHEmits,
   FHRegion,
 } from "@/extensions/task/find-hotspots/types";
-import type { Editor } from "@tiptap/vue-3";
+import type {Editor} from "@tiptap/vue-3";
 import EditorMenuButton from "@/helpers/EditorMenuButton.vue";
 import IconUpload from "@/helpers/icons/IconUpload.vue";
-import { calculateHexIcon } from "@/helpers/util";
+import {calculateHexIcon} from "@/helpers/util";
 import Rect from "@/extensions/task/find-hotspots/regions/Rect.vue";
 import {
   formatEvaluation,
   evaluationOptions,
 } from "@/extensions/task/find-hotspots/format/evaluation";
-import { formatState } from "@/extensions/task/find-hotspots/format/state";
-import type { InjectedSubmit } from "@/extensions/task/base/TaskComponent.vue";
+import {formatState} from "@/extensions/task/find-hotspots/format/state";
+import type {InjectedSubmit} from "@/extensions/task/base/TaskComponent.vue";
 import OptionsDefaults from "@/extensions/task/helpers/OptionsDefaults.vue";
 import OptionsFormEnum from "@/extensions/task/helpers/OptionsFormEnum.vue";
-import { formatEvents } from "@/extensions/task/find-hotspots/format/events";
+import {formatEvents} from "@/extensions/task/find-hotspots/format/events";
 // import type { InjectedEventBus } from "@/helpers/useEventBus";
 
 export default defineComponent({
@@ -195,15 +197,19 @@ export default defineComponent({
 
   emits: ["update", "submit"],
 
-  setup(props, { emit }) {
+  setup(props, {emit}) {
     // const { eventBus } = inject("eventBus") as InjectedEventBus;
-    const { submit } = inject("submit") as InjectedSubmit;
+    const {submit} = inject("submit") as InjectedSubmit;
 
-    const { update } = useTask<FHProps, FHEmits, FHOptions, FHContent, FHEvaluation, FHState>(
-      props,
-      emit,
-      [formatOptions, formatContent, formatEvaluation, formatState, formatEvents]
+    const {update} = useTask<FHProps, FHEmits, FHOptions, FHContent, FHEvaluation, FHState>(
+        props,
+        emit,
+        [formatOptions, formatContent, formatEvaluation, formatState, formatEvents]
     );
+
+    const disabledTimer = computed(() => {
+      return props.state.disabledTimer;
+    });
 
     const updateEvaluationName = (newName: string) => {
       switch (newName) {
@@ -213,7 +219,7 @@ export default defineComponent({
             evaluation: {
               name: newName,
               solution:
-                !!props.evaluation && !!props.evaluation.solution ? props.evaluation.solution : [],
+                  !!props.evaluation && !!props.evaluation.solution ? props.evaluation.solution : [],
             },
           });
       }
@@ -251,9 +257,9 @@ export default defineComponent({
         content: {
           ...props.content,
           regions:
-            props.content?.regions.map((region) => {
-              return { ...region, ...(region.id === regionId ? attributes : {}) };
-            }) || [],
+              props.content?.regions.map((region) => {
+                return {...region, ...(region.id === regionId ? attributes : {})};
+              }) || [],
         },
       });
     };
@@ -279,11 +285,11 @@ export default defineComponent({
     const hovering = ref(false);
 
     watch(
-      [() => props.content, () => props.state],
-      () => {
-        if (canvas.value && image.value) initCanvas();
-      },
-      { deep: true }
+        [() => props.content, () => props.state],
+        () => {
+          if (canvas.value && image.value) initCanvas();
+        },
+        {deep: true}
     );
 
     const getHexIconLabel = (id: string) => {
@@ -292,6 +298,7 @@ export default defineComponent({
 
     const submitAnswer = ($event: MouseEvent) => {
       if (["correct", "final-incorrect", "solution"].includes(props.state?.state)) return;
+      if (!!disabledTimer.value && disabledTimer.value > 0) return;
 
       const rect = canvas.value.getBoundingClientRect();
       const scaleX = canvas.value.width / rect.width;
@@ -309,58 +316,58 @@ export default defineComponent({
         switch (region.type) {
           case "rect":
             const rotatePointFromOrigin = (
-              p: { x: number; y: number },
-              degree: number
+                p: { x: number; y: number },
+                degree: number
             ): { x: number; y: number } => {
               return {
                 x:
-                  p.x * Math.cos((degree * Math.PI) / 180) -
-                  p.y * Math.sin((degree * Math.PI) / 180),
+                    p.x * Math.cos((degree * Math.PI) / 180) -
+                    p.y * Math.sin((degree * Math.PI) / 180),
                 y:
-                  p.x * Math.sin((degree * Math.PI) / 180) +
-                  p.y * Math.cos((degree * Math.PI) / 180),
+                    p.x * Math.sin((degree * Math.PI) / 180) +
+                    p.y * Math.cos((degree * Math.PI) / 180),
               };
             };
 
             const calculateAreaTriangle = (
-              A: { x: number; y: number },
-              B: { x: number; y: number },
-              C: { x: number; y: number }
+                A: { x: number; y: number },
+                B: { x: number; y: number },
+                C: { x: number; y: number }
             ) => {
               return (
-                Math.abs(
-                  B.x * A.y - A.x * B.y + (C.x * B.y - B.x * C.y) + (A.x * C.y - C.x * A.y)
-                ) / 2
+                  Math.abs(
+                      B.x * A.y - A.x * B.y + (C.x * B.y - B.x * C.y) + (A.x * C.y - C.x * A.y)
+                  ) / 2
               );
             };
 
             const areaRect = region.config.width * region.config.height;
 
             const A = rotatePointFromOrigin(
-              { x: region.config.x, y: region.config.y },
-              region.config.rotation || 0
+                {x: region.config.x, y: region.config.y},
+                region.config.rotation || 0
             );
             const B = rotatePointFromOrigin(
-              { x: region.config.x + region.config.width, y: region.config.y },
-              region.config.rotation || 0
+                {x: region.config.x + region.config.width, y: region.config.y},
+                region.config.rotation || 0
             );
             const C = rotatePointFromOrigin(
-              { x: region.config.x, y: region.config.y + region.config.height },
-              region.config.rotation || 0
+                {x: region.config.x, y: region.config.y + region.config.height},
+                region.config.rotation || 0
             );
             const D = rotatePointFromOrigin(
-              {
-                x: region.config.x + region.config.width,
-                y: region.config.y + region.config.height,
-              },
-              region.config.rotation || 0
+                {
+                  x: region.config.x + region.config.width,
+                  y: region.config.y + region.config.height,
+                },
+                region.config.rotation || 0
             );
 
             const areaSumTriangles =
-              calculateAreaTriangle(A, P, D) +
-              calculateAreaTriangle(D, P, C) +
-              calculateAreaTriangle(C, P, B) +
-              calculateAreaTriangle(P, B, A);
+                calculateAreaTriangle(A, P, D) +
+                calculateAreaTriangle(D, P, C) +
+                calculateAreaTriangle(C, P, B) +
+                calculateAreaTriangle(P, B, A);
 
             if (areaSumTriangles < areaRect) clickedRegions.push(region.id);
             break;
@@ -369,7 +376,7 @@ export default defineComponent({
         }
       });
 
-      submit({ ...props.state, answer: { position: P, clickedRegions } });
+      submit({...props.state, answer: {position: P, clickedRegions}});
     };
 
     return {
@@ -379,6 +386,7 @@ export default defineComponent({
       hovering,
       image,
       update,
+      disabledTimer,
       initCanvas,
       getHexIconLabel,
       showFileModal,
