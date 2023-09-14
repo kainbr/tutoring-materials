@@ -115,9 +115,10 @@
         </button>
 
         <!-- Next button -->
+        <!-- TODO: find-hotspots task never sets empty to false -->
         <button
           v-if="options.hasNextButton"
-          :disabled="((!options.allowEmptyAnswerSubmission && state.empty) || disabledTimer > 0) && !['correct', 'final-incorrect'].includes(state.state)"
+          :disabled="(((!options.allowEmptyAnswerSubmission && state.empty && state.type !== 'find-hotspots') || (state.type === 'find-hotspots' && state.state === 'init')) || disabledTimer > 0)"
           class="block w-full min-w-max justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white
         shadow-sm hover:bg-blue-500 sm:ml-1 sm:w-auto disabled:bg-blue-300 disabled:cursor-not-allowed whitespace-nowrap"
           type="button"

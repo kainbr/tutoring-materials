@@ -332,10 +332,10 @@ export default defineComponent({
       calculateTimerCount();
     };
 
-    const next = () => {
+    const next = async () => {
 
       if (!!state.value?.state && ['init', 'incorrect'].includes(state.value.state)) {
-        submit(state.value)
+        await submit(state.value)
       }
 
       // Emit event
