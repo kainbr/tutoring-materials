@@ -13,9 +13,10 @@
               ref="sourceRefs"
               :key="s.id"
               :id="s.id"
-              :class="{ 'bg-amber-300': sourceElement === s.id }"
               :content="s.content"
               :disabled="!!state && ['correct', 'final-incorrect', 'solution'].includes(state.state)"
+              :selected="selectedSourceElement === s.id || sourceElement === s.id"
+              @selected="selectedSourceElement = (selectedSourceElement === s.id ? null : s.id)"
               @start-dragging="sourceDragging(s.id)"
               @update-dragging-position="updateDraggingPosition"
               @stop-dragging="stopDragging"
@@ -35,7 +36,9 @@
               :class="{ 'bg-amber-300': targetElement === t.id, 'cursor-grab': !!sourceElement }"
               :content="t.content"
               :is-connected="!!state.answer.find((a) => a.target === t.id)"
-              :disabled="!!state && ['correct', 'final-incorrect', 'solution'].includes(state.state)"
+              :selectable="!!selectedSourceElement"
+              :disabled="!!state && (['correct', 'final-incorrect', 'solution'].includes(state.state))"
+              @selected="selectMapping(t.id)"
               @cancel-dragging="cancelDragging"
               @remove-connection="removeConnection(t.id)"
           />
@@ -360,6 +363,7 @@ export default defineComponent({
     /* Variable */
     let sourceElement: Ref<string | null> = ref(null);
     let targetElement: Ref<string | null> = ref(null);
+    let selectedSourceElement: Ref<string | null> = ref(null);
     let ticking: Ref<boolean> = ref(false); // For throttling scroll events
     const lines: Ref<{ source: string; target: string; line: LeaderLine }[]> = ref([]);
     const sourceRefs: Ref<typeof SourceOption[]> = ref([]);
@@ -520,6 +524,7 @@ export default defineComponent({
     /* Drag and state management */
 
     const sourceDragging = (id: string) => {
+      selectedSourceElement.value = null;
       sourceElement.value = id;
     };
 
@@ -540,7 +545,7 @@ export default defineComponent({
       }
     };
 
-    const stopDragging = () => {
+    const stopDragging = async () => {
       if (!!sourceElement.value && !!targetElement.value) {
         update({
           state: {
@@ -566,6 +571,26 @@ export default defineComponent({
         valueElement.onInputEnd(e);
       }
     };
+
+    const selectMapping = async (target_id: string) => {
+      if (!!selectedSourceElement.value && !!target_id) {
+        update({
+          state: {
+            ...props.state,
+            answer: [
+              ...props.state.answer.filter(
+                  (a) => a.source !== selectedSourceElement.value && a.target !== target_id
+              ),
+              {
+                source: selectedSourceElement.value,
+                target: target_id
+              }
+            ]
+          }
+        });
+      }
+      selectedSourceElement.value = null;
+    }
 
     watch([() => props.state, () => props.content, width, height, scrollTop, scrollLeft], () => {
       // Remove non-existing lines
@@ -749,6 +774,7 @@ export default defineComponent({
       handleRefs,
       sourceElement,
       targetElement,
+      selectedSourceElement,
       updateOptionContent,
       addOption,
       removeOption,
@@ -763,6 +789,7 @@ export default defineComponent({
       updateDraggingPosition,
       stopDragging,
       cancelDragging,
+      selectMapping,
       removeConnection
     };
   }

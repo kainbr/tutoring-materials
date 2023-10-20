@@ -1,21 +1,25 @@
 <template>
-  <div class="p-2.5 shadow border rounded-xl text-center my-1.5 relative [&_img]:my-0 text-xs">
-    <InlineEditor :content="content" @input-up-event="cancelDragging" allow-images />
+  <div class="my-1.5 relative rounded-xl [&_img]:my-0" :class="[disabled ? 'cursor-default' : 'cursor-pointer hover:bg-amber-200']">
+    <div class="p-2.5 shadow border rounded-xl text-center text-xs" @click="onSelected"
+         :class="{ 'bg-amber-300': selected }"
+    >
+      <InlineEditor :content="content" @input-up-event="cancelDragging" allow-images/>
+    </div>
 
     <div
-      class="absolute z-10 inset-y-0 right-0 inline-flex flex-col justify-center"
-      ref="containerRef"
+        class="absolute z-10 inset-y-0 right-0 inline-flex flex-col justify-center"
+        ref="containerRef"
     >
       <div
-        class="p-0 z-0"
-        :class="[disabled ? 'cursor-default' : (isDragging ? 'cursor-grab' : 'cursor-pointer'), isDragging ? 'drop-shadow-md' : '']"
-        :style="{
+          class="p-0 z-0"
+          :class="[disabled ? 'cursor-default' : (isDragging ? 'cursor-grabbing' : 'cursor-grab'), isDragging ? 'drop-shadow-md' : '']"
+          :style="{
           transform: 'translate(' + (xTransform + 15) + 'px, ' + yTransform + 'px)',
         }"
-        @mousedown="onInputStart"
-        @touchstart.passive="onInputStart"
-        @mouseup.prevent="onInputEnd"
-        @touchend.passive="onInputEnd"
+          @mousedown="onInputStart"
+          @touchstart.passive="onInputStart"
+          @mouseup.prevent="onInputEnd"
+          @touchend.passive="onInputEnd"
       >
         <div ref="handleRef" class="p-1 w-7 h-7 rounded-full bg-green-400"></div>
       </div>
@@ -24,12 +28,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watchEffect } from "vue";
+import {defineComponent, ref, watchEffect} from "vue";
 import InlineEditor from "@/helpers/InlineEditor.vue";
 import LeaderLine from "leader-line-new";
 
-import type { JSONContent } from "@tiptap/vue-3";
-import type { PropType } from "vue";
+import type {JSONContent} from "@tiptap/vue-3";
+import type {PropType} from "vue";
 
 export default defineComponent({
   name: "SourceOption",
@@ -38,7 +42,7 @@ export default defineComponent({
     InlineEditor
   },
 
-  emits: ["startDragging", "updateDraggingPosition", "stopDragging", "cancelDragging"],
+  emits: ["startDragging", "updateDraggingPosition", "stopDragging", "cancelDragging", "selected"],
 
   props: {
     id: {
@@ -54,6 +58,10 @@ export default defineComponent({
     disabled: {
       type: Boolean,
       default: true
+    },
+    selected: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -67,6 +75,13 @@ export default defineComponent({
     const yDragStart = ref(0);
     const isDragging = ref(false);
 
+
+    const onSelected = (e: MouseEvent | TouchEvent) => {
+      if (!props.disabled) {
+        context.emit("selected");
+      }
+    };
+
     const isTouchEvent = (event: any): boolean => {
       if ((window as any).TouchEvent !== undefined) {
         return event instanceof TouchEvent;
@@ -77,7 +92,10 @@ export default defineComponent({
     const onInputStart = (e: MouseEvent | TouchEvent) => {
       if (!props.disabled) {
         e.stopPropagation();
-        let { clientX, clientY } = isTouchEvent(e) ? (e as TouchEvent).targetTouches[0] : (e as MouseEvent);
+        let {
+          clientX,
+          clientY
+        } = isTouchEvent(e) ? (e as TouchEvent).targetTouches[0] : (e as MouseEvent);
         isDragging.value = true;
         xDragStart.value = clientX;
         yDragStart.value = clientY;
@@ -92,7 +110,10 @@ export default defineComponent({
 
     const onInputMove = (e: MouseEvent | TouchEvent) => {
       e.stopPropagation();
-      let { clientX, clientY } = isTouchEvent(e) ? (e as TouchEvent).targetTouches[0] : (e as MouseEvent);
+      let {
+        clientX,
+        clientY
+      } = isTouchEvent(e) ? (e as TouchEvent).targetTouches[0] : (e as MouseEvent);
       if (isDragging.value) {
         xTransform.value = clientX - xDragStart.value;
         yTransform.value = clientY - yDragStart.value;
@@ -118,8 +139,8 @@ export default defineComponent({
         leaderLine.position();
       }
       document.removeEventListener(
-        isTouchEvent(e) ? "touchmove" : "mousemove",
-        onInputMove
+          isTouchEvent(e) ? "touchmove" : "mousemove",
+          onInputMove
       );
       context.emit("stopDragging");
     };
@@ -136,7 +157,7 @@ export default defineComponent({
           endSocket: "left",
           color: "#2563eb",
           hide: true,
-          dash: { animation: true }
+          dash: {animation: true}
         });
       }
     });
@@ -153,6 +174,7 @@ export default defineComponent({
       isDragging,
       onInputStart,
       onInputEnd,
+      onSelected,
       cancelDragging
     };
   }
