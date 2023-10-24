@@ -83,6 +83,7 @@
       },
       "mapping": {
         "evaluation-all-match": "Alle Antwortoptionen sind korrekt aus-/abgewählt",
+        "label-instruction": "Ziehe den grünen Kreis auf die zugehörige Antwort oder klicke zuerst eine Option auf der linken Seite und dann auf der rechten Seite an.",
         "label-source-node": "Start Option",
         "label-target-node": "Ziel Option",
         "title-correct-mappings": "Korrekte Zuordnungen",

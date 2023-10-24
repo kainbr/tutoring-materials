@@ -53,6 +53,9 @@
           </div>
         </div>
       </div>
+        <p class="px-4 py-2 text-sm text-slate-400">
+        {{ $t("editor.task.mapping.label-instruction") }}
+      </p>
     </template>
 
     <!-- Content -->

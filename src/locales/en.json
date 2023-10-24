@@ -83,6 +83,7 @@
       },
       "mapping": {
         "evaluation-all-match": "All options are un-/selected correctly",
+        "label-instruction": "Drag the green circle to the corresponding answer or click first on an option on the left and then on the right side.",
         "label-source-node": "Source option",
         "label-target-node": "Target option",
         "title-correct-mappings": "Correct mappings",
