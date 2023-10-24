@@ -92,7 +92,7 @@
       "multiple-choice": {
         "config-label-show-partially-correct-count": "Anzahl an korrekt ausgewählten Optionen anzeigen",
         "evaluation-all-match": "Alle Antwortoptionen sind korrekt aus-/abgewählt",
-        "label-partially-correct-count": "{partiallyCorrect} Antworten richtig ausgewählt."
+        "label-partially-correct-count": "Keine Antwort richtig ausgewählt. | Eine Antwort richtig ausgewählt. | {n} Antworten richtig ausgewählt."
       },
       "short-text": {
         "evaluation-always-correct": "Immer richtig"
